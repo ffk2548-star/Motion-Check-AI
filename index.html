@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionCheck AI Pro - Analytics & Portal</title>
+  <title>MotionCheck AI Pro - Personal Analytics & Cloud Save</title>
   
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
@@ -29,65 +29,34 @@
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
-      padding: 15px 10px 0 10px;
+      padding: 20px 15px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    .header { text-align: center; margin-bottom: 15px; }
-    .header h1 { margin: 0 0 4px 0; font-size: 1.6rem; color: var(--primary); }
-    .header p { margin: 0; color: var(--text-sub); font-size: 0.85rem; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header h1 { margin: 0 0 6px 0; font-size: 1.75rem; color: var(--primary); letter-spacing: -0.5px; }
+    .header p { margin: 0; color: var(--text-sub); font-size: 0.9rem; }
 
     .main-layout {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
       width: 100%;
-      max-width: 1100px;
+      max-width: 1040px;
       align-items: center;
     }
-
-    /* Top Control Bar */
-    .top-control-bar {
-      width: 100%;
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .user-select-group {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-grow: 1;
-      max-width: 500px;
-    }
-
-    .role-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-weight: bold;
-    }
-    .role-guest { background-color: #334155; color: var(--text-sub); }
-    .role-admin { background-color: var(--warning); color: #000; }
 
     .video-card {
       position: relative;
       width: 100%;
       max-width: 640px;
       background-color: #000;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
       border: 1px solid var(--border-color);
     }
 
@@ -99,55 +68,72 @@
       max-width: 640px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
     .card {
       background-color: var(--card-bg);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 18px;
       border: 1px solid var(--border-color);
+    }
+
+    /* จัดระเบียบฟอร์มควบคุมให้อยู่แถวเดียวกันบนจอใหญ่ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
-    label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+    label { font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
     input[type="text"], select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 10px 12px;
       background-color: var(--card-inner);
       color: var(--text-main);
       border: 1px solid #334155;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
     }
 
     .btn {
-      padding: 10px 14px;
+      width: 100%;
+      padding: 12px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .btn-start { background-color: var(--success); color: #fff; width: 100%; }
-    .btn-stop { background-color: var(--danger); color: #fff; width: 100%; }
-    .btn-save { background-color: var(--primary); color: #0f172a; width: 100%; margin-top: 10px; }
-    .btn-admin { background-color: #334155; color: var(--text-main); font-size: 0.8rem; }
-    .btn-delete { background-color: var(--danger); color: #fff; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; }
+    .btn-start { background-color: var(--success); color: #fff; }
+    .btn-start:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-stop { background-color: var(--danger); color: #fff; }
+    .btn-stop:hover { opacity: 0.9; }
+    .btn-save { background-color: var(--primary); color: #0f172a; margin-top: 14px; }
+    .btn-save:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-save:disabled { background-color: #334155; color: #94a3b8; cursor: not-allowed; }
 
+    /* ปรับแต่ง Live Dashboard */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .stat-box {
@@ -155,48 +141,109 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 8px;
+      text-align: center;
+      padding: 12px 8px;
       background-color: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--text-sub); }
+    .stat-value { font-size: 1.3rem; font-weight: 700; margin-top: 4px; color: var(--primary); }
+
+    .status-banner {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: var(--card-inner);
+      border: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .status-safe { color: var(--success); }
+    .status-danger { color: var(--danger); }
+    .status-warning { color: var(--warning); }
+
+    /* Summary Card Styling */
+    .summary-card {
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+    }
+
+    .summary-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .summary-title-text { font-size: 1rem; font-weight: bold; color: var(--primary); }
+
+    .grade-badge {
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid currentColor;
+    }
+
+    .progress-container { margin-bottom: 14px; }
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background-color: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--success);
+      transition: width 0.5s ease;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric-item {
+      background-color: var(--card-inner);
+      padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
     }
 
-    .stat-label { font-size: 0.7rem; color: var(--text-sub); }
-    .stat-value { font-size: 1.2rem; font-weight: 700; margin-top: 2px; color: var(--primary); }
+    .metric-item .title { font-size: 0.7rem; color: var(--text-sub); display: block; }
+    .metric-item .value { font-size: 0.95rem; font-weight: bold; color: var(--text-main); margin-top: 2px; display: block; }
 
-    /* Table & Stats Section */
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      margin-top: 8px;
-    }
-
-    .history-table th, .history-table td {
-      padding: 8px 6px;
-      text-align: center;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .history-table th { color: var(--text-sub); background-color: var(--card-inner); }
-
-    /* Footer */
-    footer {
-      margin-top: auto;
-      width: 100%;
-      background-color: var(--card-bg);
-      border-top: 1px solid var(--border-color);
-      padding: 15px 10px;
-      text-align: center;
-      color: var(--text-sub);
-      font-size: 0.8rem;
-      line-height: 1.5;
+    .feedback-box {
+      background-color: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--primary);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      line-height: 1.4;
     }
 
     @media (min-width: 900px) {
-      .main-layout { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
-      .top-control-bar { width: 100%; }
-      .controls-panel { max-width: 420px; }
+      .main-layout { flex-direction: row; align-items: flex-start; }
+      .controls-panel { max-width: 380px; }
     }
   </style>
 </head>
@@ -208,172 +255,140 @@
   </div>
 
   <div class="main-layout">
-    
-    <!-- แถบเลือกผู้ใช้ และสิทธิ์การใช้งาน ด้านบนสุด -->
-    <div class="top-control-bar">
-      <div class="user-select-group">
-        <div class="form-group" style="width: 100%;">
-          <label for="user_name">ชื่อผู้ใช้งาน / ID</label>
-          <input type="text" id="user_name" value="User01" placeholder="พิมพ์ชื่อเพื่อค้นหาหรือเริ่มใหม่">
-        </div>
-        <div class="form-group" style="width: 100%;">
-          <label for="exercise_select">เลือกท่าฝึก</label>
-          <select id="exercise_select">
-            <option value="squat">Bodyweight Squat</option>
-            <option value="jump">Jump Landing</option>
-            <option value="balance">Single-leg Balance</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span id="role_status" class="role-badge role-guest">👁️ บุคคลทั่วไป (ดูได้อย่างเดียว)</span>
-        <button id="admin_unlock_btn" class="btn btn-admin">🔑 ยืนยันรหัสแก้ไข</button>
-      </div>
+    <!-- ฝั่งแสดงกล้องวิดีโอ -->
+    <div class="video-card">
+      <video id="input_video" playsinline></video>
+      <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
 
-    <!-- ฝั่งซ้าย: กล้องแสดงผลการซ้อม -->
-    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 640px;">
-      <div class="video-card">
-        <video id="input_video" playsinline></video>
-        <canvas id="output_canvas" width="640" height="480"></canvas>
-      </div>
+    <!-- ฝั่งแผงควบคุมและรายงานผล -->
+    <div class="controls-panel">
       
-      <button id="toggle_btn" class="btn btn-start">▶️ เริ่มบันทึกการฝึก</button>
+      <!-- เมนูควบคุมหลัก -->
+      <div class="card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="user_name">ผู้ใช้งาน</label>
+            <input type="text" id="user_name" placeholder="ระบุชื่อ" value="User01">
+          </div>
 
-      <!-- แสดงสถิติสดขณะซ้อม -->
+          <div class="form-group">
+            <label for="exercise_select">เลือกท่าทาง</label>
+            <select id="exercise_select">
+              <option value="squat">Squat</option>
+              <option value="jump">Jump Landing</option>
+              <option value="balance">Balance</option>
+            </select>
+          </div>
+        </div>
+        
+        <button id="toggle_btn" class="btn btn-start">▶️ เริ่มบันทึกการฝึก</button>
+      </div>
+
+      <!-- สถานะสด Real-time -->
       <div class="dashboard-grid">
         <div class="stat-box">
-          <span class="stat-label">รอบการทำ</span>
-          <span id="rep_display" class="stat-value" style="color: var(--success);">0</span>
+          <span class="stat-label">จำนวนครั้ง</span>
+          <span id="rep_display" class="stat-value" style="color: var(--success); font-size: 1.5rem;">0</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">มุมเข่า (L | R)</span>
+          <span class="stat-label">เข่า (L | R)</span>
           <span id="knee_display" class="stat-value">0° | 0°</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">สถานะ</span>
-          <span id="status_display" class="stat-value" style="font-size: 0.9rem;">พร้อมใช้งาน</span>
+          <span class="stat-label">สะโพก (L | R)</span>
+          <span id="hip_display" class="stat-value">0° | 0°</span>
         </div>
       </div>
+
+      <div class="status-banner">
+        <span id="status_display" class="status-safe">พร้อมทำงาน</span>
+      </div>
+
+      <!-- รายงานสรุปผลการฝึก -->
+      <div class="card summary-card">
+        <div class="summary-header-box">
+          <span class="summary-title-text">📊 สรุปผล: <span id="summary_username" style="color:#fff;">User01</span></span>
+          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">Grade -</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-label-row">
+            <span>Safe Score (ความปลอดภัย)</span>
+            <strong id="safe_score_text">0%</strong>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="safe_score_fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="title">จำนวนครั้งรวม</span>
+            <span id="total_reps_val" class="value" style="color: var(--success);">0 ครั้ง</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">องศาเข่าต่ำสุด (L / R)</span>
+            <span id="min_knee_val" class="value">- / -</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">ความสมดุล ซ้าย-ขวา</span>
+            <span id="symmetry_val" class="value">-</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">เตือนความเสี่ยง</span>
+            <span id="warning_count_val" class="value" style="color: var(--danger);">0 ครั้ง</span>
+          </div>
+        </div>
+
+        <div class="feedback-box">
+          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการฝึก" เพื่อประเมินท่าทาง</span>
+        </div>
+
+        <!-- ปุ่มบันทึกลง Google Drive -->
+        <button id="save_cloud_btn" class="btn btn-save" disabled>☁️ บันทึกผลลง Google Drive (CSV)</button>
+        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:6px;"></span>
+      </div>
+
     </div>
-
-    <!-- ฝั่งขวา: รายงานผล และสถิติล่าสุด -->
-    <div class="controls-panel">
-      
-      <!-- สรุปผลการฝึกรอบปัจจุบัน -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="color: var(--primary);">📊 ผลประเมินรอบล่าสุด</strong>
-          <span id="summary_grade" style="font-weight: bold; color: var(--text-sub);">Grade -</span>
-        </div>
-
-        <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 6px;">
-          <div>ความปลอดภัย (Safe Score): <strong id="safe_score_text" style="color: var(--success);">0%</strong></div>
-          <div>เตือนเสี่ยง: <span id="warning_count_val" style="color: var(--danger);">0 ครั้ง</span> | ความสมดุล: <span id="symmetry_val">-</span></div>
-        </div>
-
-        <button id="save_cloud_btn" class="btn btn-save" disabled>☁️ บันทึกผลลง Google Drive</button>
-        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:4px;"></span>
-      </div>
-
-      <!-- รายการประวัติสถิติของผู้ฝึกรายบุคคล -->
-      <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <strong style="color: var(--primary);">📁 สถิติย้อนหลัง: <span id="history_user_title" style="color: #fff;">User01</span></strong>
-        </div>
-
-        <table class="history-table">
-          <thead>
-            <tr>
-              <th>วันที่/เวลา</th>
-              <th>ท่า</th>
-              <th>รอบ</th>
-              <th>คะแนน</th>
-              <th class="admin-only-col" style="display: none;">จัดการ</th>
-            </tr>
-          </thead>
-          <tbody id="history_tbody">
-            <tr>
-              <td colspan="5" style="color: var(--text-sub);">ยังไม่มีข้อมูลประวัติ</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-
   </div>
-
-  <!-- Footer แสดงลิขสิทธิ์ -->
-  <footer>
-    <p>© สงวนลิขสิทธิ์ โดย ทีม PARTNER AAA <br>คณะวิทยาศาสตร์การกีฬาและสุขภาพ มหาวิทยาลัยการกีฬาแห่งชาติ วิทยาเขตมหาสารคาม</p>
-  </footer>
 
   <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec";
-    const ADMIN_PIN = "1234"; // รหัสผ่านสำหรับแก้ไข/ลบข้อมูล
 
-    let isAdmin = false;
-    let localHistory = []; // จำลอง/จัดเก็บข้อมูลในฝั่ง Client
-
+    const videoElement = document.getElementById('input_video');
+    const canvasElement = document.getElementById('output_canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+    
     const userNameInput = document.getElementById('user_name');
     const exerciseSelect = document.getElementById('exercise_select');
     const toggleBtn = document.getElementById('toggle_btn');
     const saveCloudBtn = document.getElementById('save_cloud_btn');
     const saveStatusMsg = document.getElementById('save_status_msg');
-    const adminUnlockBtn = document.getElementById('admin_unlock_btn');
-    const roleStatus = document.getElementById('role_status');
-    const historyUserTitle = document.getElementById('history_user_title');
-    const historyTbody = document.getElementById('history_tbody');
-
+    
     const repDisplay = document.getElementById('rep_display');
     const kneeDisplay = document.getElementById('knee_display');
+    const hipDisplay = document.getElementById('hip_display');
     const statusDisplay = document.getElementById('status_display');
+
+    const summaryUsername = document.getElementById('summary_username');
     const summaryGrade = document.getElementById('summary_grade');
     const safeScoreText = document.getElementById('safe_score_text');
-    const warningCountVal = document.getElementById('warning_count_val');
+    const safeScoreFill = document.getElementById('safe_score_fill');
+    const totalRepsVal = document.getElementById('total_reps_val');
+    const minKneeVal = document.getElementById('min_knee_val');
     const symmetryVal = document.getElementById('symmetry_val');
+    const warningCountVal = document.getElementById('warning_count_val');
+    const aiFeedbackText = document.getElementById('ai_feedback_text');
 
     let isRecording = false;
     let totalFrames = 0, safeFrames = 0, warningCount = 0;
     let minLeftKnee = 999, minRightKnee = 999;
     let totalDiff = 0, diffFrames = 0;
     let repCount = 0, stage = "UP";
-    let lastCalculatedData = null;
-
-    // ระบบปลดล็อกสิทธิ์ Admin
-    adminUnlockBtn.addEventListener('click', () => {
-      if (isAdmin) {
-        isAdmin = false;
-        roleStatus.className = "role-badge role-guest";
-        roleStatus.innerText = "👁️ บุคคลทั่วไป (ดูได้อย่างเดียว)";
-        adminUnlockBtn.innerText = "🔑 ยืนยันรหัสแก้ไข";
-        toggleAdminColumns(false);
-      } else {
-        const pin = prompt("กรุณากรอกรหัสผ่านเพื่อแก้ไขข้อมูล:");
-        if (pin === ADMIN_PIN) {
-          isAdmin = true;
-          roleStatus.className = "role-badge role-admin";
-          roleStatus.innerText = "🔓 ผู้ดูแลระบบ (แก้ไขได้)";
-          adminUnlockBtn.innerText = "🔒 ล็อกการแก้ไข";
-          toggleAdminColumns(true);
-        } else if (pin !== null) {
-          alert("รหัสผ่านไม่ถูกต้อง!");
-        }
-      }
-    });
-
-    function toggleAdminColumns(show) {
-      const cols = document.querySelectorAll('.admin-only-col');
-      cols.forEach(col => col.style.display = show ? 'table-cell' : 'none');
-      renderHistoryTable();
-    }
 
     userNameInput.addEventListener('input', () => {
-      const uName = userNameInput.value.trim() || "Anonymous";
-      historyUserTitle.innerText = uName;
-      renderHistoryTable();
+      summaryUsername.innerText = userNameInput.value.trim() || "Anonymous";
     });
 
     toggleBtn.addEventListener('click', () => {
@@ -396,9 +411,13 @@
       minLeftKnee = 999; minRightKnee = 999;
       totalDiff = 0; diffFrames = 0;
       repCount = 0; stage = "UP";
+      
       repDisplay.innerText = "0";
       summaryGrade.innerText = "Grade -";
+      summaryGrade.style.color = "var(--text-sub)";
       safeScoreText.innerText = "0%";
+      safeScoreFill.style.width = "0%";
+      aiFeedbackText.innerText = "กำลังวิเคราะห์ข้อมูลการฝึก...";
     }
 
     function updateRepCounter(mode, kneeAngle) {
@@ -411,31 +430,48 @@
       }
     }
 
+    let lastCalculatedData = null;
+
     function calculateSummary() {
-      if (totalFrames === 0) return;
+      if (totalFrames === 0) {
+        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองใหม่อีกครั้ง";
+        return;
+      }
 
       const safeRatio = Math.round((safeFrames / totalFrames) * 100);
       safeScoreText.innerText = safeRatio + "%";
+      safeScoreFill.style.width = safeRatio + "%";
+
+      totalRepsVal.innerText = repCount + " ครั้ง";
       warningCountVal.innerText = warningCount + " ครั้ง";
+      
+      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
+      minKneeVal.innerText = minKneeStr;
 
       const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
-      symmetryVal.innerText = `${avgDiff}°`;
+      let symStr = `-`;
+      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
+      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
+      else symStr = `ต่างกันมาก (${avgDiff}°)`;
+      symmetryVal.innerText = symStr;
 
       let grade = "C";
-      if (safeRatio >= 90 && warningCount <= 1) grade = "A+";
-      else if (safeRatio >= 75) grade = "B";
+      let gradeColor = "var(--danger)";
+      if (safeRatio >= 90 && warningCount <= 1) { grade = "A+"; gradeColor = "var(--success)"; }
+      else if (safeRatio >= 75) { grade = "B"; gradeColor = "var(--primary)"; }
+      
       summaryGrade.innerText = "Grade " + grade;
+      summaryGrade.style.color = gradeColor;
 
       lastCalculatedData = {
         userName: userNameInput.value.trim() || "Anonymous",
         exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
         reps: repCount,
         safeScore: safeRatio,
-        minKnee: `${minLeftKnee}° / ${minRightKnee}°`,
+        minKnee: minKneeStr,
         symmetry: `${avgDiff}°`,
         warnings: warningCount,
-        grade: grade,
-        timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
+        grade: grade
       };
 
       saveCloudBtn.disabled = false;
@@ -460,51 +496,16 @@
         if (res.result === "success") {
           saveStatusMsg.style.color = "var(--success)";
           saveStatusMsg.innerText = "✅ บันทึกลง Google Drive สำเร็จ!";
-          
-          localHistory.unshift(lastCalculatedData);
-          renderHistoryTable();
         } else {
           throw new Error(res.message);
         }
       } catch (err) {
         saveStatusMsg.style.color = "var(--danger)";
         saveStatusMsg.innerText = "❌ เกิดข้อผิดพลาดในการบันทึก";
+        console.error(err);
         saveCloudBtn.disabled = false;
       }
     });
-
-    function renderHistoryTable() {
-      const currentUser = userNameInput.value.trim() || "Anonymous";
-      const userRecords = localHistory.filter(item => item.userName === currentUser);
-
-      if (userRecords.length === 0) {
-        historyTbody.innerHTML = `<tr><td colspan="${isAdmin ? 5 : 4}" style="color: var(--text-sub);">ไม่พบประวัติการฝึก</td></tr>`;
-        return;
-      }
-
-      historyTbody.innerHTML = userRecords.map((item, index) => `
-        <tr>
-          <td>${item.timestamp}</td>
-          <td>${item.exercise}</td>
-          <td>${item.reps}</td>
-          <td><strong style="color:var(--success);">${item.safeScore}%</strong></td>
-          ${isAdmin ? `<td><button onclick="deleteRecord(${index})" class="btn-delete">ลบ</button></td>` : ''}
-        </tr>
-      `).join('');
-    }
-
-    function deleteRecord(index) {
-      if (!isAdmin) return;
-      if (confirm("คุณต้องการลบข้อมูลรายการนี้ใช่หรือไม่?")) {
-        localHistory.splice(index, 1);
-        renderHistoryTable();
-      }
-    }
-
-    // MediaPipe Pose & Camera Initialization
-    const videoElement = document.getElementById('input_video');
-    const canvasElement = document.getElementById('output_canvas');
-    const canvasCtx = canvasElement.getContext('2d');
 
     function calculateAngle(a, b, c) {
       const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
@@ -513,32 +514,94 @@
       return Math.round(angle);
     }
 
+    function drawJoint(p1, p2, p3, color) {
+      const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
+      const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
+      const pt3 = { x: p3.x * canvasElement.width, y: p3.y * canvasElement.height };
+
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(pt1.x, pt1.y);
+      canvasCtx.lineTo(pt2.x, pt2.y);
+      canvasCtx.lineTo(pt3.x, pt3.y);
+      canvasCtx.lineWidth = 5;
+      canvasCtx.strokeStyle = color;
+      canvasCtx.stroke();
+    }
+
     function onResults(results) {
       canvasElement.width = videoElement.videoWidth;
       canvasElement.height = videoElement.videoHeight;
+
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
       if (results.poseLandmarks) {
         const lm = results.poseLandmarks;
-        const leftKneeAngle = calculateAngle(lm[23], lm[25], lm[27]);
-        const rightKneeAngle = calculateAngle(lm[24], lm[26], lm[28]);
+        const mode = exerciseSelect.value;
+
+        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
+        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
+
+        let leftKneeAngle = 0, rightKneeAngle = 0;
+        let leftHipAngle = 0, rightHipAngle = 0;
+
+        if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
+          leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+          leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        }
+
+        if (rightHip.visibility > 0.5 && rightKnee.visibility > 0.5 && rightAnkle.visibility > 0.5) {
+          rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+          rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
+        }
 
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
-        const currentKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
-        if (currentKneeAngle > 0) updateRepCounter(exerciseSelect.value, currentKneeAngle);
+        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        if (isRecording) {
-          totalFrames++;
-          safeFrames++;
+        const currentKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
+        if (currentKneeAngle > 0) updateRepCounter(mode, currentKneeAngle);
+
+        let isSafe = true;
+        let statusText = "ท่าทางสมบูรณ์ ปลอดภัย";
+        let statusClass = "status-safe";
+        let lineColor = "#22c55e";
+
+        if (mode === 'squat') {
+          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
+          if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
+            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน! (ต่างกัน ${diff}°)`;
+            statusClass = "status-warning";
+            lineColor = "#f59e0b";
+            isSafe = false;
+          } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
+            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์เสี่ยง!";
+            statusClass = "status-danger";
+            lineColor = "#ef4444";
+            isSafe = false;
+          }
         }
+
+        statusDisplay.innerText = statusText;
+        statusDisplay.className = statusClass;
+
+        if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
+          totalFrames++;
+          if (isSafe) safeFrames++; else warningCount++;
+          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
+          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
+          totalDiff += Math.abs(leftKneeAngle - rightKneeAngle);
+          diffFrames++;
+        }
+
+        if (leftKneeAngle > 0) drawJoint(leftHip, leftKnee, leftAnkle, lineColor);
+        if (rightKneeAngle > 0) drawJoint(rightHip, rightKnee, rightAnkle, lineColor);
       }
       canvasCtx.restore();
     }
 
     const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
-    pose.setOptions({ modelComplexity: 1, smoothLandmarks: true });
+    pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
     pose.onResults(onResults);
 
     const camera = new Camera(videoElement, {
