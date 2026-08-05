@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MotionCheck AI Pro - Personal Analytics & Cloud Save</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --card-inner: #0f172a;
+      --primary: #38bdf8;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Takhoma', 'Segoe UI', Thonburi, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .header { text-align: center; margin-bottom: 15px; }
+    .header h1 { margin: 0 0 4px 0; font-size: 1.6rem; color: var(--primary); }
+    .header p { margin: 0; color: var(--text-sub); font-size: 0.85rem; }
+
+    .main-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      max-width: 960px;
+      align-items: center;
+    }
+
+    .video-card {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      background-color: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    #input_video { display: none; }
+    #output_canvas { width: 100%; height: auto; display: block; }
+
+    .controls-panel {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    label { font-size: 0.85rem; color: var(--text-sub); font-weight: bold; }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 10px;
+      background-color: #0f172a;
+      color: var(--text-main);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-start { background-color: var(--success); color: #fff; }
+    .btn-stop { background-color: var(--danger); color: #fff; }
+    .btn-save { background-color: var(--primary); color: #0f172a; margin-top: 10px; }
+    .btn-save:disabled { background-color: #334155; color: #94a3b8; cursor: not-allowed; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--text-sub); }
+    .stat-value { font-size: 1.4rem; font-weight: 700; margin-top: 2px; color: var(--primary); }
+
+    .status-safe { color: var(--success); }
+    .status-danger { color: var(--danger); }
+    .status-warning { color: var(--warning); }
+
+    .summary-card {
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .summary-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .summary-title-text { font-size: 1.05rem; font-weight: bold; color: var(--primary); }
+
+    .grade-badge {
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid currentColor;
+    }
+
+    .progress-container { margin-bottom: 12px; }
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background-color: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--success);
+      transition: width 0.5s ease;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .metric-item {
+      background-color: var(--card-inner);
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .metric-item .title { font-size: 0.7rem; color: var(--text-sub); display: block; }
+    .metric-item .value { font-size: 0.95rem; font-weight: bold; color: var(--text-main); margin-top: 2px; display: block; }
+
+    .feedback-box {
+      background-color: rgba(56, 189, 248, 0.08);
+      border-left: 3px solid var(--primary);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    @media (min-width: 850px) {
+      .main-layout { flex-direction: row; align-items: flex-start; }
+      .controls-panel { max-width: 380px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>🎯 MotionCheck AI Pro</h1>
+    <p>ระบบตรวจจับการเคลื่อนไหว และบันทึกข้อมูลรายบุคคลลง Google Drive</p>
+  </div>
+
+  <div class="main-layout">
+    <div class="video-card">
+      <video id="input_video" playsinline></video>
+      <canvas id="output_canvas" width="640" height="480"></canvas>
+    </div>
+
+    <div class="controls-panel">
+      
+      <div class="card">
+        <div class="form-group">
+          <label for="user_name">ชื่อผู้ใช้งาน / ID:</label>
+          <input type="text" id="user_name" placeholder="ระบุชื่อ เช่น User01" value="User01">
+        </div>
+
+        <div class="form-group">
+          <label for="exercise_select">เลือกท่าทางการฝึก:</label>
+          <select id="exercise_select">
+            <option value="squat">1. Bodyweight Squat (ย่อตัว)</option>
+            <option value="jump">2. Jump & Landing (กระโดดลงสู่พื้น)</option>
+            <option value="balance">3. Single-leg Balance (ทรงตัวขาเดียว)</option>
+          </select>
+        </div>
+        
+        <button id="toggle_btn" class="btn btn-start" style="margin-top: 5px;">▶️ เริ่มบันทึกการฝึก</button>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="card stat-box">
+          <span class="stat-label">จำนวนครั้ง</span>
+          <span id="rep_display" class="stat-value" style="color: var(--success); font-size: 1.6rem;">0</span>
+        </div>
+        <div class="card stat-box">
+          <span class="stat-label">เข่า (ซ้าย/ขวา)</span>
+          <span id="knee_display" class="stat-value">0° | 0°</span>
+        </div>
+        <div class="card stat-box">
+          <span class="stat-label">สะโพก (ซ้าย/ขวา)</span>
+          <span id="hip_display" class="stat-value">0° | 0°</span>
+        </div>
+      </div>
+
+      <div class="card stat-box" style="width: 100%;">
+        <span class="stat-label">สถานะความปลอดภัยขณะนี้</span>
+        <span id="status_display" class="stat-value status-safe" style="font-size: 1rem; margin-top: 4px;">พร้อมทำงาน</span>
+      </div>
+
+      <!-- รายงานสรุปผลการฝึก -->
+      <div class="card summary-card">
+        <div class="summary-header-box">
+          <span class="summary-title-text">📊 สรุปผลรายบุคคล: <span id="summary_username" style="color:#fff;">User01</span></span>
+          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">Grade -</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-label-row">
+            <span>ความปลอดภัยภาพรวม (Safe Score)</span>
+            <strong id="safe_score_text">0%</strong>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="safe_score_fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="title">จำนวนครั้งที่ทำได้ทั้งหมด</span>
+            <span id="total_reps_val" class="value" style="color: var(--success);">0 ครั้ง</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">องศาเข่าต่ำสุด (L / R)</span>
+            <span id="min_knee_val" class="value">- / -</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">ความสมดุลซ้าย-ขวา</span>
+            <span id="symmetry_val" class="value">-</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">แจ้งเตือนความเสี่ยง</span>
+            <span id="warning_count_val" class="value" style="color: var(--danger);">0 ครั้ง</span>
+          </div>
+        </div>
+
+        <div class="feedback-box">
+          <strong>💡 ข้อเสนอแนะการพัฒนา:</strong>
+          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการฝึก" เพื่อเริ่มต้นประเมินผลท่าทาง</span>
+        </div>
+
+        <!-- ปุ่มกดบันทึกลง Google Drive CSV -->
+        <button id="save_cloud_btn" class="btn btn-save" disabled>☁️ บันทึกผลลง Google Drive (CSV)</button>
+        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:4px;"></span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // URL เว็บแอพ Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec";
+
+    const videoElement = document.getElementById('input_video');
+    const canvasElement = document.getElementById('output_canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+    
+    const userNameInput = document.getElementById('user_name');
+    const exerciseSelect = document.getElementById('exercise_select');
+    const toggleBtn = document.getElementById('toggle_btn');
+    const saveCloudBtn = document.getElementById('save_cloud_btn');
+    const saveStatusMsg = document.getElementById('save_status_msg');
+    
+    const repDisplay = document.getElementById('rep_display');
+    const kneeDisplay = document.getElementById('knee_display');
+    const hipDisplay = document.getElementById('hip_display');
+    const statusDisplay = document.getElementById('status_display');
+
+    const summaryUsername = document.getElementById('summary_username');
+    const summaryGrade = document.getElementById('summary_grade');
+    const safeScoreText = document.getElementById('safe_score_text');
+    const safeScoreFill = document.getElementById('safe_score_fill');
+    const totalRepsVal = document.getElementById('total_reps_val');
+    const minKneeVal = document.getElementById('min_knee_val');
+    const symmetryVal = document.getElementById('symmetry_val');
+    const warningCountVal = document.getElementById('warning_count_val');
+    const aiFeedbackText = document.getElementById('ai_feedback_text');
+
+    let isRecording = false;
+    let totalFrames = 0, safeFrames = 0, warningCount = 0;
+    let minLeftKnee = 999, minRightKnee = 999;
+    let totalDiff = 0, diffFrames = 0;
+    let repCount = 0, stage = "UP";
+
+    userNameInput.addEventListener('input', () => {
+      summaryUsername.innerText = userNameInput.value.trim() || "Anonymous";
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      isRecording = !isRecording;
+      if (isRecording) {
+        toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
+        toggleBtn.className = "btn btn-stop";
+        saveCloudBtn.disabled = true;
+        saveStatusMsg.innerText = "";
+        resetStats();
+      } else {
+        toggleBtn.innerText = "▶️ เริ่มบันทึกการฝึก";
+        toggleBtn.className = "btn btn-start";
+        calculateSummary();
+      }
+    });
+
+    function resetStats() {
+      totalFrames = 0; safeFrames = 0; warningCount = 0;
+      minLeftKnee = 999; minRightKnee = 999;
+      totalDiff = 0; diffFrames = 0;
+      repCount = 0; stage = "UP";
+      
+      repDisplay.innerText = "0";
+      summaryGrade.innerText = "Grade -";
+      summaryGrade.style.color = "var(--text-sub)";
+      safeScoreText.innerText = "0%";
+      safeScoreFill.style.width = "0%";
+      aiFeedbackText.innerText = "กำลังวิเคราะห์ข้อมูลการฝึก...";
+    }
+
+    function updateRepCounter(mode, kneeAngle) {
+      if (!isRecording) return;
+      if (kneeAngle < 110 && stage === "UP") stage = "DOWN";
+      if (kneeAngle > 150 && stage === "DOWN") {
+        stage = "UP";
+        repCount++;
+        repDisplay.innerText = repCount;
+      }
+    }
+
+    let lastCalculatedData = null;
+
+    function calculateSummary() {
+      if (totalFrames === 0) {
+        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองใหม่อีกครั้ง";
+        return;
+      }
+
+      const safeRatio = Math.round((safeFrames / totalFrames) * 100);
+      safeScoreText.innerText = safeRatio + "%";
+      safeScoreFill.style.width = safeRatio + "%";
+
+      totalRepsVal.innerText = repCount + " ครั้ง";
+      warningCountVal.innerText = warningCount + " ครั้ง";
+      
+      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
+      minKneeVal.innerText = minKneeStr;
+
+      const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
+      let symStr = `-`;
+      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
+      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
+      else symStr = `ต่างกันมาก (${avgDiff}°)`;
+      symmetryVal.innerText = symStr;
+
+      let grade = "C";
+      let gradeColor = "var(--danger)";
+      if (safeRatio >= 90 && warningCount <= 1) { grade = "A+"; gradeColor = "var(--success)"; }
+      else if (safeRatio >= 75) { grade = "B"; gradeColor = "var(--primary)"; }
+      
+      summaryGrade.innerText = "Grade " + grade;
+      summaryGrade.style.color = gradeColor;
+
+      lastCalculatedData = {
+        userName: userNameInput.value.trim() || "Anonymous",
+        exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
+        reps: repCount,
+        safeScore: safeRatio,
+        minKnee: minKneeStr,
+        symmetry: `${avgDiff}°`,
+        warnings: warningCount,
+        grade: grade
+      };
+
+      saveCloudBtn.disabled = false;
+    }
+
+    saveCloudBtn.addEventListener('click', async () => {
+      if (!lastCalculatedData) return;
+
+      saveCloudBtn.disabled = true;
+      saveStatusMsg.style.color = "var(--warning)";
+      saveStatusMsg.innerText = "⏳ กำลังส่งข้อมูลไปยัง Google Drive...";
+
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(lastCalculatedData)
+        });
+
+        const res = await response.json();
+        if (res.result === "success") {
+          saveStatusMsg.style.color = "var(--success)";
+          saveStatusMsg.innerText = "✅ บันทึกลง Google Drive สำเร็จ!";
+        } else {
+          throw new Error(res.message);
+        }
+      } catch (err) {
+        saveStatusMsg.style.color = "var(--danger)";
+        saveStatusMsg.innerText = "❌ เกิดข้อผิดพลาดในการบันทึก";
+        console.error(err);
+        saveCloudBtn.disabled = false;
+      }
+    });
+
+    function calculateAngle(a, b, c) {
+      const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+      let angle = Math.abs((radians * 180.0) / Math.PI);
+      if (angle > 180.0) angle = 360.0 - angle;
+      return Math.round(angle);
+    }
+
+    function drawJoint(p1, p2, p3, color) {
+      const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
+      const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
+      const pt3 = { x: p3.x * canvasElement.width, y: p3.y * canvasElement.height };
+
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(pt1.x, pt1.y);
+      canvasCtx.lineTo(pt2.x, pt2.y);
+      canvasCtx.lineTo(pt3.x, pt3.y);
+      canvasCtx.lineWidth = 5;
+      canvasCtx.strokeStyle = color;
+      canvasCtx.stroke();
+    }
+
+    function onResults(results) {
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.poseLandmarks) {
+        const lm = results.poseLandmarks;
+        const mode = exerciseSelect.value;
+
+        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
+        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
+
+        let leftKneeAngle = 0, rightKneeAngle = 0;
+        let leftHipAngle = 0, rightHipAngle = 0;
+
+        if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
+          leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+          leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        }
+
+        if (rightHip.visibility > 0.5 && rightKnee.visibility > 0.5 && rightAnkle.visibility > 0.5) {
+          rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+          rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
+        }
+
+        kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
+        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
+
+        const currentKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
+        if (currentKneeAngle > 0) updateRepCounter(mode, currentKneeAngle);
+
+        let isSafe = true;
+        let statusText = "ท่าทางสมบูรณ์ ปลอดภัย";
+        let statusClass = "stat-value status-safe";
+        let lineColor = "#22c55e";
+
+        if (mode === 'squat') {
+          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
+          if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
+            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน! (ต่างกัน ${diff}°)`;
+            statusClass = "stat-value status-warning";
+            lineColor = "#f59e0b";
+            isSafe = false;
+          } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
+            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์เสี่ยง!";
+            statusClass = "stat-value status-danger";
+            lineColor = "#ef4444";
+            isSafe = false;
+          }
+        }
+
+        statusDisplay.innerText = statusText;
+        statusDisplay.className = statusClass;
+
+        if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
+          totalFrames++;
+          if (isSafe) safeFrames++; else warningCount++;
+          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
+          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
+          totalDiff += Math.abs(leftKneeAngle - rightKneeAngle);
+          diffFrames++;
+        }
+
+        if (leftKneeAngle > 0) drawJoint(leftHip, leftKnee, leftAnkle, lineColor);
+        if (rightKneeAngle > 0) drawJoint(rightHip, rightKnee, rightAnkle, lineColor);
+      }
+      canvasCtx.restore();
+    }
+
+    const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
+    pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+    pose.onResults(onResults);
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => { await pose.send({ image: videoElement }); },
+      width: 640, height: 480
+    });
+    camera.start();
+  </script>
+</body>
+</html>
