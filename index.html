@@ -25,7 +25,7 @@
     * { box-sizing: border-box; }
 
     body {
-      font-family: 'Takhoma', 'Segoe UI', Thonburi, sans-serif;
+      font-family: 'Segoe UI', Thonburi, 'Takhoma', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
@@ -127,6 +127,18 @@
     .btn-save { background-color: var(--primary); color: #0f172a; margin-top: 14px; }
     .btn-save:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
     .btn-save:disabled { background-color: #334155; color: #94a3b8; cursor: not-allowed; }
+    
+    .btn-shortcut {
+      background-color: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      margin-top: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+    .btn-shortcut:hover {
+      background-color: rgba(56, 189, 248, 0.1);
+    }
 
     .dashboard-grid {
       display: grid;
@@ -238,6 +250,41 @@
       line-height: 1.4;
     }
 
+    /* History Table Section */
+    .history-card {
+      display: none;
+      width: 100%;
+      max-width: 1040px;
+      margin-top: 10px;
+    }
+
+    .history-table-wrapper {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .history-table th, .history-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table th {
+      color: var(--text-sub);
+      background-color: var(--card-inner);
+      font-weight: 600;
+    }
+
+    .history-table tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
       .controls-panel { max-width: 380px; }
@@ -276,6 +323,7 @@
         </div>
         
         <button id="toggle_btn" class="btn btn-start">▶️ เริ่มบันทึกการฝึก</button>
+        <button id="toggle_history_btn" class="btn btn-shortcut">📜 ดูประวัติการฝึกที่บันทึกไว้</button>
       </div>
 
       <div class="dashboard-grid">
@@ -343,6 +391,33 @@
     </div>
   </div>
 
+  <!-- History Log Section -->
+  <div id="history_section" class="card history-card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0; color:var(--primary); font-size:1.1rem;">📂 ประวัติบันทึกการฝึกย้อนหลัง</h3>
+      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.8rem;">ลบประวัติทั้งหมด</button>
+    </div>
+    <div class="history-table-wrapper">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>วัน-เวลา</th>
+            <th>ผู้ใช้งาน</th>
+            <th>ท่าทาง</th>
+            <th>จำนวนครั้ง</th>
+            <th>Safe Score</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody id="history_table_body">
+          <tr>
+            <td colspan="6" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec";
 
@@ -353,6 +428,10 @@
     const userNameInput = document.getElementById('user_name');
     const exerciseSelect = document.getElementById('exercise_select');
     const toggleBtn = document.getElementById('toggle_btn');
+    const toggleHistoryBtn = document.getElementById('toggle_history_btn');
+    const historySection = document.getElementById('history_section');
+    const historyTableBody = document.getElementById('history_table_body');
+    const clearHistoryBtn = document.getElementById('clear_history_btn');
     const saveCloudBtn = document.getElementById('save_cloud_btn');
     const saveStatusMsg = document.getElementById('save_status_msg');
     
@@ -393,6 +472,17 @@
         toggleBtn.innerText = "▶️ เริ่มบันทึกการฝึก";
         toggleBtn.className = "btn btn-start";
         calculateSummary();
+      }
+    });
+
+    toggleHistoryBtn.addEventListener('click', () => {
+      if (historySection.style.display === "block") {
+        historySection.style.display = "none";
+        toggleHistoryBtn.innerText = "📜 ดูประวัติการฝึกที่บันทึกไว้";
+      } else {
+        historySection.style.display = "block";
+        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติการฝึก";
+        renderHistoryTable();
       }
     });
 
@@ -467,7 +557,10 @@
       summaryGrade.style.color = gradeColor;
       aiFeedbackText.innerText = feedback;
 
+      const timestamp = new Date().toLocaleString('th-TH');
+
       lastCalculatedData = {
+        timestamp: timestamp,
         userName: userNameInput.value.trim() || "Anonymous",
         exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
         reps: repCount,
@@ -500,6 +593,7 @@
         if (res.result === "success") {
           saveStatusMsg.style.color = "var(--success)";
           saveStatusMsg.innerText = "✅ บันทึกลง Google Drive สำเร็จ!";
+          saveLocalHistory(lastCalculatedData);
         } else {
           throw new Error(res.message);
         }
@@ -508,6 +602,39 @@
         saveStatusMsg.innerText = "❌ เกิดข้อผิดพลาดในการบันทึก";
         console.error(err);
         saveCloudBtn.disabled = false;
+      }
+    });
+
+    function saveLocalHistory(data) {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      history.unshift(data);
+      localStorage.setItem('motionCheck_history', JSON.stringify(history));
+      renderHistoryTable();
+    }
+
+    function renderHistoryTable() {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      if (history.length === 0) {
+        historyTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>`;
+        return;
+      }
+
+      historyTableBody.innerHTML = history.map(item => `
+        <tr>
+          <td>${item.timestamp || '-'}</td>
+          <td>${item.userName}</td>
+          <td>${item.exercise}</td>
+          <td>${item.reps} ครั้ง</td>
+          <td>${item.safeScore}%</td>
+          <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--primary)' : 'var(--danger)'}">${item.grade}</strong></td>
+        </tr>
+      `).join('');
+    }
+
+    clearHistoryBtn.addEventListener('click', () => {
+      if (confirm('คุณต้องการลบประวัติการฝึกในเครื่องทั้งหมดใช่หรือไม่?')) {
+        localStorage.removeItem('motionCheck_history');
+        renderHistoryTable();
       }
     });
 
@@ -539,7 +666,6 @@
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       
-      // Mirror canvas ภาพเพื่อให้ดูเป็นธรรมชาติเหมือนส่องกระจก
       canvasCtx.translate(canvasElement.width, 0);
       canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
