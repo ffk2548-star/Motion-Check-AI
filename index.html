@@ -62,7 +62,7 @@
     }
     .header h1 { 
       margin: 0 0 6px 0; 
-      font-size: 2rem; 
+      font-size: 2.2rem; 
       font-weight: 700;
       background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
       -webkit-background-clip: text;
@@ -91,6 +91,7 @@
       position: relative;
       width: 100%;
       max-width: 640px;
+      aspect-ratio: 4 / 3;
       background-color: #000;
       border-radius: 20px;
       overflow: hidden;
@@ -102,7 +103,12 @@
     }
 
     #input_video { display: none; }
-    #output_canvas { width: 100%; height: auto; display: block; }
+    #output_canvas { 
+      width: 100%; 
+      height: 100%; 
+      display: block; 
+      object-fit: cover;
+    }
 
     /* Controls & Menu Panels */
     .controls-panel {
@@ -472,7 +478,7 @@
 
   <div class="main-layout">
     <div class="video-card">
-      <video id="input_video" playsinline></video>
+      <video id="input_video" playsinline muted></video>
       <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
 
@@ -603,6 +609,7 @@
   </div>
 
   <script>
+    // ตั้งค่า Web App URL ของ Google Apps Script ที่นี่ (ถ้ามี)
     const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
@@ -693,10 +700,13 @@
       aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
     }
 
+    // ฟังก์ชันนับรอบที่มี Hysteresis Threshold เพื่อป้องกัน False Positive
     function updateRepCounter(mode, kneeAngle) {
       if (!isRecording) return;
-      if (kneeAngle < 110 && stage === "UP") stage = "DOWN";
-      if (kneeAngle > 150 && stage === "DOWN") {
+      if (kneeAngle < 100 && stage === "UP") {
+        stage = "DOWN";
+      }
+      if (kneeAngle > 155 && stage === "DOWN") {
         stage = "UP";
         repCount++;
         repDisplay.innerText = repCount;
@@ -875,6 +885,7 @@
       }
     });
 
+    // คำนวณองศาร่างกายโดยใช้เวกเตอร์
     function calculateAngle(a, b, c) {
       const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
       let angle = Math.abs((radians * 180.0) / Math.PI);
@@ -882,6 +893,7 @@
       return Math.round(angle);
     }
 
+    // ฟังก์ชันวาดเส้นข้อต่อพร้อมจุดเชื่อมต่อ
     function drawJoint(p1, p2, p3, color) {
       const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
       const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
@@ -891,18 +903,33 @@
       canvasCtx.moveTo(pt1.x, pt1.y);
       canvasCtx.lineTo(pt2.x, pt2.y);
       canvasCtx.lineTo(pt3.x, pt3.y);
-      canvasCtx.lineWidth = 5;
+      canvasCtx.lineWidth = 4;
       canvasCtx.strokeStyle = color;
       canvasCtx.stroke();
+
+      // วาดจุดข้อต่อเพื่อความสวยงาม
+      [pt1, pt2, pt3].forEach(pt => {
+        canvasCtx.beginPath();
+        canvasCtx.arc(pt.x, pt.y, 6, 0, 2 * Math.PI);
+        canvasCtx.fillStyle = color;
+        canvasCtx.fill();
+        canvasCtx.lineWidth = 2;
+        canvasCtx.strokeStyle = '#ffffff';
+        canvasCtx.stroke();
+      });
     }
 
+    // ประมวลผลจาก MediaPipe Pose
     function onResults(results) {
+      if (!results.image) return;
+
       canvasElement.width = videoElement.videoWidth || 640;
       canvasElement.height = videoElement.videoHeight || 480;
 
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       
+      // Mirror ภาพให้ใช้งานสมจริงเสมือนกระจก
       canvasCtx.translate(canvasElement.width, 0);
       canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
@@ -911,12 +938,14 @@
         const lm = results.poseLandmarks;
         const mode = exerciseSelect.value;
 
+        // Keypoints ตามดัชนี MediaPipe
         const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
         const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
 
         let leftKneeAngle = 0, rightKneeAngle = 0;
         let leftHipAngle = 0, rightHipAngle = 0;
 
+        // ตรวจสอบความมั่นใจของจุด Keypoints (Visibility Check)
         if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
           leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
           leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
@@ -930,8 +959,8 @@
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
         hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        const currentKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
-        if (currentKneeAngle > 0) updateRepCounter(mode, currentKneeAngle);
+        const activeKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
+        if (activeKneeAngle > 0) updateRepCounter(mode, activeKneeAngle);
 
         let isSafe = true;
         let statusText = "ท่าทางปกติ";
@@ -961,30 +990,49 @@
           if (isSafe) safeFrames++; else warningCount++;
           if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
           if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
-          totalDiff += Math.abs(leftKneeAngle - rightKneeAngle);
+          
+          const currentDiff = Math.abs(leftKneeAngle - rightKneeAngle);
+          totalDiff += currentDiff;
           diffFrames++;
         }
 
         if (leftKneeAngle > 0) drawJoint(leftHip, leftKnee, leftAnkle, lineColor);
         if (rightKneeAngle > 0) drawJoint(rightHip, rightKnee, rightAnkle, lineColor);
+      } else {
+        statusDisplay.innerText = "ไม่พบผู้ใช้งานหน้ากล้อง";
+        statusDisplay.className = "status-warning";
       }
+
       canvasCtx.restore();
     }
 
-    const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
-    pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+    // กำหนดค่า MediaPipe Pose
+    const pose = new Pose({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
     pose.onResults(onResults);
 
+    // เริ่มต้นระบบกล้อง
     const camera = new Camera(videoElement, {
-      onFrame: async () => { await pose.send({ image: videoElement }); },
-      width: 640, height: 480
+      onFrame: async () => {
+        await pose.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480
     });
-    
-    camera.start().then(() => {
-      statusDisplay.innerText = "กล้องพร้อมใช้งาน";
-    }).catch(err => {
-      console.error(err);
-      statusDisplay.innerText = "❌ ไม่สามารถเข้าถึงกล้องได้ กรุณาอนุญาตให้ใช้งานกล้อง";
+
+    camera.start().catch(err => {
+      console.error('ไม่สามารถเปิดใช้งานกล้องได้:', err);
+      statusDisplay.innerText = "ไม่สามารถเชื่อมต่อกล้องได้";
       statusDisplay.className = "status-danger";
     });
   </script>
