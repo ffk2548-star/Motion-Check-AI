@@ -285,6 +285,57 @@
       background-color: rgba(255, 255, 255, 0.03);
     }
 
+    .btn-view-detail {
+      background-color: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    /* Modal Component */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
       .controls-panel { max-width: 380px; }
@@ -407,14 +458,28 @@
             <th>จำนวนครั้ง</th>
             <th>Safe Score</th>
             <th>Grade</th>
+            <th>จัดการ</th>
           </tr>
         </thead>
         <tbody id="history_table_body">
           <tr>
-            <td colspan="6" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
+            <td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail_modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin:0; color:var(--primary);" id="modal_title">รายละเอียดการฝึก</h3>
+        <button id="close_modal_btn" class="modal-close-btn">✖</button>
+      </div>
+      <div id="modal_body">
+        <!-- Content will be injected by JavaScript -->
+      </div>
     </div>
   </div>
 
@@ -434,6 +499,10 @@
     const clearHistoryBtn = document.getElementById('clear_history_btn');
     const saveCloudBtn = document.getElementById('save_cloud_btn');
     const saveStatusMsg = document.getElementById('save_status_msg');
+
+    const detailModal = document.getElementById('detail_modal');
+    const closeModalBtn = document.getElementById('close_modal_btn');
+    const modalBody = document.getElementById('modal_body');
     
     const repDisplay = document.getElementById('rep_display');
     const kneeDisplay = document.getElementById('knee_display');
@@ -484,6 +553,10 @@
         toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติการฝึก";
         renderHistoryTable();
       }
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      detailModal.style.display = "none";
     });
 
     function resetStats() {
@@ -566,9 +639,10 @@
         reps: repCount,
         safeScore: safeRatio,
         minKnee: minKneeStr,
-        symmetry: `${avgDiff}°`,
+        symmetry: symStr,
         warnings: warningCount,
-        grade: grade
+        grade: grade,
+        feedback: feedback
       };
 
       saveCloudBtn.disabled = false;
@@ -615,11 +689,11 @@
     function renderHistoryTable() {
       let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
       if (history.length === 0) {
-        historyTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>`;
+        historyTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>`;
         return;
       }
 
-      historyTableBody.innerHTML = history.map(item => `
+      historyTableBody.innerHTML = history.map((item, index) => `
         <tr>
           <td>${item.timestamp || '-'}</td>
           <td>${item.userName}</td>
@@ -627,9 +701,49 @@
           <td>${item.reps} ครั้ง</td>
           <td>${item.safeScore}%</td>
           <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--primary)' : 'var(--danger)'}">${item.grade}</strong></td>
+          <td><button class="btn-view-detail" onclick="openDetailModal(${index})">🔍 เปิดดู</button></td>
         </tr>
       `).join('');
     }
+
+    window.openDetailModal = function(index) {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      const data = history[index];
+      if (!data) return;
+
+      modalBody.innerHTML = `
+        <div style="font-size:0.9rem; line-height:1.6;">
+          <p><strong>ผู้ใช้งาน:</strong> ${data.userName}</p>
+          <p><strong>วัน-เวลาบันทึก:</strong> ${data.timestamp || '-'}</p>
+          <p><strong>ท่าทางการฝึก:</strong> ${data.exercise}</p>
+          <hr style="border-color:var(--border-color); margin:10px 0;">
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <span class="title">จำนวนครั้ง</span>
+              <span class="value" style="color:var(--success);">${data.reps} ครั้ง</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">Safe Score</span>
+              <span class="value" style="color:var(--primary);">${data.safeScore}%</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">เกรดประเมิน</span>
+              <span class="value">${data.grade}</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">คำเตือนความเสี่ยง</span>
+              <span class="value" style="color:var(--danger);">${data.warnings} ครั้ง</span>
+            </div>
+          </div>
+          <p><strong>องศาเข่าต่ำสุด (L/R):</strong> ${data.minKnee}</p>
+          <p><strong>ความสมดุล ซ้าย-ขวา:</strong> ${data.symmetry}</p>
+          <div class="feedback-box" style="margin-top:10px;">
+            <strong>คำแนะนำ AI:</strong><br>${data.feedback || 'ไม่มีคำแนะนำเพิ่มเติม'}
+          </div>
+        </div>
+      `;
+      detailModal.style.display = "flex";
+    };
 
     clearHistoryBtn.addEventListener('click', () => {
       if (confirm('คุณต้องการลบประวัติการฝึกในเครื่องทั้งหมดใช่หรือไม่?')) {
