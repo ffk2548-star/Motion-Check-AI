@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MotionCheck AI Pro - Personal Analytics & Cloud Save</title>
   
+  <!-- MediaPipe Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 
@@ -250,7 +251,6 @@
       line-height: 1.4;
     }
 
-    /* History Table Section */
     .history-card {
       display: none;
       width: 100%;
@@ -295,13 +295,12 @@
       cursor: pointer;
     }
 
-    /* Modal Component */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(4px);
       z-index: 1000;
       justify-content: center;
@@ -393,7 +392,7 @@
       </div>
 
       <div class="status-banner">
-        <span id="status_display" class="status-safe">พร้อมทำงาน</span>
+        <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
       </div>
 
       <div class="card summary-card">
@@ -435,7 +434,7 @@
           <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการฝึก" เพื่อประเมินท่าทาง</span>
         </div>
 
-        <button id="save_cloud_btn" class="btn btn-save" disabled>☁️ บันทึกผลลง Google Drive (CSV)</button>
+        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลการฝึก</button>
         <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:6px;"></span>
       </div>
 
@@ -477,14 +476,13 @@
         <h3 style="margin:0; color:var(--primary);" id="modal_title">รายละเอียดการฝึก</h3>
         <button id="close_modal_btn" class="modal-close-btn">✖</button>
       </div>
-      <div id="modal_body">
-        <!-- Content will be injected by JavaScript -->
-      </div>
+      <div id="modal_body"></div>
     </div>
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec";
+    // URL สำหรับเชื่อมต่อ Google Apps Script (หากยังไม่มี สามารถเว้นว่างไว้เพื่อใช้งาน Local Storage)
+    const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
     const canvasElement = document.getElementById('output_canvas');
@@ -524,6 +522,7 @@
     let minLeftKnee = 999, minRightKnee = 999;
     let totalDiff = 0, diffFrames = 0;
     let repCount = 0, stage = "UP";
+    let lastCalculatedData = null;
 
     userNameInput.addEventListener('input', () => {
       summaryUsername.innerText = userNameInput.value.trim() || "Anonymous";
@@ -570,7 +569,7 @@
       summaryGrade.style.color = "var(--text-sub)";
       safeScoreText.innerText = "0%";
       safeScoreFill.style.width = "0%";
-      aiFeedbackText.innerText = "กำลังวิเคราะห์ข้อมูลการฝึก...";
+      aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
     }
 
     function updateRepCounter(mode, kneeAngle) {
@@ -583,11 +582,9 @@
       }
     }
 
-    let lastCalculatedData = null;
-
     function calculateSummary() {
       if (totalFrames === 0) {
-        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองใหม่อีกครั้ง";
+        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองเริ่มใหม่อีกครั้ง";
         return;
       }
 
@@ -615,15 +612,15 @@
       if (safeRatio >= 90 && warningCount <= 1) { 
         grade = "A+"; 
         gradeColor = "var(--success)"; 
-        feedback = "ยอดเยี่ยม! การเคลื่อนไหวมีความเสถียร สมดุลซ้าย-ขวาดี และอยู่ในเกณฑ์ปลอดภัยสูง";
+        feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
       } else if (safeRatio >= 75) { 
         grade = "B"; 
         gradeColor = "var(--primary)"; 
-        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ลองรักษาจังหวะและระวังการลงน้ำหนักให้ลงทั้งสองข้างเท่าๆ กัน";
+        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
       } else {
         grade = "C";
         gradeColor = "var(--danger)";
-        feedback = "ควรปรับปรุง: พบความเสี่ยงหรือการลงน้ำหนักไม่สมดุลบ่อยครั้ง แนะนำให้ลดความเร็วลงเพื่อโฟกัสที่จัดระเบียบร่างกาย";
+        feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
       }
       
       summaryGrade.innerText = "Grade " + grade;
@@ -653,29 +650,36 @@
 
       saveCloudBtn.disabled = true;
       saveStatusMsg.style.color = "var(--warning)";
-      saveStatusMsg.innerText = "⏳ กำลังส่งข้อมูลไปยัง Google Drive...";
+      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
 
-      try {
-        const response = await fetch(WEB_APP_URL, {
-          method: "POST",
-          mode: "cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(lastCalculatedData)
-        });
+      // บันทึกลงใน Local History ทันที
+      saveLocalHistory(lastCalculatedData);
 
-        const res = await response.json();
-        if (res.result === "success") {
-          saveStatusMsg.style.color = "var(--success)";
-          saveStatusMsg.innerText = "✅ บันทึกลง Google Drive สำเร็จ!";
-          saveLocalHistory(lastCalculatedData);
-        } else {
-          throw new Error(res.message);
+      // หากมีการตั้งค่า WEB_APP_URL จะทำการส่งข้อมูลไปยัง Google Cloud / Sheets
+      if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
+        try {
+          const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(lastCalculatedData)
+          });
+
+          const res = await response.json();
+          if (res.result === "success") {
+            saveStatusMsg.style.color = "var(--success)";
+            saveStatusMsg.innerText = "✅ บันทึกลง Google Sheets และระบบสำเร็จ!";
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (err) {
+          saveStatusMsg.style.color = "var(--warning)";
+          saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
+          console.error(err);
         }
-      } catch (err) {
-        saveStatusMsg.style.color = "var(--danger)";
-        saveStatusMsg.innerText = "❌ เกิดข้อผิดพลาดในการบันทึก";
-        console.error(err);
-        saveCloudBtn.disabled = false;
+      } else {
+        saveStatusMsg.style.color = "var(--success)";
+        saveStatusMsg.innerText = "✅ บันทึกลงในประวัติการฝึกเรียบร้อย!";
       }
     });
 
@@ -713,10 +717,10 @@
 
       modalBody.innerHTML = `
         <div style="font-size:0.9rem; line-height:1.6;">
-          <p><strong>ผู้ใช้งาน:</strong> ${data.userName}</p>
-          <p><strong>วัน-เวลาบันทึก:</strong> ${data.timestamp || '-'}</p>
-          <p><strong>ท่าทางการฝึก:</strong> ${data.exercise}</p>
-          <hr style="border-color:var(--border-color); margin:10px 0;">
+          <p style="margin:4px 0;"><strong>ผู้ใช้งาน:</strong> ${data.userName}</p>
+          <p style="margin:4px 0;"><strong>วัน-เวลาบันทึก:</strong> ${data.timestamp || '-'}</p>
+          <p style="margin:4px 0;"><strong>ท่าทางการฝึก:</strong> ${data.exercise}</p>
+          <hr style="border-color:var(--border-color); margin:12px 0;">
           <div class="metrics-grid">
             <div class="metric-item">
               <span class="title">จำนวนครั้ง</span>
@@ -735,9 +739,9 @@
               <span class="value" style="color:var(--danger);">${data.warnings} ครั้ง</span>
             </div>
           </div>
-          <p><strong>องศาเข่าต่ำสุด (L/R):</strong> ${data.minKnee}</p>
-          <p><strong>ความสมดุล ซ้าย-ขวา:</strong> ${data.symmetry}</p>
-          <div class="feedback-box" style="margin-top:10px;">
+          <p style="margin:4px 0;"><strong>องศาเข่าต่ำสุด (L/R):</strong> ${data.minKnee}</p>
+          <p style="margin:4px 0;"><strong>ความสมดุล ซ้าย-ขวา:</strong> ${data.symmetry}</p>
+          <div class="feedback-box" style="margin-top:12px;">
             <strong>คำแนะนำ AI:</strong><br>${data.feedback || 'ไม่มีคำแนะนำเพิ่มเติม'}
           </div>
         </div>
@@ -774,8 +778,8 @@
     }
 
     function onResults(results) {
-      canvasElement.width = videoElement.videoWidth;
-      canvasElement.height = videoElement.videoHeight;
+      canvasElement.width = videoElement.videoWidth || 640;
+      canvasElement.height = videoElement.videoHeight || 480;
 
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -811,19 +815,19 @@
         if (currentKneeAngle > 0) updateRepCounter(mode, currentKneeAngle);
 
         let isSafe = true;
-        let statusText = "ท่าทางสมบูรณ์ ปลอดภัย";
+        let statusText = "ท่าทางปกติ";
         let statusClass = "status-safe";
         let lineColor = "#22c55e";
 
         if (mode === 'squat') {
           const diff = Math.abs(leftKneeAngle - rightKneeAngle);
           if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
-            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน! (ต่างกัน ${diff}°)`;
+            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
             statusClass = "status-warning";
             lineColor = "#f59e0b";
             isSafe = false;
           } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
-            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์เสี่ยง!";
+            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
             statusClass = "status-danger";
             lineColor = "#ef4444";
             isSafe = false;
@@ -848,15 +852,24 @@
       canvasCtx.restore();
     }
 
+    // Initialize MediaPipe Pose
     const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
     pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
     pose.onResults(onResults);
 
+    // Initialize Camera Access
     const camera = new Camera(videoElement, {
       onFrame: async () => { await pose.send({ image: videoElement }); },
       width: 640, height: 480
     });
-    camera.start();
+    
+    camera.start().then(() => {
+      statusDisplay.innerText = "กล้องพร้อมใช้งาน";
+    }).catch(err => {
+      console.error(err);
+      statusDisplay.innerText = "❌ ไม่สามารถเข้าถึงกล้องได้ กรุณาอนุญาตให้ใช้งานกล้อง";
+      statusDisplay.className = "status-danger";
+    });
   </script>
 </body>
 </html>
