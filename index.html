@@ -10,80 +10,125 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --card-inner: #0f172a;
+      --bg-color: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.75);
+      --card-inner: rgba(11, 15, 25, 0.6);
       --primary: #38bdf8;
-      --success: #22c55e;
-      --danger: #ef4444;
+      --primary-glow: rgba(56, 189, 248, 0.35);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --danger: #f43f5e;
       --warning: #f59e0b;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
-      --border-color: rgba(255, 255, 255, 0.08);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(56, 189, 248, 0.4);
     }
 
-    * { box-sizing: border-box; }
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
     body {
-      font-family: 'Segoe UI', Thonburi, 'Takhoma', sans-serif;
-      background-color: var(--bg-color);
+      background: radial-gradient(circle at top center, #1e293b 0%, #0b0f19 100%);
       color: var(--text-main);
       margin: 0;
-      padding: 20px 15px;
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    .header { text-align: center; margin-bottom: 20px; }
-    .header h1 { margin: 0 0 6px 0; font-size: 1.75rem; color: var(--primary); letter-spacing: -0.5px; }
-    .header p { margin: 0; color: var(--text-sub); font-size: 0.9rem; }
+    /* Header Styling */
+    .header { 
+      text-align: center; 
+      margin-bottom: 24px; 
+    }
+    .header-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--primary-glow);
+      border-radius: 20px;
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .header h1 { 
+      margin: 0 0 6px 0; 
+      font-size: 2rem; 
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px; 
+    }
+    .header p { 
+      margin: 0; 
+      color: var(--text-sub); 
+      font-size: 0.95rem; 
+      font-weight: 300;
+    }
 
+    /* Layout */
     .main-layout {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px;
       width: 100%;
-      max-width: 1040px;
+      max-width: 1080px;
       align-items: center;
     }
 
+    /* Camera Card */
     .video-card {
       position: relative;
       width: 100%;
       max-width: 640px;
       background-color: #000;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-color);
+      transition: border-color 0.3s;
+    }
+    .video-card:hover {
+      border-color: var(--border-hover);
     }
 
     #input_video { display: none; }
     #output_canvas { width: 100%; height: auto; display: block; }
 
+    /* Controls & Menu Panels */
     .controls-panel {
       width: 100%;
       max-width: 640px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .card {
-      background-color: var(--card-bg);
-      border-radius: 14px;
-      padding: 18px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 20px;
       border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
+    /* Input Form Styles */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 14px;
+      margin-bottom: 16px;
     }
 
     .form-group {
@@ -92,59 +137,102 @@
       gap: 6px;
     }
 
-    label { font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    label { 
+      font-size: 0.8rem; 
+      color: var(--text-sub); 
+      font-weight: 500; 
+      letter-spacing: 0.5px; 
+    }
 
     input[type="text"], select {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px 14px;
       background-color: var(--card-inner);
       color: var(--text-main);
-      border: 1px solid #334155;
-      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s ease;
     }
 
     input[type="text"]:focus, select:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
     }
 
+    /* Buttons */
     .btn {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 10px;
-      font-weight: 700;
+      border-radius: 12px;
+      font-weight: 600;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn-start { background-color: var(--success); color: #fff; }
-    .btn-start:hover { opacity: 0.9; transform: translateY(-1px); }
-    .btn-stop { background-color: var(--danger); color: #fff; }
-    .btn-stop:hover { opacity: 0.9; }
-    .btn-save { background-color: var(--primary); color: #0f172a; margin-top: 14px; }
-    .btn-save:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .btn-save:disabled { background-color: #334155; color: #94a3b8; cursor: not-allowed; }
+    .btn-start { 
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 16px var(--success-glow);
+    }
+    .btn-start:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 20px var(--success-glow);
+    }
+
+    .btn-stop { 
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.35);
+    }
+    .btn-stop:hover { 
+      transform: translateY(-2px); 
+    }
+
+    .btn-save { 
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); 
+      color: #0f172a; 
+      font-weight: 700;
+      margin-top: 16px; 
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .btn-save:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 20px var(--primary-glow);
+    }
+    .btn-save:disabled { 
+      background: #1e293b; 
+      color: #64748b; 
+      box-shadow: none;
+      cursor: not-allowed; 
+    }
     
     .btn-shortcut {
-      background-color: transparent;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-      margin-top: 8px;
-      padding: 8px 12px;
-      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      margin-top: 10px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
     }
     .btn-shortcut:hover {
-      background-color: rgba(56, 189, 248, 0.1);
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
+    /* Live Display Dashboard */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 12px;
     }
 
     .stat-box {
@@ -152,34 +240,40 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 12px 8px;
-      background-color: var(--card-bg);
-      border-radius: 12px;
+      padding: 14px 10px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
       border: 1px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+    .stat-box:hover {
+      border-color: var(--border-hover);
     }
 
-    .stat-label { font-size: 0.75rem; color: var(--text-sub); }
-    .stat-value { font-size: 1.3rem; font-weight: 700; margin-top: 4px; color: var(--primary); }
+    .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 400; }
+    .stat-value { font-size: 1.35rem; font-weight: 700; margin-top: 4px; color: var(--primary); }
 
     .status-banner {
       width: 100%;
       text-align: center;
-      padding: 10px;
-      border-radius: 10px;
-      background-color: var(--card-inner);
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--card-inner);
       border: 1px solid var(--border-color);
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.2px;
     }
 
     .status-safe { color: var(--success); }
     .status-danger { color: var(--danger); }
     .status-warning { color: var(--warning); }
 
+    /* Summary Card Styling */
     .summary-card {
       border: 1px solid rgba(56, 189, 248, 0.25);
-      background: linear-gradient(145deg, #1e293b, #0f172a);
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
     }
 
     .summary-header-box {
@@ -187,98 +281,108 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 12px;
-      margin-bottom: 14px;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
     }
 
-    .summary-title-text { font-size: 1rem; font-weight: bold; color: var(--primary); }
+    .summary-title-text { font-size: 1.05rem; font-weight: 600; color: var(--primary); }
 
     .grade-badge {
       font-size: 1rem;
-      font-weight: 800;
-      padding: 4px 14px;
+      font-weight: 700;
+      padding: 4px 16px;
       border-radius: 20px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid currentColor;
+      box-shadow: 0 0 12px currentColor;
     }
 
-    .progress-container { margin-bottom: 14px; }
+    .progress-container { margin-bottom: 16px; }
     .progress-label-row {
       display: flex;
       justify-content: space-between;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--text-sub);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .progress-bar-bg {
       width: 100%;
-      height: 8px;
-      background-color: #334155;
-      border-radius: 4px;
+      height: 10px;
+      background-color: var(--card-inner);
+      border-radius: 6px;
       overflow: hidden;
+      border: 1px solid var(--border-color);
     }
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background-color: var(--success);
-      transition: width 0.5s ease;
+      background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+      transition: width 0.6s ease;
+      border-radius: 6px;
     }
 
     .metrics-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     .metric-item {
-      background-color: var(--card-inner);
-      padding: 10px 12px;
-      border-radius: 8px;
+      background: var(--card-inner);
+      padding: 12px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
     }
 
-    .metric-item .title { font-size: 0.7rem; color: var(--text-sub); display: block; }
-    .metric-item .value { font-size: 0.95rem; font-weight: bold; color: var(--text-main); margin-top: 2px; display: block; }
+    .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; }
+    .metric-item .value { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-top: 3px; display: block; }
 
     .feedback-box {
-      background-color: rgba(56, 189, 248, 0.08);
-      border-left: 3px solid var(--primary);
-      padding: 10px 12px;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.85rem;
+      background: rgba(56, 189, 248, 0.06);
+      border-left: 4px solid var(--primary);
+      padding: 12px 14px;
+      border-radius: 0 12px 12px 0;
+      font-size: 0.88rem;
       color: var(--text-main);
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
+    /* History Log Table Section */
     .history-card {
       display: none;
       width: 100%;
-      max-width: 1040px;
-      margin-top: 10px;
+      max-width: 1080px;
+      margin-top: 12px;
     }
 
     .history-table-wrapper {
       overflow-x: auto;
-      margin-top: 10px;
+      margin-top: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
     }
 
     .history-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       text-align: left;
     }
 
     .history-table th, .history-table td {
-      padding: 10px 12px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border-color);
     }
 
     .history-table th {
       color: var(--text-sub);
       background-color: var(--card-inner);
-      font-weight: 600;
+      font-weight: 500;
+    }
+
+    .history-table tbody tr {
+      transition: background-color 0.2s;
     }
 
     .history-table tbody tr:hover {
@@ -286,36 +390,43 @@
     }
 
     .btn-view-detail {
-      background-color: rgba(56, 189, 248, 0.15);
+      background: rgba(56, 189, 248, 0.12);
       color: var(--primary);
-      border: 1px solid var(--primary);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      border: 1px solid var(--primary-glow);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-view-detail:hover {
+      background: var(--primary);
+      color: #0b0f19;
+      font-weight: 600;
     }
 
+    /* Modal Component UI */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(4px);
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
-      padding: 15px;
+      padding: 16px;
     }
 
     .modal-content {
-      background-color: var(--card-bg);
+      background: #161e31;
       border: 1px solid var(--border-color);
-      border-radius: 16px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 480px;
-      padding: 20px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5);
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
 
     .modal-header {
@@ -323,28 +434,39 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 10px;
-      margin-bottom: 15px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
     }
 
     .modal-close-btn {
-      background: none;
-      border: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
       color: var(--text-sub);
-      font-size: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: var(--danger);
+      color: #fff;
     }
 
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
-      .controls-panel { max-width: 380px; }
+      .controls-panel { max-width: 400px; }
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <h1>🎯 MotionCheck AI Pro</h1>
+    <span class="header-badge">AI Motion Tracking Engine</span>
+    <h1>MotionCheck AI Pro</h1>
     <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคล</p>
   </div>
 
@@ -379,7 +501,7 @@
       <div class="dashboard-grid">
         <div class="stat-box">
           <span class="stat-label">จำนวนครั้ง</span>
-          <span id="rep_display" class="stat-value" style="color: var(--success); font-size: 1.5rem;">0</span>
+          <span id="rep_display" class="stat-value" style="color: var(--success); font-size: 1.6rem;">0</span>
         </div>
         <div class="stat-box">
           <span class="stat-label">เข่า (L | R)</span>
@@ -435,7 +557,7 @@
         </div>
 
         <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลการฝึก</button>
-        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:6px;"></span>
+        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:8px;"></span>
       </div>
 
     </div>
@@ -444,8 +566,8 @@
   <!-- History Log Section -->
   <div id="history_section" class="card history-card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--primary); font-size:1.1rem;">📂 ประวัติบันทึกการฝึกย้อนหลัง</h3>
-      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.8rem;">ลบประวัติทั้งหมด</button>
+      <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:600;">📂 ประวัติบันทึกการฝึกย้อนหลัง</h3>
+      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; padding:4px 8px;">ลบประวัติทั้งหมด</button>
     </div>
     <div class="history-table-wrapper">
       <table class="history-table">
@@ -473,7 +595,7 @@
   <div id="detail_modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin:0; color:var(--primary);" id="modal_title">รายละเอียดการฝึก</h3>
+        <h3 style="margin:0; color:var(--primary); font-size:1.1rem;" id="modal_title">รายละเอียดการฝึกเชิงลึก</h3>
         <button id="close_modal_btn" class="modal-close-btn">✖</button>
       </div>
       <div id="modal_body"></div>
@@ -481,7 +603,6 @@
   </div>
 
   <script>
-    // URL สำหรับเชื่อมต่อ Google Apps Script (หากยังไม่มี สามารถเว้นว่างไว้เพื่อใช้งาน Local Storage)
     const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
@@ -652,10 +773,8 @@
       saveStatusMsg.style.color = "var(--warning)";
       saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
 
-      // บันทึกลงใน Local History ทันที
       saveLocalHistory(lastCalculatedData);
 
-      // หากมีการตั้งค่า WEB_APP_URL จะทำการส่งข้อมูลไปยัง Google Cloud / Sheets
       if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
         try {
           const response = await fetch(WEB_APP_URL, {
@@ -716,11 +835,11 @@
       if (!data) return;
 
       modalBody.innerHTML = `
-        <div style="font-size:0.9rem; line-height:1.6;">
-          <p style="margin:4px 0;"><strong>ผู้ใช้งาน:</strong> ${data.userName}</p>
-          <p style="margin:4px 0;"><strong>วัน-เวลาบันทึก:</strong> ${data.timestamp || '-'}</p>
-          <p style="margin:4px 0;"><strong>ท่าทางการฝึก:</strong> ${data.exercise}</p>
-          <hr style="border-color:var(--border-color); margin:12px 0;">
+        <div style="font-size:0.92rem; line-height:1.6;">
+          <p style="margin:4px 0; color:var(--text-sub);">ผู้ใช้งาน: <strong style="color:#fff;">${data.userName}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">วัน-เวลาบันทึก: <strong style="color:#fff;">${data.timestamp || '-'}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">ท่าทางการฝึก: <strong style="color:#fff;">${data.exercise}</strong></p>
+          <hr style="border-color:var(--border-color); margin:14px 0;">
           <div class="metrics-grid">
             <div class="metric-item">
               <span class="title">จำนวนครั้ง</span>
@@ -739,9 +858,9 @@
               <span class="value" style="color:var(--danger);">${data.warnings} ครั้ง</span>
             </div>
           </div>
-          <p style="margin:4px 0;"><strong>องศาเข่าต่ำสุด (L/R):</strong> ${data.minKnee}</p>
-          <p style="margin:4px 0;"><strong>ความสมดุล ซ้าย-ขวา:</strong> ${data.symmetry}</p>
-          <div class="feedback-box" style="margin-top:12px;">
+          <p style="margin:6px 0; color:var(--text-sub);">องศาเข่าต่ำสุด (L/R): <strong style="color:#fff;">${data.minKnee}</strong></p>
+          <p style="margin:6px 0; color:var(--text-sub);">ความสมดุล ซ้าย-ขวา: <strong style="color:#fff;">${data.symmetry}</strong></p>
+          <div class="feedback-box" style="margin-top:14px;">
             <strong>คำแนะนำ AI:</strong><br>${data.feedback || 'ไม่มีคำแนะนำเพิ่มเติม'}
           </div>
         </div>
@@ -817,7 +936,7 @@
         let isSafe = true;
         let statusText = "ท่าทางปกติ";
         let statusClass = "status-safe";
-        let lineColor = "#22c55e";
+        let lineColor = "#10b981";
 
         if (mode === 'squat') {
           const diff = Math.abs(leftKneeAngle - rightKneeAngle);
@@ -829,7 +948,7 @@
           } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
             statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
             statusClass = "status-danger";
-            lineColor = "#ef4444";
+            lineColor = "#f43f5e";
             isSafe = false;
           }
         }
@@ -852,12 +971,10 @@
       canvasCtx.restore();
     }
 
-    // Initialize MediaPipe Pose
     const pose = new Pose({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}` });
     pose.setOptions({ modelComplexity: 1, smoothLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
     pose.onResults(onResults);
 
-    // Initialize Camera Access
     const camera = new Camera(videoElement, {
       onFrame: async () => { await pose.send({ image: videoElement }); },
       width: 640, height: 480
