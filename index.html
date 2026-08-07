@@ -102,7 +102,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      filter: brightness(0.5) contract(1.2);
+      filter: brightness(0.5) contrast(1.2);
     }
     .sports-hero-overlay {
       position: absolute;
@@ -993,27 +993,61 @@
       return Math.round(angle);
     }
 
-    function drawJoint(p1, p2, p3, color) {
-      const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
-      const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
-      const pt3 = { x: p3.x * canvasElement.width, y: p3.y * canvasElement.height };
+    // ฟังก์ชันวาดโครงกระดูกแบบเต็มตัว (Stickman Skeleton Framework)
+    function drawFullSkeleton(landmarks, color) {
+      // รายชื่อคู่จุดเชื่อมต่อโครงกระดูก
+      const connections = [
+        // ลำตัว (Torso)
+        [11, 12], [11, 23], [12, 24], [23, 24],
+        // แขนซ้าย (Left Arm)
+        [11, 13], [13, 15],
+        // แขนขวา (Right Arm)
+        [12, 14], [14, 16],
+        // ขาซ้าย (Left Leg)
+        [23, 25], [25, 27], [27, 31],
+        // ขาขวา (Right Leg)
+        [24, 26], [26, 28], [28, 32],
+        // ศีรษะและคอ (Head / Neck)
+        [0, 11], [0, 12]
+      ];
 
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(pt1.x, pt1.y);
-      canvasCtx.lineTo(pt2.x, pt2.y);
-      canvasCtx.lineTo(pt3.x, pt3.y);
-      canvasCtx.lineWidth = 4;
-      canvasCtx.strokeStyle = color;
-      canvasCtx.stroke();
+      // 1. วาดเส้นกระดูกเชื่อมต่อ
+      connections.forEach(([i, j]) => {
+        const p1 = landmarks[i];
+        const p2 = landmarks[j];
 
-      [pt1, pt2, pt3].forEach(pt => {
-        canvasCtx.beginPath();
-        canvasCtx.arc(pt.x, pt.y, 6, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = color;
-        canvasCtx.fill();
-        canvasCtx.lineWidth = 2;
-        canvasCtx.strokeStyle = '#ffffff';
-        canvasCtx.stroke();
+        if (p1 && p2 && p1.visibility > 0.4 && p2.visibility > 0.4) {
+          const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
+          const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
+
+          canvasCtx.beginPath();
+          canvasCtx.moveTo(pt1.x, pt1.y);
+          canvasCtx.lineTo(pt2.x, pt2.y);
+          canvasCtx.lineWidth = 4;
+          canvasCtx.strokeStyle = color;
+          canvasCtx.shadowColor = color;
+          canvasCtx.shadowBlur = 8; // เพิ่มเอฟเฟกต์ไฟเรืองแสง
+          canvasCtx.stroke();
+          canvasCtx.shadowBlur = 0; // คืนค่า blur
+        }
+      });
+
+      // 2. วาดหัวข้อต่อ (Joints)
+      landmarks.forEach((lm, index) => {
+        // วาดเฉพาะจุดสำคัญ (ไม่รวมจุดย่อยของใบหน้า)
+        if ([0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 31, 32].includes(index)) {
+          if (lm && lm.visibility > 0.4) {
+            const pt = { x: lm.x * canvasElement.width, y: lm.y * canvasElement.height };
+
+            canvasCtx.beginPath();
+            canvasCtx.arc(pt.x, pt.y, index === 0 ? 10 : 6, 0, 2 * Math.PI); // ศีรษะใหญ่กว่าข้อต่ออื่น
+            canvasCtx.fillStyle = '#ffffff';
+            canvasCtx.fill();
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = color;
+            canvasCtx.stroke();
+          }
+        }
       });
     }
 
@@ -1059,19 +1093,19 @@
         let isSafe = true;
         let statusText = "ท่าทางปกติ";
         let statusClass = "status-safe";
-        let lineColor = "#ff3b30"; // Sports Red
+        let skeletonColor = "#ff3b30"; // สีนีออนเรดสไตล์สปอร์ต
 
         if (mode === 'squat') {
           const diff = Math.abs(leftKneeAngle - rightKneeAngle);
           if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
             statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
             statusClass = "status-warning";
-            lineColor = "#ff9500";
+            skeletonColor = "#ff9500";
             isSafe = false;
           } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
             statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
             statusClass = "status-danger";
-            lineColor = "#ff2a55";
+            skeletonColor = "#ff2a55";
             isSafe = false;
           }
         }
@@ -1090,8 +1124,9 @@
           diffFrames++;
         }
 
-        if (leftKneeAngle > 0) drawJoint(leftHip, leftKnee, leftAnkle, lineColor);
-        if (rightKneeAngle > 0) drawJoint(rightHip, rightKnee, rightAnkle, lineColor);
+        // เรียกใช้วาดเส้นวัดแบบโครงกระดูกเต็มตัว
+        drawFullSkeleton(lm, skeletonColor);
+
       } else {
         statusDisplay.innerText = "ไม่พบผู้ใช้งานหน้ากล้อง";
         statusDisplay.className = "status-warning";
