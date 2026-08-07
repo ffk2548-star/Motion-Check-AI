@@ -3,29 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionCheck AI Pro - Personal Analytics & Cloud Save</title>
+  <title>MotionCheck AI Pro - Sports Analytics Engine</title>
   
   <!-- MediaPipe Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;1,700;1,800&display=swap');
 
     :root {
-      --bg-color: #0b0f19;
-      --card-bg: rgba(22, 30, 49, 0.75);
-      --card-inner: rgba(11, 15, 25, 0.6);
-      --primary: #38bdf8;
-      --primary-glow: rgba(56, 189, 248, 0.35);
+      --bg-color: #08090c;
+      --card-bg: rgba(18, 22, 31, 0.85);
+      --card-inner: rgba(10, 12, 18, 0.7);
+      --primary: #ff3b30; /* Sports Racing Red / Neon Orange */
+      --primary-glow: rgba(255, 59, 48, 0.4);
+      --accent-neon: #00f2fe; /* Neon Blue */
       --success: #10b981;
       --success-glow: rgba(16, 185, 129, 0.35);
-      --danger: #f43f5e;
-      --warning: #f59e0b;
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-      --border-color: rgba(255, 255, 255, 0.1);
-      --border-hover: rgba(56, 189, 248, 0.4);
+      --danger: #ff2a55;
+      --warning: #ff9500;
+      --text-main: #ffffff;
+      --text-sub: #a1a1aa;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 59, 48, 0.6);
+      --sports-skew: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
+      --sports-skew-btn: polygon(6% 0%, 100% 0%, 94% 100%, 0% 100%);
     }
 
     * { 
@@ -34,7 +37,7 @@
     }
 
     body {
-      background: radial-gradient(circle at top center, #1e293b 0%, #0b0f19 100%);
+      background: radial-gradient(circle at top center, #1a1e29 0%, #08090c 100%);
       color: var(--text-main);
       margin: 0;
       padding: 24px 16px;
@@ -44,27 +47,34 @@
       min-height: 100vh;
     }
 
-    /* Header Styling */
+    /* Header Styling - Sports Style */
     .header { 
       text-align: center; 
-      margin-bottom: 24px; 
+      margin-bottom: 24px;
+      position: relative;
     }
     .header-badge {
       display: inline-block;
-      padding: 4px 12px;
-      background: rgba(56, 189, 248, 0.12);
+      padding: 4px 16px;
+      background: rgba(255, 59, 48, 0.15);
       border: 1px solid var(--primary-glow);
-      border-radius: 20px;
+      border-radius: 4px;
       color: var(--primary);
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
       margin-bottom: 8px;
+      clip-path: var(--sports-skew-btn);
     }
     .header h1 { 
       margin: 0 0 6px 0; 
-      font-size: 2.2rem; 
-      font-weight: 700;
-      background: linear-gradient(135deg, #ffffff 0%, var(--primary) 100%);
+      font-size: 2.5rem; 
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.5px; 
@@ -74,6 +84,44 @@
       color: var(--text-sub); 
       font-size: 0.95rem; 
       font-weight: 300;
+    }
+
+    /* Sports Banner Image */
+    .sports-hero-banner {
+      width: 100%;
+      max-width: 1080px;
+      height: 120px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      position: relative;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .sports-hero-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) contract(1.2);
+    }
+    .sports-hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(8,9,12,0.9) 0%, rgba(8,9,12,0.2) 50%, rgba(255,59,48,0.3) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .sports-hero-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .sports-hero-text span {
+      color: var(--primary);
     }
 
     /* Layout */
@@ -93,9 +141,9 @@
       max-width: 640px;
       aspect-ratio: 4 / 3;
       background-color: #000;
-      border-radius: 20px;
+      border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-color);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border-color);
       transition: border-color 0.3s;
     }
     .video-card:hover {
@@ -123,10 +171,35 @@
       background: var(--card-bg);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-radius: 20px;
+      border-radius: 16px;
       padding: 20px;
       border: 1px solid var(--border-color);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    /* Sports Skew Header Bar on Cards */
+    .card-sports-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .card-sports-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--primary);
+    }
+    .card-sports-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
     }
 
     /* Input Form Styles */
@@ -146,7 +219,8 @@
     label { 
       font-size: 0.8rem; 
       color: var(--text-sub); 
-      font-weight: 500; 
+      font-weight: 600; 
+      text-transform: uppercase;
       letter-spacing: 0.5px; 
     }
 
@@ -156,8 +230,9 @@
       background-color: var(--card-inner);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: 8px;
       font-size: 0.95rem;
+      font-weight: 500;
       outline: none;
       transition: all 0.2s ease;
     }
@@ -167,51 +242,57 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    /* Buttons */
+    /* Buttons - Sports Skewed Style */
     .btn {
       width: 100%;
       padding: 14px;
       border: none;
-      border-radius: 12px;
-      font-weight: 600;
+      border-radius: 8px;
+      font-weight: 700;
       font-size: 1rem;
+      font-style: italic;
+      text-transform: uppercase;
       cursor: pointer;
       transition: all 0.25s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      letter-spacing: 0.5px;
     }
 
     .btn-start { 
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+      background: linear-gradient(135deg, #ff3b30 0%, #d32f2f 100%); 
       color: #fff; 
-      box-shadow: 0 4px 16px var(--success-glow);
+      box-shadow: 0 4px 16px var(--primary-glow);
     }
     .btn-start:hover { 
       transform: translateY(-2px); 
-      box-shadow: 0 6px 20px var(--success-glow);
+      box-shadow: 0 6px 22px var(--primary-glow);
     }
 
     .btn-stop { 
-      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); 
-      color: #fff; 
-      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.35);
+      background: linear-gradient(135deg, #27272a 0%, #18181b 100%); 
+      color: var(--danger); 
+      border: 1px solid var(--danger);
+      box-shadow: 0 4px 16px rgba(255, 42, 85, 0.2);
     }
     .btn-stop:hover { 
+      background: var(--danger);
+      color: #fff;
       transform: translateY(-2px); 
     }
 
     .btn-save { 
-      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%); 
-      color: #0f172a; 
-      font-weight: 700;
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); 
+      color: #000; 
+      font-weight: 800;
       margin-top: 16px; 
-      box-shadow: 0 4px 16px var(--primary-glow);
+      box-shadow: 0 4px 16px rgba(0, 242, 254, 0.3);
     }
     .btn-save:hover:not(:disabled) { 
       transform: translateY(-2px); 
-      box-shadow: 0 6px 20px var(--primary-glow);
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
     }
     .btn-save:disabled { 
       background: #1e293b; 
@@ -221,7 +302,7 @@
     }
     
     .btn-shortcut {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-color);
       color: var(--text-sub);
       margin-top: 10px;
@@ -229,7 +310,7 @@
       font-size: 0.88rem;
     }
     .btn-shortcut:hover {
-      background: rgba(56, 189, 248, 0.1);
+      background: rgba(255, 59, 48, 0.1);
       border-color: var(--primary);
       color: var(--primary);
     }
@@ -249,7 +330,7 @@
       padding: 14px 10px;
       background: var(--card-bg);
       backdrop-filter: blur(12px);
-      border-radius: 16px;
+      border-radius: 12px;
       border: 1px solid var(--border-color);
       transition: border-color 0.2s;
     }
@@ -257,18 +338,18 @@
       border-color: var(--border-hover);
     }
 
-    .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 400; }
-    .stat-value { font-size: 1.35rem; font-weight: 700; margin-top: 4px; color: var(--primary); }
+    .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; font-style: italic; margin-top: 4px; color: var(--primary); }
 
     .status-banner {
       width: 100%;
       text-align: center;
       padding: 12px;
-      border-radius: 14px;
+      border-radius: 12px;
       background: var(--card-inner);
       border: 1px solid var(--border-color);
-      font-size: 0.92rem;
-      font-weight: 500;
+      font-size: 0.95rem;
+      font-weight: 600;
       letter-spacing: 0.2px;
     }
 
@@ -278,8 +359,8 @@
 
     /* Summary Card Styling */
     .summary-card {
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
     }
 
     .summary-header-box {
@@ -291,13 +372,14 @@
       margin-bottom: 16px;
     }
 
-    .summary-title-text { font-size: 1.05rem; font-weight: 600; color: var(--primary); }
+    .summary-title-text { font-size: 1.05rem; font-weight: 700; font-style: italic; text-transform: uppercase; color: var(--primary); }
 
     .grade-badge {
-      font-size: 1rem;
-      font-weight: 700;
-      padding: 4px 16px;
-      border-radius: 20px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-style: italic;
+      padding: 4px 18px;
+      border-radius: 4px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid currentColor;
       box-shadow: 0 0 12px currentColor;
@@ -310,6 +392,7 @@
       font-size: 0.85rem;
       color: var(--text-sub);
       margin-bottom: 8px;
+      font-weight: 600;
     }
     .progress-bar-bg {
       width: 100%;
@@ -322,7 +405,7 @@
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+      background: linear-gradient(90deg, #ff3b30 0%, #00f2fe 100%);
       transition: width 0.6s ease;
       border-radius: 6px;
     }
@@ -337,18 +420,18 @@
     .metric-item {
       background: var(--card-inner);
       padding: 12px;
-      border-radius: 12px;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
     }
 
-    .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; }
-    .metric-item .value { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-top: 3px; display: block; }
+    .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; text-transform: uppercase; font-weight: 600; }
+    .metric-item .value { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 3px; display: block; }
 
     .feedback-box {
-      background: rgba(56, 189, 248, 0.06);
+      background: rgba(255, 59, 48, 0.08);
       border-left: 4px solid var(--primary);
       padding: 12px 14px;
-      border-radius: 0 12px 12px 0;
+      border-radius: 0 8px 8px 0;
       font-size: 0.88rem;
       color: var(--text-main);
       line-height: 1.5;
@@ -365,7 +448,7 @@
     .history-table-wrapper {
       overflow-x: auto;
       margin-top: 14px;
-      border-radius: 12px;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
     }
 
@@ -384,7 +467,8 @@
     .history-table th {
       color: var(--text-sub);
       background-color: var(--card-inner);
-      font-weight: 500;
+      font-weight: 600;
+      text-transform: uppercase;
     }
 
     .history-table tbody tr {
@@ -396,19 +480,19 @@
     }
 
     .btn-view-detail {
-      background: rgba(56, 189, 248, 0.12);
+      background: rgba(255, 59, 48, 0.15);
       color: var(--primary);
       border: 1px solid var(--primary-glow);
       padding: 5px 12px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 0.8rem;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
     }
     .btn-view-detail:hover {
       background: var(--primary);
-      color: #0b0f19;
-      font-weight: 600;
+      color: #fff;
     }
 
     /* Modal Component UI */
@@ -417,7 +501,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(11, 15, 25, 0.85);
+      background: rgba(8, 9, 12, 0.88);
       backdrop-filter: blur(8px);
       z-index: 1000;
       justify-content: center;
@@ -426,13 +510,13 @@
     }
 
     .modal-content {
-      background: #161e31;
+      background: #12161f;
       border: 1px solid var(--border-color);
-      border-radius: 20px;
+      border-radius: 16px;
       width: 100%;
       max-width: 500px;
       padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
     }
 
     .modal-header {
@@ -471,9 +555,19 @@
 <body>
 
   <div class="header">
-    <span class="header-badge">AI Motion Tracking Engine</span>
+    <span class="header-badge">PRO ATHLETE PERFORMANCE</span>
     <h1>MotionCheck AI Pro</h1>
-    <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคล</p>
+    <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
+  </div>
+
+  <!-- Sports Hero Banner Section -->
+  <div class="sports-hero-banner">
+    <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
+    <div class="sports-hero-overlay">
+      <div class="sports-hero-text">
+        <span>POWER & PRECISION</span> ANALYTICS ENGINE
+      </div>
+    </div>
   </div>
 
   <div class="main-layout">
@@ -483,39 +577,46 @@
     </div>
 
     <div class="controls-panel">
+      <!-- Sports Menu Card -->
       <div class="card">
+        <div class="card-sports-header">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
+          <span class="card-sports-title">ตั้งค่าการซ้อม (TRAINING MENU)</span>
+        </div>
+
         <div class="form-grid">
           <div class="form-group">
-            <label for="user_name">ผู้ใช้งาน</label>
-            <input type="text" id="user_name" placeholder="ระบุชื่อ" value="User01">
+            <label for="user_name">ชื่อนักกีฬา</label>
+            <input type="text" id="user_name" placeholder="ระบุชื่อ" value="Athlete01">
           </div>
 
           <div class="form-group">
-            <label for="exercise_select">เลือกท่าทาง</label>
+            <label for="exercise_select">เลือกโปรแกรมฝึก</label>
             <select id="exercise_select">
-              <option value="squat">Squat</option>
-              <option value="jump">Jump Landing</option>
-              <option value="balance">Balance</option>
+              <option value="squat">Squat (สควอช)</option>
+              <option value="jump">Jump Landing (กระโดดลงสู่พื้น)</option>
+              <option value="balance">Balance (การทรงตัว)</option>
             </select>
           </div>
         </div>
         
-        <button id="toggle_btn" class="btn btn-start">▶️ เริ่มบันทึกการฝึก</button>
-        <button id="toggle_history_btn" class="btn btn-shortcut">📜 ดูประวัติการฝึกที่บันทึกไว้</button>
+        <button id="toggle_btn" class="btn btn-start">🔥 เริ่มบันทึกการซ้อม</button>
+        <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
       </div>
 
+      <!-- Realtime Dashboard -->
       <div class="dashboard-grid">
         <div class="stat-box">
-          <span class="stat-label">จำนวนครั้ง</span>
-          <span id="rep_display" class="stat-value" style="color: var(--success); font-size: 1.6rem;">0</span>
+          <span class="stat-label">จำนวนรอบ (REPS)</span>
+          <span id="rep_display" class="stat-value" style="color: var(--primary); font-size: 1.8rem;">0</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">เข่า (L | R)</span>
-          <span id="knee_display" class="stat-value">0° | 0°</span>
+          <span class="stat-label">มุมเข่า (L | R)</span>
+          <span id="knee_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">สะโพก (L | R)</span>
-          <span id="hip_display" class="stat-value">0° | 0°</span>
+          <span class="stat-label">มุมสะโพก (L | R)</span>
+          <span id="hip_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
         </div>
       </div>
 
@@ -523,15 +624,16 @@
         <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
       </div>
 
+      <!-- Sports Performance Summary Card -->
       <div class="card summary-card">
         <div class="summary-header-box">
-          <span class="summary-title-text">📊 สรุปผล: <span id="summary_username" style="color:#fff;">User01</span></span>
-          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">Grade -</span>
+          <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
+          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">GRADE -</span>
         </div>
 
         <div class="progress-container">
           <div class="progress-label-row">
-            <span>Safe Score (ความปลอดภัย)</span>
+            <span>PERFORMANCE SAFE SCORE</span>
             <strong id="safe_score_text">0%</strong>
           </div>
           <div class="progress-bar-bg">
@@ -542,7 +644,7 @@
         <div class="metrics-grid">
           <div class="metric-item">
             <span class="title">จำนวนครั้งรวม</span>
-            <span id="total_reps_val" class="value" style="color: var(--success);">0 ครั้ง</span>
+            <span id="total_reps_val" class="value" style="color: var(--primary);">0 ครั้ง</span>
           </div>
           <div class="metric-item">
             <span class="title">องศาเข่าต่ำสุด (L / R)</span>
@@ -559,10 +661,10 @@
         </div>
 
         <div class="feedback-box">
-          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการฝึก" เพื่อประเมินท่าทาง</span>
+          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการซ้อม" เพื่อวิเคราะห์การเคลื่อนไหว</span>
         </div>
 
-        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลการฝึก</button>
+        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลลงคลาวด์</button>
         <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:8px;"></span>
       </div>
 
@@ -572,15 +674,15 @@
   <!-- History Log Section -->
   <div id="history_section" class="card history-card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:600;">📂 ประวัติบันทึกการฝึกย้อนหลัง</h3>
-      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; padding:4px 8px;">ลบประวัติทั้งหมด</button>
+      <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:700; font-style:italic; text-transform:uppercase;">🏆 ประวัติบันทึกการฝึกย้อนหลัง</h3>
+      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; padding:4px 8px; font-weight:600;">ลบประวัติทั้งหมด</button>
     </div>
     <div class="history-table-wrapper">
       <table class="history-table">
         <thead>
           <tr>
             <th>วัน-เวลา</th>
-            <th>ผู้ใช้งาน</th>
+            <th>นักกีฬา</th>
             <th>ท่าทาง</th>
             <th>จำนวนครั้ง</th>
             <th>Safe Score</th>
@@ -601,7 +703,7 @@
   <div id="detail_modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 style="margin:0; color:var(--primary); font-size:1.1rem;" id="modal_title">รายละเอียดการฝึกเชิงลึก</h3>
+        <h3 style="margin:0; color:var(--primary); font-size:1.1rem; font-style:italic; text-transform:uppercase;" id="modal_title">รายละเอียดการฝึกเชิงลึก</h3>
         <button id="close_modal_btn" class="modal-close-btn">✖</button>
       </div>
       <div id="modal_body"></div>
@@ -653,7 +755,7 @@
     let lastCalculatedData = null;
 
     userNameInput.addEventListener('input', () => {
-      summaryUsername.innerText = userNameInput.value.trim() || "Anonymous";
+      summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
     });
 
     toggleBtn.addEventListener('click', () => {
@@ -665,7 +767,7 @@
         saveStatusMsg.innerText = "";
         resetStats();
       } else {
-        toggleBtn.innerText = "▶️ เริ่มบันทึกการฝึก";
+        toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
         toggleBtn.className = "btn btn-start";
         calculateSummary();
       }
@@ -674,10 +776,10 @@
     toggleHistoryBtn.addEventListener('click', () => {
       if (historySection.style.display === "block") {
         historySection.style.display = "none";
-        toggleHistoryBtn.innerText = "📜 ดูประวัติการฝึกที่บันทึกไว้";
+        toggleHistoryBtn.innerText = "🏆 ดูประวัติสถิติการฝึก";
       } else {
         historySection.style.display = "block";
-        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติการฝึก";
+        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติสถิติ";
         renderHistoryTable();
       }
     });
@@ -693,14 +795,13 @@
       repCount = 0; stage = "UP";
       
       repDisplay.innerText = "0";
-      summaryGrade.innerText = "Grade -";
+      summaryGrade.innerText = "GRADE -";
       summaryGrade.style.color = "var(--text-sub)";
       safeScoreText.innerText = "0%";
       safeScoreFill.style.width = "0%";
       aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
     }
 
-    // ฟังก์ชันนับรอบที่มี Hysteresis Threshold เพื่อป้องกัน False Positive
     function updateRepCounter(mode, kneeAngle) {
       if (!isRecording) return;
       if (kneeAngle < 100 && stage === "UP") {
@@ -746,7 +847,7 @@
         feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
       } else if (safeRatio >= 75) { 
         grade = "B"; 
-        gradeColor = "var(--primary)"; 
+        gradeColor = "var(--accent-neon)"; 
         feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
       } else {
         grade = "C";
@@ -754,7 +855,7 @@
         feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
       }
       
-      summaryGrade.innerText = "Grade " + grade;
+      summaryGrade.innerText = "GRADE " + grade;
       summaryGrade.style.color = gradeColor;
       aiFeedbackText.innerText = feedback;
 
@@ -762,7 +863,7 @@
 
       lastCalculatedData = {
         timestamp: timestamp,
-        userName: userNameInput.value.trim() || "Anonymous",
+        userName: userNameInput.value.trim() || "Athlete01",
         exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
         reps: repCount,
         safeScore: safeRatio,
@@ -833,8 +934,8 @@
           <td>${item.exercise}</td>
           <td>${item.reps} ครั้ง</td>
           <td>${item.safeScore}%</td>
-          <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--primary)' : 'var(--danger)'}">${item.grade}</strong></td>
-          <td><button class="btn-view-detail" onclick="openDetailModal(${index})">🔍 เปิดดู</button></td>
+          <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--accent-neon)' : 'var(--danger)'}">${item.grade}</strong></td>
+          <td><button class="btn-view-detail" onclick="openDetailModal(${index})">🔍 รายละเอียด</button></td>
         </tr>
       `).join('');
     }
@@ -846,18 +947,18 @@
 
       modalBody.innerHTML = `
         <div style="font-size:0.92rem; line-height:1.6;">
-          <p style="margin:4px 0; color:var(--text-sub);">ผู้ใช้งาน: <strong style="color:#fff;">${data.userName}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">นักกีฬา: <strong style="color:#fff;">${data.userName}</strong></p>
           <p style="margin:4px 0; color:var(--text-sub);">วัน-เวลาบันทึก: <strong style="color:#fff;">${data.timestamp || '-'}</strong></p>
           <p style="margin:4px 0; color:var(--text-sub);">ท่าทางการฝึก: <strong style="color:#fff;">${data.exercise}</strong></p>
           <hr style="border-color:var(--border-color); margin:14px 0;">
           <div class="metrics-grid">
             <div class="metric-item">
               <span class="title">จำนวนครั้ง</span>
-              <span class="value" style="color:var(--success);">${data.reps} ครั้ง</span>
+              <span class="value" style="color:var(--primary);">${data.reps} ครั้ง</span>
             </div>
             <div class="metric-item">
               <span class="title">Safe Score</span>
-              <span class="value" style="color:var(--primary);">${data.safeScore}%</span>
+              <span class="value" style="color:var(--accent-neon);">${data.safeScore}%</span>
             </div>
             <div class="metric-item">
               <span class="title">เกรดประเมิน</span>
@@ -885,7 +986,6 @@
       }
     });
 
-    // คำนวณองศาร่างกายโดยใช้เวกเตอร์
     function calculateAngle(a, b, c) {
       const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
       let angle = Math.abs((radians * 180.0) / Math.PI);
@@ -893,7 +993,6 @@
       return Math.round(angle);
     }
 
-    // ฟังก์ชันวาดเส้นข้อต่อพร้อมจุดเชื่อมต่อ
     function drawJoint(p1, p2, p3, color) {
       const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
       const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
@@ -907,7 +1006,6 @@
       canvasCtx.strokeStyle = color;
       canvasCtx.stroke();
 
-      // วาดจุดข้อต่อเพื่อความสวยงาม
       [pt1, pt2, pt3].forEach(pt => {
         canvasCtx.beginPath();
         canvasCtx.arc(pt.x, pt.y, 6, 0, 2 * Math.PI);
@@ -919,7 +1017,6 @@
       });
     }
 
-    // ประมวลผลจาก MediaPipe Pose
     function onResults(results) {
       if (!results.image) return;
 
@@ -929,7 +1026,6 @@
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       
-      // Mirror ภาพให้ใช้งานสมจริงเสมือนกระจก
       canvasCtx.translate(canvasElement.width, 0);
       canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
@@ -938,14 +1034,12 @@
         const lm = results.poseLandmarks;
         const mode = exerciseSelect.value;
 
-        // Keypoints ตามดัชนี MediaPipe
         const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
         const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
 
         let leftKneeAngle = 0, rightKneeAngle = 0;
         let leftHipAngle = 0, rightHipAngle = 0;
 
-        // ตรวจสอบความมั่นใจของจุด Keypoints (Visibility Check)
         if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
           leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
           leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
@@ -965,19 +1059,19 @@
         let isSafe = true;
         let statusText = "ท่าทางปกติ";
         let statusClass = "status-safe";
-        let lineColor = "#10b981";
+        let lineColor = "#ff3b30"; // Sports Red
 
         if (mode === 'squat') {
           const diff = Math.abs(leftKneeAngle - rightKneeAngle);
           if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
             statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
             statusClass = "status-warning";
-            lineColor = "#f59e0b";
+            lineColor = "#ff9500";
             isSafe = false;
           } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
             statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
             statusClass = "status-danger";
-            lineColor = "#f43f5e";
+            lineColor = "#ff2a55";
             isSafe = false;
           }
         }
@@ -1006,7 +1100,6 @@
       canvasCtx.restore();
     }
 
-    // กำหนดค่า MediaPipe Pose
     const pose = new Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
     });
@@ -1021,7 +1114,6 @@
 
     pose.onResults(onResults);
 
-    // เริ่มต้นระบบกล้อง
     const camera = new Camera(videoElement, {
       onFrame: async () => {
         await pose.send({ image: videoElement });
