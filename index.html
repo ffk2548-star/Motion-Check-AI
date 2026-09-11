@@ -48,7 +48,7 @@
       min-height: 100vh;
     }
 
-    /* Header Styling - Sports Style */
+    /* Header Styling */
     .header { 
       text-align: center; 
       margin-bottom: 24px;
@@ -87,7 +87,7 @@
       font-weight: 300;
     }
 
-    /* Sports Banner Image */
+    /* Sports Hero Banner */
     .sports-hero-banner {
       width: 100%;
       max-width: 1080px;
@@ -159,7 +159,7 @@
       object-fit: cover;
     }
 
-    /* Controls & Menu Panels */
+    /* Controls Panel */
     .controls-panel {
       width: 100%;
       max-width: 640px;
@@ -179,14 +179,18 @@
       position: relative;
     }
 
-    /* Sports Skew Header Bar on Cards */
     .card-sports-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       margin-bottom: 16px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border-color);
+    }
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .card-sports-header img {
       width: 32px;
@@ -203,7 +207,31 @@
       color: #fff;
     }
 
-    /* Input Form Styles */
+    /* Sound Toggle Button */
+    .sound-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .sound-toggle-btn:hover {
+      background: rgba(255, 59, 48, 0.2);
+      border-color: var(--primary);
+    }
+    .sound-toggle-btn.muted {
+      color: var(--text-sub);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Form Styles */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -243,7 +271,7 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    /* Buttons - Sports Skewed Style */
+    /* Buttons */
     .btn {
       width: 100%;
       padding: 14px;
@@ -335,9 +363,7 @@
       border: 1px solid var(--border-color);
       transition: border-color 0.2s;
     }
-    .stat-box:hover {
-      border-color: var(--border-hover);
-    }
+    .stat-box:hover { border-color: var(--border-hover); }
 
     .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
     .stat-value { font-size: 1.4rem; font-weight: 800; font-style: italic; margin-top: 4px; color: var(--primary); }
@@ -438,7 +464,7 @@
       line-height: 1.5;
     }
 
-    /* History Log Table Section */
+    /* History Table */
     .history-card {
       display: none;
       width: 100%;
@@ -472,13 +498,7 @@
       text-transform: uppercase;
     }
 
-    .history-table tbody tr {
-      transition: background-color 0.2s;
-    }
-
-    .history-table tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.03);
-    }
+    .history-table tbody tr:hover { background-color: rgba(255, 255, 255, 0.03); }
 
     .btn-view-detail {
       background: rgba(255, 59, 48, 0.15);
@@ -496,7 +516,7 @@
       color: #fff;
     }
 
-    /* Modal Component UI */
+    /* Modal */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -540,12 +560,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
     }
-    .modal-close-btn:hover {
-      background: var(--danger);
-      color: #fff;
-    }
+    .modal-close-btn:hover { background: var(--danger); color: #fff; }
 
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
@@ -561,7 +577,7 @@
     <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
   </div>
 
-  <!-- Sports Hero Banner Section -->
+  <!-- Hero Banner -->
   <div class="sports-hero-banner">
     <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
     <div class="sports-hero-overlay">
@@ -578,11 +594,16 @@
     </div>
 
     <div class="controls-panel">
-      <!-- Sports Menu Card -->
+      <!-- Training Menu Card -->
       <div class="card">
         <div class="card-sports-header">
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
-          <span class="card-sports-title">ตั้งค่าการซ้อม (TRAINING MENU)</span>
+          <div class="card-title-group">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
+            <span class="card-sports-title">ตั้งค่าการซ้อม</span>
+          </div>
+          <button id="sound_toggle_btn" class="sound-toggle-btn">
+            <span id="sound_icon">🔊</span> <span id="sound_text">เปิดเสียงเตือน</span>
+          </button>
         </div>
 
         <div class="form-grid">
@@ -601,7 +622,7 @@
           </div>
         </div>
 
-        <!-- Guide Preview Box -->
+        <!-- Guide Box -->
         <div id="exercise_guide_box" style="margin-bottom: 16px; text-align: center; background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">📌 ท่าทางตัวอย่างที่ถูกต้อง</span>
           <img id="guide_img" src="https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o" 
@@ -616,7 +637,7 @@
         <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
       </div>
 
-      <!-- Realtime Dashboard -->
+      <!-- Live Dashboard -->
       <div class="dashboard-grid">
         <div class="stat-box">
           <span class="stat-label">จำนวนรอบ (REPS)</span>
@@ -636,7 +657,7 @@
         <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
       </div>
 
-      <!-- Sports Performance Summary Card -->
+      <!-- Performance Summary Card -->
       <div class="card summary-card">
         <div class="summary-header-box">
           <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
@@ -683,7 +704,7 @@
     </div>
   </div>
 
-  <!-- History Log Section -->
+  <!-- History Section -->
   <div id="history_section" class="card history-card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:700; font-style:italic; text-transform:uppercase;">🏆 ประวัติบันทึกการฝึกย้อนหลัง</h3>
@@ -723,7 +744,6 @@
   </div>
 
   <script>
-    // ตั้งค่า Web App URL ของ Google Apps Script ที่นี่ (ถ้ามี)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
 
     const videoElement = document.getElementById('input_video');
@@ -761,6 +781,63 @@
 
     const guideImg = document.getElementById('guide_img');
     const guideText = document.getElementById('guide_text');
+
+    // Sound Controls & Web Audio Context
+    const soundToggleBtn = document.getElementById('sound_toggle_btn');
+    const soundIcon = document.getElementById('sound_icon');
+    const soundText = document.getElementById('sound_text');
+    let isSoundMuted = false;
+    let audioCtx = null;
+    let lastBeepTime = 0;
+
+    soundToggleBtn.addEventListener('click', () => {
+      isSoundMuted = !isSoundMuted;
+      if (isSoundMuted) {
+        soundIcon.innerText = "🔇";
+        soundText.innerText = "ปิดเสียงเตือน";
+        soundToggleBtn.classList.add('muted');
+      } else {
+        soundIcon.innerText = "🔊";
+        soundText.innerText = "เปิดเสียงเตือน";
+        soundToggleBtn.classList.remove('muted');
+        // Test sound when unmuting
+        playBeepSound(600, 'sine', 0.1);
+      }
+    });
+
+    function playBeepSound(frequency = 880, type = 'sawtooth', duration = 0.15) {
+      if (isSoundMuted) return;
+
+      const now = Date.now();
+      if (now - lastBeepTime < 300) return; // Cooldown 300ms
+      lastBeepTime = now;
+
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.value = frequency;
+
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.error("Audio error:", e);
+      }
+    }
 
     // Guide info array
     const exerciseGuides = {
@@ -850,6 +927,7 @@
         stage = "UP";
         repCount++;
         repDisplay.innerText = repCount;
+        playBeepSound(523.25, 'sine', 0.1); // 🔔 เสียงเตือนเมื่อนับ 1 Rep สำเร็จ
       }
     }
 
@@ -1042,7 +1120,7 @@
       if (results.poseLandmarks) {
         const lm = results.poseLandmarks;
 
-        // Key Points Extraction (MediaPipe Pose Landmark Indices)
+        // Key Points Extraction
         const leftHip = lm[23], rightHip = lm[24];
         const leftKnee = lm[25], rightKnee = lm[26];
         const leftAnkle = lm[27], rightAnkle = lm[28];
@@ -1058,7 +1136,7 @@
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
         hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        // Movement Processing Logic
+        // Movement Processing Logic & Sound Trigger
         const exercise = exerciseSelect.value;
         let isSafeFrame = true;
         let statusMessage = "ท่าทางการเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
@@ -1072,10 +1150,12 @@
             isSafeFrame = false;
             statusMessage = "⚠️ เตือน: หัวเข่าซ้าย-ขวา ไม่สมดุล!";
             statusClass = "status-warning";
+            playBeepSound(600, 'square', 0.12); // 🔊 เสียงเตือนระดับกลาง
           } else if (leftKneeAngle < 70 || rightKneeAngle < 70) {
             isSafeFrame = false;
             statusMessage = "🚫 เตือน: ย่อลึกเกินไป อาจส่งผลเสียต่อข้อเข่า!";
             statusClass = "status-danger";
+            playBeepSound(950, 'sawtooth', 0.2); // 🔊 เสียงเตือนภัยระดับสูง
           }
         } else if (exercise === 'jump') {
           if (leftKneeAngle < 120 && rightKneeAngle < 120) {
@@ -1084,6 +1164,7 @@
               isSafeFrame = false;
               statusMessage = "⚠️ เตือน: ลงสู่พื้นด้วยการรับน้ำหนักไม่เท่ากัน!";
               statusClass = "status-danger";
+              playBeepSound(950, 'sawtooth', 0.2); // 🔊 เสียงเตือนภัยระดับสูง
             }
           }
         } else if (exercise === 'balance') {
@@ -1092,6 +1173,7 @@
             isSafeFrame = false;
             statusMessage = "⚠️ เตือน: ลำตัวเอียง เสียการทรงตัว!";
             statusClass = "status-warning";
+            playBeepSound(600, 'square', 0.12); // 🔊 เสียงเตือนระดับกลาง
           }
         }
 
