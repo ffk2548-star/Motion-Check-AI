@@ -723,7 +723,7 @@
       return Math.round(sum / buffer.length);
     }
 
-    // --- High Accuracy MediaPipe Pose Pipeline ---
+    // --- High Accuracy & Clean Skeleton Rendering Pipeline ---
     function onResults(results) {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -747,8 +747,8 @@
           statusDisplay.innerText = "⚠️ กรุณาถอยห่างจากกล้อง หรือจัดแสงให้เห็นช่วงขาชัดเจน";
           statusDisplay.className = "status-warning";
           
-          // วาด Skeleton แบบโปร่งแสงเตือนผู้ใช้
-          drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: 'rgba(255, 149, 0, 0.4)', lineWidth: 2 });
+          // วาด Skeleton แบบส้มเตือนโปร่งแสงเมื่อเห็นไม่ชัด
+          drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: 'rgba(255, 149, 0, 0.4)', lineWidth: 3 });
           canvasCtx.restore();
           return;
         }
@@ -824,9 +824,55 @@
           diffFrames++;
         }
 
-        // High Quality Skeleton Rendering
-        drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: isSafeFrame ? '#00f2fe' : '#ff2a55', lineWidth: 4 });
-        drawLandmarks(canvasCtx, lm, { color: '#ff3b30', fillColor: '#ffffff', lineWidth: 2, radius: 5 });
+        // -------------------------------------------------------------
+        // 🎨 CUSTOM HIGH-VISIBILITY & CLEAN SKELETON RENDERER
+        // -------------------------------------------------------------
+        
+        // กำหนดจุดที่ไม่ต้องการวาด (ใบหน้า: 0-10, ปลายนิ้วมือ: 17-22)
+        const ignoredIndices = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 21, 22]);
+
+        // สีของเส้นสเกเรตัน (ฟ้า นีออน = ปลอดภัย | ชมพู/แดง นีออน = มีอันตราย)
+        const lineColor = isSafeFrame ? '#00f2fe' : '#ff0055';
+
+        // 1. วาดเส้นเชื่อม (Connectors) เฉพาะเส้นที่ไม่เกี่ยวกับใบหน้า/นิ้วมือ
+        POSE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
+          if (!ignoredIndices.has(startIdx) && !ignoredIndices.has(endIdx)) {
+            const startPoint = lm[startIdx];
+            const endPoint = lm[endIdx];
+
+            if (startPoint && endPoint && startPoint.visibility > 0.5 && endPoint.visibility > 0.5) {
+              canvasCtx.beginPath();
+              canvasCtx.moveTo(startPoint.x * canvasElement.width, startPoint.y * canvasElement.height);
+              canvasCtx.lineTo(endPoint.x * canvasElement.width, endPoint.y * canvasElement.height);
+              canvasCtx.lineWidth = 6;            // ขยายเส้นหนาขึ้นเป็น 6px (เห็นชัดเจน)
+              canvasCtx.strokeStyle = lineColor;
+              canvasCtx.lineCap = 'round';
+              canvasCtx.shadowColor = lineColor;   // เพิ่ม Glow เอฟเฟกต์เรืองแสง
+              canvasCtx.shadowBlur = 8;
+              canvasCtx.stroke();
+            }
+          }
+        });
+
+        // 2. วาดจุดข้อต่อ (Joint Landmarks) เฉพาะข้อต่อหลักร่างกาย
+        lm.forEach((landmark, index) => {
+          if (!ignoredIndices.has(index) && landmark.visibility > 0.5) {
+            const x = landmark.x * canvasElement.width;
+            const y = landmark.y * canvasElement.height;
+
+            canvasCtx.beginPath();
+            canvasCtx.arc(x, y, 8, 0, 2 * Math.PI); // ขนาดจุดใหญ่ขึ้น 8px
+            canvasCtx.fillStyle = '#ffe600';        // สีเหลืองสว่างสดใส (High Contrast)
+            canvasCtx.shadowColor = '#ffe600';
+            canvasCtx.shadowBlur = 10;
+            canvasCtx.fill();
+
+            // ขอบจุดข้อต่อสีขาว เพื่อความคมชัด
+            canvasCtx.lineWidth = 2.5;
+            canvasCtx.strokeStyle = '#ffffff';
+            canvasCtx.stroke();
+          }
+        });
       }
       canvasCtx.restore();
     }
