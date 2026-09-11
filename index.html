@@ -8,6 +8,7 @@
   <!-- MediaPipe Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;1,700;1,800&display=swap');
@@ -599,6 +600,17 @@
             </select>
           </div>
         </div>
+
+        <!-- Guide Preview Box -->
+        <div id="exercise_guide_box" style="margin-bottom: 16px; text-align: center; background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">📌 ท่าทางตัวอย่างที่ถูกต้อง</span>
+          <img id="guide_img" src="https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o" 
+               alt="Exercise Guide" 
+               style="width: 100%; max-height: 160px; object-fit: contain; border-radius: 6px; background: rgba(0,0,0,0.3);">
+          <p id="guide_text" style="font-size: 0.78rem; color: var(--text-sub); margin: 8px 0 0 0; line-height: 1.4;">
+            Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า
+          </p>
+        </div>
         
         <button id="toggle_btn" class="btn btn-start">🔥 เริ่มบันทึกการซ้อม</button>
         <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
@@ -746,6 +758,33 @@
     const symmetryVal = document.getElementById('symmetry_val');
     const warningCountVal = document.getElementById('warning_count_val');
     const aiFeedbackText = document.getElementById('ai_feedback_text');
+
+    const guideImg = document.getElementById('guide_img');
+    const guideText = document.getElementById('guide_text');
+
+    // Guide info array
+    const exerciseGuides = {
+      squat: {
+        img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o",
+        text: "Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า"
+      },
+      jump: {
+        img: "https://cdn.shopify.com/s/files/1/1281/4359/files/E8398_135art.jpg",
+        text: "Jump Landing: ย่อเข่าและสะโพกเล็กน้อยเพื่อซับแรงกระแทก ลงน้ำหนัก 2 ข้างเท่าๆ กัน"
+      },
+      balance: {
+        img: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcRmd1X-5G4UwO5y6Y5SU-qWRUhb_Fk9xYA1DWc2HF7w6pZipmQZlBaNY_XdcxZhSXjT0i76PWM8YgM0efM",
+        text: "Balance: เกร็งแกนกลางลำตัว รักษาระดับไหล่และสะโพกให้ขนานกับพื้น"
+      }
+    };
+
+    exerciseSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      if (exerciseGuides[selected]) {
+        guideImg.src = exerciseGuides[selected].img;
+        guideText.innerText = exerciseGuides[selected].text;
+      }
+    });
 
     let isRecording = false;
     let totalFrames = 0, safeFrames = 0, warningCount = 0;
@@ -986,155 +1025,103 @@
       }
     });
 
-    function calculateAngle(a, b, c) {
-      const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+    // --- Math & Angle Calculation Helpers ---
+    function calculateAngle(A, B, C) {
+      let radians = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
       let angle = Math.abs((radians * 180.0) / Math.PI);
-      if (angle > 180.0) angle = 360.0 - angle;
+      if (angle > 180.0) angle = 360 - angle;
       return Math.round(angle);
     }
 
-    // ฟังก์ชันวาดโครงกระดูกแบบเต็มตัว (Stickman Skeleton Framework)
-    function drawFullSkeleton(landmarks, color) {
-      // รายชื่อคู่จุดเชื่อมต่อโครงกระดูก
-      const connections = [
-        // ลำตัว (Torso)
-        [11, 12], [11, 23], [12, 24], [23, 24],
-        // แขนซ้าย (Left Arm)
-        [11, 13], [13, 15],
-        // แขนขวา (Right Arm)
-        [12, 14], [14, 16],
-        // ขาซ้าย (Left Leg)
-        [23, 25], [25, 27], [27, 31],
-        // ขาขวา (Right Leg)
-        [24, 26], [26, 28], [28, 32],
-        // ศีรษะและคอ (Head / Neck)
-        [0, 11], [0, 12]
-      ];
-
-      // 1. วาดเส้นกระดูกเชื่อมต่อ
-      connections.forEach(([i, j]) => {
-        const p1 = landmarks[i];
-        const p2 = landmarks[j];
-
-        if (p1 && p2 && p1.visibility > 0.4 && p2.visibility > 0.4) {
-          const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
-          const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
-
-          canvasCtx.beginPath();
-          canvasCtx.moveTo(pt1.x, pt1.y);
-          canvasCtx.lineTo(pt2.x, pt2.y);
-          canvasCtx.lineWidth = 4;
-          canvasCtx.strokeStyle = color;
-          canvasCtx.shadowColor = color;
-          canvasCtx.shadowBlur = 8; // เพิ่มเอฟเฟกต์ไฟเรืองแสง
-          canvasCtx.stroke();
-          canvasCtx.shadowBlur = 0; // คืนค่า blur
-        }
-      });
-
-      // 2. วาดหัวข้อต่อ (Joints)
-      landmarks.forEach((lm, index) => {
-        // วาดเฉพาะจุดสำคัญ (ไม่รวมจุดย่อยของใบหน้า)
-        if ([0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 31, 32].includes(index)) {
-          if (lm && lm.visibility > 0.4) {
-            const pt = { x: lm.x * canvasElement.width, y: lm.y * canvasElement.height };
-
-            canvasCtx.beginPath();
-            canvasCtx.arc(pt.x, pt.y, index === 0 ? 10 : 6, 0, 2 * Math.PI); // ศีรษะใหญ่กว่าข้อต่ออื่น
-            canvasCtx.fillStyle = '#ffffff';
-            canvasCtx.fill();
-            canvasCtx.lineWidth = 2;
-            canvasCtx.strokeStyle = color;
-            canvasCtx.stroke();
-          }
-        }
-      });
-    }
-
+    // --- MediaPipe Pose Engine Integration ---
     function onResults(results) {
-      if (!results.image) return;
-
-      canvasElement.width = videoElement.videoWidth || 640;
-      canvasElement.height = videoElement.videoHeight || 480;
-
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      
-      canvasCtx.translate(canvasElement.width, 0);
-      canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
       if (results.poseLandmarks) {
         const lm = results.poseLandmarks;
-        const mode = exerciseSelect.value;
 
-        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
-        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
+        // Key Points Extraction (MediaPipe Pose Landmark Indices)
+        const leftHip = lm[23], rightHip = lm[24];
+        const leftKnee = lm[25], rightKnee = lm[26];
+        const leftAnkle = lm[27], rightAnkle = lm[28];
+        const leftShoulder = lm[11], rightShoulder = lm[12];
 
-        let leftKneeAngle = 0, rightKneeAngle = 0;
-        let leftHipAngle = 0, rightHipAngle = 0;
+        // Calculate Angles
+        const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+        const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+        const leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        const rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
 
-        if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
-          leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
-          leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
-        }
-
-        if (rightHip.visibility > 0.5 && rightKnee.visibility > 0.5 && rightAnkle.visibility > 0.5) {
-          rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
-          rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
-        }
-
+        // Update Live HUD UI
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
         hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        const activeKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
-        if (activeKneeAngle > 0) updateRepCounter(mode, activeKneeAngle);
-
-        let isSafe = true;
-        let statusText = "ท่าทางปกติ";
+        // Movement Processing Logic
+        const exercise = exerciseSelect.value;
+        let isSafeFrame = true;
+        let statusMessage = "ท่าทางการเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
         let statusClass = "status-safe";
-        let skeletonColor = "#ff3b30"; // สีนีออนเรดสไตล์สปอร์ต
 
-        if (mode === 'squat') {
-          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
-          if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
-            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
+        if (exercise === 'squat') {
+          updateRepCounter('squat', Math.min(leftKneeAngle, rightKneeAngle));
+          const kneeDiff = Math.abs(leftKneeAngle - rightKneeAngle);
+
+          if (kneeDiff > 15) {
+            isSafeFrame = false;
+            statusMessage = "⚠️ เตือน: หัวเข่าซ้าย-ขวา ไม่สมดุล!";
             statusClass = "status-warning";
-            skeletonColor = "#ff9500";
-            isSafe = false;
-          } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
-            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
+          } else if (leftKneeAngle < 70 || rightKneeAngle < 70) {
+            isSafeFrame = false;
+            statusMessage = "🚫 เตือน: ย่อลึกเกินไป อาจส่งผลเสียต่อข้อเข่า!";
             statusClass = "status-danger";
-            skeletonColor = "#ff2a55";
-            isSafe = false;
+          }
+        } else if (exercise === 'jump') {
+          if (leftKneeAngle < 120 && rightKneeAngle < 120) {
+            const kneeDiff = Math.abs(leftKneeAngle - rightKneeAngle);
+            if (kneeDiff > 18) {
+              isSafeFrame = false;
+              statusMessage = "⚠️ เตือน: ลงสู่พื้นด้วยการรับน้ำหนักไม่เท่ากัน!";
+              statusClass = "status-danger";
+            }
+          }
+        } else if (exercise === 'balance') {
+          const hipDiff = Math.abs(leftHipAngle - rightHipAngle);
+          if (hipDiff > 15) {
+            isSafeFrame = false;
+            statusMessage = "⚠️ เตือน: ลำตัวเอียง เสียการทรงตัว!";
+            statusClass = "status-warning";
           }
         }
 
-        statusDisplay.innerText = statusText;
+        statusDisplay.innerText = statusMessage;
         statusDisplay.className = statusClass;
 
-        if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
+        // Accumulate statistics when recording
+        if (isRecording) {
           totalFrames++;
-          if (isSafe) safeFrames++; else warningCount++;
-          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
-          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
-          
-          const currentDiff = Math.abs(leftKneeAngle - rightKneeAngle);
-          totalDiff += currentDiff;
+          if (isSafeFrame) {
+            safeFrames++;
+          } else {
+            warningCount++;
+          }
+
+          minLeftKnee = Math.min(minLeftKnee, leftKneeAngle);
+          minRightKnee = Math.min(minRightKnee, rightKneeAngle);
+
+          totalDiff += Math.abs(leftKneeAngle - rightKneeAngle);
           diffFrames++;
         }
 
-        // เรียกใช้วาดเส้นวัดแบบโครงกระดูกเต็มตัว
-        drawFullSkeleton(lm, skeletonColor);
-
-      } else {
-        statusDisplay.innerText = "ไม่พบผู้ใช้งานหน้ากล้อง";
-        statusDisplay.className = "status-warning";
+        // Draw Skeleton Connections & Joints
+        drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: isSafeFrame ? '#00f2fe' : '#ff2a55', lineWidth: 3 });
+        drawLandmarks(canvasCtx, lm, { color: '#ff3b30', fillColor: '#ffffff', lineWidth: 2, radius: 4 });
       }
-
       canvasCtx.restore();
     }
 
+    // Initialize MediaPipe Pose Model
     const pose = new Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
     });
@@ -1143,12 +1130,13 @@
       modelComplexity: 1,
       smoothLandmarks: true,
       enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.6
     });
 
     pose.onResults(onResults);
 
+    // Initialize Camera Feed
     const camera = new Camera(videoElement, {
       onFrame: async () => {
         await pose.send({ image: videoElement });
@@ -1157,11 +1145,7 @@
       height: 480
     });
 
-    camera.start().catch(err => {
-      console.error('ไม่สามารถเปิดใช้งานกล้องได้:', err);
-      statusDisplay.innerText = "ไม่สามารถเชื่อมต่อกล้องได้";
-      statusDisplay.className = "status-danger";
-    });
+    camera.start();
   </script>
 </body>
 </html>
