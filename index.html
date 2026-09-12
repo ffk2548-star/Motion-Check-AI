@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionCheck AI Pro - High Precision Motion Analytics Engine</title>
+  <title>MotionCheck AI Pro - Multi-Exercise Motion Analytics Engine</title>
   
   <!-- MediaPipe Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -177,7 +177,7 @@
     .history-table th { color: var(--text-sub); background-color: var(--card-inner); font-weight: 600; text-transform: uppercase; }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 9, 12, 0.88); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-content { background: #12161f; border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 500px; padding: 24px; }
+    .modal-content { background: #12161f; border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 500px; padding: 24px; max-height: 90vh; overflow-y: auto; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 18px; }
     .modal-close-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-sub); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
@@ -190,16 +190,16 @@
 <body>
 
   <div class="header">
-    <span class="header-badge">HIGH PRECISION ENGINE v2.0</span>
+    <span class="header-badge">MULTI-EXERCISE ENGINE v2.5</span>
     <h1>MotionCheck AI Pro</h1>
-    <p>ระบบตรวจจับการเคลื่อนไหวความแม่นยำสูง กรองสัญญาณรบกวนอัตโนมัติ</p>
+    <p>ระบบตรวจจับการเคลื่อนไหวความแม่นยำสูง รองรับ Squat, Push-up, Plank และอื่นๆ</p>
   </div>
 
   <div class="sports-hero-banner">
     <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
     <div class="sports-hero-overlay">
       <div class="sports-hero-text">
-        <span>POWER & PRECISION</span> ANALYTICS ENGINE
+        <span>MULTI-EXERCISE</span> ANALYTICS ENGINE
       </div>
     </div>
   </div>
@@ -232,7 +232,9 @@
             <label for="exercise_select">เลือกโปรแกรมฝึก</label>
             <select id="exercise_select">
               <option value="squat">Squat (สควอช)</option>
-              <option value="jump">Jump Landing (กระโดดลงสู่พื้น)</option>
+              <option value="pushup">Push-up (วิดพื้น)</option>
+              <option value="plank">Plank (แพลงก์)</option>
+              <option value="jump">Jump Landing (กระโดด)</option>
               <option value="balance">Balance (การทรงตัว)</option>
             </select>
           </div>
@@ -253,15 +255,15 @@
 
       <div class="dashboard-grid">
         <div class="stat-box">
-          <span class="stat-label">จำนวนรอบ (REPS)</span>
+          <span class="stat-label" id="primary_stat_label">จำนวนรอบ (REPS)</span>
           <span id="rep_display" class="stat-value" style="color: var(--primary); font-size: 1.8rem;">0</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">มุมเข่า (L | R)</span>
+          <span class="stat-label" id="metric1_label">มุมเข่า (L | R)</span>
           <span id="knee_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
         </div>
         <div class="stat-box">
-          <span class="stat-label">มุมสะโพก (L | R)</span>
+          <span class="stat-label" id="metric2_label">มุมสะโพก (L | R)</span>
           <span id="hip_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
         </div>
       </div>
@@ -288,15 +290,15 @@
 
         <div class="metrics-grid">
           <div class="metric-item">
-            <span class="title">จำนวนครั้งรวม</span>
+            <span class="title" id="sum_metric1_title">จำนวนครั้งรวม</span>
             <span id="total_reps_val" class="value" style="color: var(--primary);">0 ครั้ง</span>
           </div>
           <div class="metric-item">
-            <span class="title">องศาเข่าต่ำสุด (L / R)</span>
+            <span class="title" id="sum_metric2_title">องศาเข่าต่ำสุด (L / R)</span>
             <span id="min_knee_val" class="value">- / -</span>
           </div>
           <div class="metric-item">
-            <span class="title">ความสมดุล ซ้าย-ขวา</span>
+            <span class="title">ความสมดุล / ฟอร์ม</span>
             <span id="symmetry_val" class="value">-</span>
           </div>
           <div class="metric-item">
@@ -328,7 +330,7 @@
             <th>วัน-เวลา</th>
             <th>นักกีฬา</th>
             <th>ท่าทาง</th>
-            <th>จำนวนครั้ง</th>
+            <th>ผลลัพธ์หลัก</th>
             <th>Safe Score</th>
             <th>Grade</th>
             <th>จัดการ</th>
@@ -352,7 +354,7 @@
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
+    const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
     const canvasElement = document.getElementById('output_canvas');
@@ -376,6 +378,9 @@
     const kneeDisplay = document.getElementById('knee_display');
     const hipDisplay = document.getElementById('hip_display');
     const statusDisplay = document.getElementById('status_display');
+    const primaryStatLabel = document.getElementById('primary_stat_label');
+    const metric1Label = document.getElementById('metric1_label');
+    const metric2Label = document.getElementById('metric2_label');
 
     const summaryUsername = document.getElementById('summary_username');
     const summaryGrade = document.getElementById('summary_grade');
@@ -397,7 +402,6 @@
     let audioCtx = null;
     let lastBeepTime = 0;
 
-    // --- High Precision Audio Synthesizer ---
     soundToggleBtn.addEventListener('click', () => {
       isSoundMuted = !isSoundMuted;
       if (isSoundMuted) {
@@ -446,6 +450,14 @@
         img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o",
         text: "Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า"
       },
+      pushup: {
+        img: "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=600&auto=format&fit=crop",
+        text: "Push-up: ลำตัวตรงเป็นเส้นเดียวกัน งอแขนทำมุม 45 องศากับลำตัวตอนลดตัวลง"
+      },
+      plank: {
+        img: "https://images.unsplash.com/photo-1566241142559-40e1dab266c6?q=80&w=600&auto=format&fit=crop",
+        text: "Plank: เกร็งหน้าท้องและลำตัวให้ขนานกับพื้น ไม่ยกสะโพกสูงหรือหย่อนสะโพก"
+      },
       jump: {
         img: "https://cdn.shopify.com/s/files/1/1281/4359/files/E8398_135art.jpg",
         text: "Jump Landing: ย่อเข่าและสะโพกเล็กน้อยเพื่อซับแรงกระแทก ลงน้ำหนัก 2 ข้างเท่าๆ กัน"
@@ -462,13 +474,29 @@
         guideImg.src = exerciseGuides[selected].img;
         guideText.innerText = exerciseGuides[selected].text;
       }
+
+      // Update UI labels based on exercise type
+      if (selected === 'plank') {
+        primaryStatLabel.innerText = "เวลาค้าง (SEC)";
+        metric1Label.innerText = "ความตรงลำตัว";
+        metric2Label.innerText = "สถานะแกนกลาง";
+      } else if (selected === 'pushup') {
+        primaryStatLabel.innerText = "จำนวนครั้ง (REPS)";
+        metric1Label.innerText = "มุมข้อศอก (L | R)";
+        metric2Label.innerText = "มุมสะโพก";
+      } else {
+        primaryStatLabel.innerText = "จำนวนรอบ (REPS)";
+        metric1Label.innerText = "มุมเข่า (L | R)";
+        metric2Label.innerText = "มุมสะโพก (L | R)";
+      }
     });
 
     let isRecording = false;
     let totalFrames = 0, safeFrames = 0, warningCount = 0;
+    let repCount = 0, stage = "UP";
+    let plankSeconds = 0, plankTimer = null;
     let minLeftKnee = 999, minRightKnee = 999;
     let totalDiff = 0, diffFrames = 0;
-    let repCount = 0, stage = "UP";
     let lastCalculatedData = null;
 
     userNameInput.addEventListener('input', () => {
@@ -483,9 +511,20 @@
         saveCloudBtn.disabled = true;
         saveStatusMsg.innerText = "";
         resetStats();
+
+        if (exerciseSelect.value === 'plank') {
+          plankSeconds = 0;
+          plankTimer = setInterval(() => {
+            if (isRecording) {
+              plankSeconds++;
+              repDisplay.innerText = plankSeconds;
+            }
+          }, 1000);
+        }
       } else {
         toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
         toggleBtn.className = "btn btn-start";
+        if (plankTimer) clearInterval(plankTimer);
         calculateSummary();
       }
     });
@@ -501,14 +540,18 @@
       }
     });
 
+    clearHistoryBtn.addEventListener('click', () => {
+      localStorage.removeItem('motionCheck_history');
+      renderHistoryTable();
+    });
+
     closeModalBtn.addEventListener('click', () => detailModal.style.display = "none");
 
     function resetStats() {
       totalFrames = 0; safeFrames = 0; warningCount = 0;
+      repCount = 0; stage = "UP";
       minLeftKnee = 999; minRightKnee = 999;
       totalDiff = 0; diffFrames = 0;
-      repCount = 0; stage = "UP";
-      
       repDisplay.innerText = "0";
       summaryGrade.innerText = "GRADE -";
       summaryGrade.style.color = "var(--text-sub)";
@@ -517,17 +560,171 @@
       aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
     }
 
-    function updateRepCounter(mode, kneeAngle) {
-      if (!isRecording) return;
-      if (kneeAngle < 100 && stage === "UP") {
-        stage = "DOWN";
+    function calculateAngle(a, b, c) {
+      const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+      let angle = Math.abs(radians * 180.0 / Math.PI);
+      if (angle > 180.0) angle = 360 - angle;
+      return Math.round(angle);
+    }
+
+    const pose = new Pose({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+    });
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    pose.onResults(onPoseResults);
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await pose.send({ image: videoElement });
+      },
+      width: 1280,
+      height: 720
+    });
+    camera.start().then(() => {
+      statusDisplay.innerText = "🟢 กล้องพร้อมทำงาน เริ่มบันทึกได้เลย";
+      statusDisplay.className = "status-banner status-safe";
+    }).catch(err => {
+      statusDisplay.innerText = "❌ ไม่สามารถเข้าถึงกล้องได้";
+      statusDisplay.className = "status-banner status-danger";
+    });
+
+    function onPoseResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.poseLandmarks) {
+        const lm = results.poseLandmarks;
+        const currentExercise = exerciseSelect.value;
+
+        if (currentExercise === 'pushup') {
+          // Push-up Analytics: Shoulder(11), Elbow(13), Wrist(15)
+          const lShoulder = lm[11], lElbow = lm[13], lWrist = lm[15];
+          const rShoulder = lm[12], rElbow = lm[14], rWrist = lm[16];
+          const leftElbowAngle = calculateAngle(lShoulder, lElbow, lWrist);
+          const rightElbowAngle = calculateAngle(rShoulder, rElbow, rWrist);
+
+          kneeDisplay.innerText = `${leftElbowAngle}° | ${rightElbowAngle}°`;
+          hipDisplay.innerText = `พับตัวดี`;
+
+          if (isRecording) {
+            totalFrames++;
+            if (leftElbowAngle < 90 && stage === "UP") {
+              stage = "DOWN";
+            }
+            if (leftElbowAngle > 150 && stage === "DOWN") {
+              stage = "UP";
+              repCount++;
+              repDisplay.innerText = repCount;
+              playBeepSound(523.25, 'sine', 0.1);
+            }
+
+            if (leftElbowAngle < 160) {
+              safeFrames++;
+              statusDisplay.innerText = "[PUSH-UP] - ฟอร์มกำลังลดตัวลงยอดเยี่ยม 🟢";
+              statusDisplay.className = "status-banner status-safe";
+            } else {
+              safeFrames++;
+              statusDisplay.innerText = "[PUSH-UP] - รักษาระดับลำตัวให้ตรง 🟢";
+              statusDisplay.className = "status-banner status-safe";
+            }
+          }
+        } else if (currentExercise === 'plank') {
+          // Plank Analytics: Shoulder(11), Hip(23), Ankle(27) alignment
+          const shoulder = lm[11], hip = lm[23], ankle = lm[27];
+          const alignmentAngle = calculateAngle(shoulder, hip, ankle);
+
+          kneeDisplay.innerText = `${alignmentAngle}°`;
+          hipDisplay.innerText = alignmentAngle > 160 ? "ขนานดี" : "สะโพกตก/โก่ง";
+
+          if (isRecording) {
+            totalFrames++;
+            if (alignmentAngle >= 155 && alignmentAngle <= 185) {
+              safeFrames++;
+              statusDisplay.innerText = "[PLANK] - ลำตัวขนานกับพื้นดีมาก คงค้างไว้ 🟢";
+              statusDisplay.className = "status-banner status-safe";
+            } else {
+              warningCount++;
+              statusDisplay.innerText = "[PLANK] - ระวัง! อย่าหย่อนหรือยกสะโพกสูงเกินไป ⚠️";
+              statusDisplay.className = "status-banner status-warning";
+              playBeepSound(400, 'sawtooth', 0.1);
+            }
+          }
+        } else {
+          // Default: Squat & others
+          const lHip = lm[23], lKnee = lm[25], lAnkle = lm[27], lShoulder = lm[11];
+          const rHip = lm[24], rKnee = lm[26], rAnkle = lm[28], rShoulder = lm[12];
+
+          const leftKneeAngle = calculateAngle(lHip, lKnee, lAnkle);
+          const rightKneeAngle = calculateAngle(rHip, rKnee, rAnkle);
+          const leftHipAngle = calculateAngle(lShoulder, lHip, lKnee);
+          const rightHipAngle = calculateAngle(rShoulder, rHip, rKnee);
+
+          kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
+          hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
+
+          if (isRecording) {
+            totalFrames++;
+            const angleDiff = Math.abs(leftKneeAngle - rightKneeAngle);
+            totalDiff += angleDiff;
+            diffFrames++;
+
+            if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
+            if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
+
+            let isSafe = true;
+            let feedbackMsg = "ฟอร์มถูกต้อง ไปต่อได้ปกติ 🟢";
+
+            if (leftKneeAngle < 160 && leftKneeAngle > 105) {
+              if (angleDiff > 15) {
+                isSafe = false;
+                feedbackMsg = "⚠️ น้ำหนักเอียงซ้าย-ขวาไม่เท่ากัน ควรปรับสมดุล!";
+              }
+            } else if (leftKneeAngle <= 105) {
+              if (leftKneeAngle < 70) {
+                isSafe = false;
+                feedbackMsg = "🛑 ย่อลึกเกินไป ระวังบาดเจ็บ ดันขึ้นต่อได้เลย!";
+              }
+            }
+
+            if (leftKneeAngle < 100 && stage === "UP") {
+              stage = "DOWN";
+            }
+            if (stage === "DOWN" && leftKneeAngle > 155) {
+              stage = "UP";
+              repCount++;
+              repDisplay.innerText = repCount;
+              playBeepSound(523.25, 'sine', 0.1);
+            }
+
+            if (isSafe) {
+              safeFrames++;
+              statusDisplay.innerText = feedbackMsg;
+              statusDisplay.className = "status-banner status-safe";
+            } else {
+              warningCount++;
+              statusDisplay.innerText = feedbackMsg;
+              statusDisplay.className = "status-banner status-danger";
+              playBeepSound(400, 'sawtooth', 0.1);
+            }
+          }
+        }
+
+        drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: '#00f2fe', lineWidth: 3 });
+        drawLandmarks(canvasCtx, lm, { color: '#ff3b30', lineWidth: 2, radius: 4 });
+      } else {
+        statusDisplay.innerText = "⚠️ ไม่พบตัวนักกีฬา กรุณาขยับมาหน้ากล้อง";
+        statusDisplay.className = "status-banner status-warning";
       }
-      if (kneeAngle > 155 && stage === "DOWN") {
-        stage = "UP";
-        repCount++;
-        repDisplay.innerText = repCount;
-        playBeepSound(523.25, 'sine', 0.1);
-      }
+
+      canvasCtx.restore();
     }
 
     function calculateSummary() {
@@ -536,41 +733,29 @@
         return;
       }
 
+      const currentExercise = exerciseSelect.value;
       const safeRatio = Math.round((safeFrames / totalFrames) * 100);
       safeScoreText.innerText = safeRatio + "%";
       safeScoreFill.style.width = safeRatio + "%";
 
-      totalRepsVal.innerText = repCount + " ครั้ง";
+      let resultValText = repCount + " ครั้ง";
+      if (currentExercise === 'plank') {
+        resultValText = plankSeconds + " วินาที";
+      }
+      totalRepsVal.innerText = resultValText;
       warningCountVal.innerText = warningCount + " ครั้ง";
       
-      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
+      const minKneeStr = currentExercise === 'plank' ? 'ความตรงลำตัว' : `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
       minKneeVal.innerText = minKneeStr;
 
       const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
-      let symStr = `-`;
-      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
-      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
-      else symStr = `ต่างกันมาก (${avgDiff}°)`;
+      let symStr = currentExercise === 'plank' ? 'ยอดเยี่ยม' : (avgDiff <= 5 ? `ดีเยี่ยม (${avgDiff}°)` : `ปานกลาง (${avgDiff}°)`);
       symmetryVal.innerText = symStr;
 
-      let grade = "C";
-      let gradeColor = "var(--danger)";
-      let feedback = "";
+      let grade = safeRatio >= 90 ? "A+" : (safeRatio >= 75 ? "B" : "C");
+      let gradeColor = grade === 'A+' ? "var(--success)" : (grade === 'B' ? "var(--accent-neon)" : "var(--danger)");
+      let feedback = `การฝึกเสร็จสิ้น ทำคะแนนความปลอดภัยได้ ${safeRatio}% พร้อมความเสี่ยง ${warningCount} ครั้ง`;
 
-      if (safeRatio >= 90 && warningCount <= 1) { 
-        grade = "A+"; 
-        gradeColor = "var(--success)"; 
-        feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
-      } else if (safeRatio >= 75) { 
-        grade = "B"; 
-        gradeColor = "var(--accent-neon)"; 
-        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
-      } else {
-        grade = "C";
-        gradeColor = "var(--danger)";
-        feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
-      }
-      
       summaryGrade.innerText = "GRADE " + grade;
       summaryGrade.style.color = gradeColor;
       aiFeedbackText.innerText = feedback;
@@ -581,7 +766,7 @@
         timestamp: timestamp,
         userName: userNameInput.value.trim() || "Athlete01",
         exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
-        reps: repCount,
+        reps: resultValText,
         safeScore: safeRatio,
         minKnee: minKneeStr,
         symmetry: symStr,
@@ -593,39 +778,12 @@
       saveCloudBtn.disabled = false;
     }
 
-    saveCloudBtn.addEventListener('click', async () => {
+    saveCloudBtn.addEventListener('click', () => {
       if (!lastCalculatedData) return;
-
-      saveCloudBtn.disabled = true;
-      saveStatusMsg.style.color = "var(--warning)";
-      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
-
       saveLocalHistory(lastCalculatedData);
-
-      if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
-        try {
-          const response = await fetch(WEB_APP_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(lastCalculatedData)
-          });
-
-          const res = await response.json();
-          if (res.result === "success") {
-            saveStatusMsg.style.color = "var(--success)";
-            saveStatusMsg.innerText = "✅ บันทึกลง Google Sheets และระบบสำเร็จ!";
-          } else {
-            throw new Error(res.message);
-          }
-        } catch (err) {
-          saveStatusMsg.style.color = "var(--warning)";
-          saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
-        }
-      } else {
-        saveStatusMsg.style.color = "var(--success)";
-        saveStatusMsg.innerText = "✅ บันทึกลงในประวัติการฝึกเรียบร้อย!";
-      }
+      saveCloudBtn.disabled = true;
+      saveStatusMsg.style.color = "var(--success)";
+      saveStatusMsg.innerText = "✅ บันทึกลงประวัติเรียบร้อย!";
     });
 
     function saveLocalHistory(data) {
@@ -647,10 +805,10 @@
           <td>${item.timestamp || '-'}</td>
           <td>${item.userName}</td>
           <td>${item.exercise}</td>
-          <td>${item.reps} ครั้ง</td>
+          <td>${item.reps}</td>
           <td>${item.safeScore}%</td>
           <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--accent-neon)' : 'var(--danger)'}">${item.grade}</strong></td>
-          <td><button class="btn-view-detail" onclick="openDetailModal(${index})">🔍 รายละเอียด</button></td>
+          <td><button class="btn-view-detail" onclick="openDetailModal(${index})" style="background:var(--card-inner); border:1px solid var(--border-color); color:#fff; padding:6px 10px; border-radius:6px; cursor:pointer;">🔍 รายละเอียด</button></td>
         </tr>
       `).join('');
     }
@@ -663,245 +821,15 @@
       modalBody.innerHTML = `
         <div style="font-size:0.92rem; line-height:1.6;">
           <p style="margin:4px 0; color:var(--text-sub);">นักกีฬา: <strong style="color:#fff;">${data.userName}</strong></p>
-          <p style="margin:4px 0; color:var(--text-sub);">วัน-เวลาบันทึก: <strong style="color:#fff;">${data.timestamp || '-'}</strong></p>
-          <p style="margin:4px 0; color:var(--text-sub);">ท่าทางการฝึก: <strong style="color:#fff;">${data.exercise}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">วัน-เวลา: <strong style="color:#fff;">${data.timestamp || '-'}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">ท่าฝึก: <strong style="color:#fff;">${data.exercise}</strong></p>
           <hr style="border-color:var(--border-color); margin:14px 0;">
-          <div class="metrics-grid">
-            <div class="metric-item">
-              <span class="title">จำนวนครั้ง</span>
-              <span class="value" style="color:var(--primary);">${data.reps} ครั้ง</span>
-            </div>
-            <div class="metric-item">
-              <span class="title">Safe Score</span>
-              <span class="value" style="color:var(--accent-neon);">${data.safeScore}%</span>
-            </div>
-            <div class="metric-item">
-              <span class="title">เกรดประเมิน</span>
-              <span class="value">${data.grade}</span>
-            </div>
-            <div class="metric-item">
-              <span class="title">คำเตือนความเสี่ยง</span>
-              <span class="value" style="color:var(--danger);">${data.warnings} ครั้ง</span>
-            </div>
-          </div>
-          <p style="margin:6px 0; color:var(--text-sub);">องศาเข่าต่ำสุด (L/R): <strong style="color:#fff;">${data.minKnee}</strong></p>
-          <p style="margin:6px 0; color:var(--text-sub);">ความสมดุล ซ้าย-ขวา: <strong style="color:#fff;">${data.symmetry}</strong></p>
-          <div class="feedback-box" style="margin-top:14px;">
-            <strong>คำแนะนำ AI:</strong><br>${data.feedback || 'ไม่มีคำแนะนำเพิ่มเติม'}
-          </div>
+          <p style="font-size:0.88rem; color:var(--accent-neon);">ผลการประเมิน: <strong>${data.reps}</strong> | เกรด: <strong>${data.grade}</strong></p>
+          <p style="font-size:0.85rem; color:var(--text-main); margin-top:10px;">💡 <strong>คำแนะนำ:</strong> ${data.feedback}</p>
         </div>
       `;
       detailModal.style.display = "flex";
     };
-
-    clearHistoryBtn.addEventListener('click', () => {
-      if (confirm('คุณต้องการลบประวัติการฝึกในเครื่องทั้งหมดใช่หรือไม่?')) {
-        localStorage.removeItem('motionCheck_history');
-        renderHistoryTable();
-      }
-    });
-
-    // --- Math & High Accuracy Signal Smooth Filters ---
-    function calculateAngle(A, B, C) {
-      let radians = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
-      let angle = Math.abs((radians * 180.0) / Math.PI);
-      if (angle > 180.0) angle = 360 - angle;
-      return Math.round(angle);
-    }
-
-    // Moving Average Signal Filter (ลดอาการสั่นกระตุกของมุมข้อต่อ)
-    const angleBuffers = {
-      leftKnee: [], rightKnee: [],
-      leftHip: [], rightHip: []
-    };
-
-    function getSmoothedAngle(key, rawAngle, windowSize = 5) {
-      const buffer = angleBuffers[key];
-      buffer.push(rawAngle);
-      if (buffer.length > windowSize) buffer.shift();
-      const sum = buffer.reduce((acc, val) => acc + val, 0);
-      return Math.round(sum / buffer.length);
-    }
-
-    // --- High Accuracy & Clean Skeleton Rendering Pipeline ---
-    function onResults(results) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-      if (results.poseLandmarks) {
-        const lm = results.poseLandmarks;
-
-        // Key Joints Extraction
-        const leftHip = lm[23], rightHip = lm[24];
-        const leftKnee = lm[25], rightKnee = lm[26];
-        const leftAnkle = lm[27], rightAnkle = lm[28];
-        const leftShoulder = lm[11], rightShoulder = lm[12];
-
-        // 1. Visibility Gate Check (ตรวจสอบความน่าเชื่อถือของการเห็นข้อต่อ > 65%)
-        const isLegsVisible = leftHip.visibility > 0.65 && rightHip.visibility > 0.65 &&
-                              leftKnee.visibility > 0.65 && rightKnee.visibility > 0.65 &&
-                              leftAnkle.visibility > 0.65 && rightAnkle.visibility > 0.65;
-
-        if (!isLegsVisible) {
-          statusDisplay.innerText = "⚠️ กรุณาถอยห่างจากกล้อง หรือจัดแสงให้เห็นช่วงขาชัดเจน";
-          statusDisplay.className = "status-warning";
-          
-          // วาด Skeleton แบบส้มเตือนโปร่งแสงเมื่อเห็นไม่ชัด
-          drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: 'rgba(255, 149, 0, 0.4)', lineWidth: 3 });
-          canvasCtx.restore();
-          return;
-        }
-
-        // 2. Raw Angle Calculation & Smooth Filtering
-        const rawLeftKnee = calculateAngle(leftHip, leftKnee, leftAnkle);
-        const rawRightKnee = calculateAngle(rightHip, rightKnee, rightAnkle);
-        const rawLeftHip = calculateAngle(leftShoulder, leftHip, leftKnee);
-        const rawRightHip = calculateAngle(rightShoulder, rightHip, rightKnee);
-
-        const leftKneeAngle = getSmoothedAngle('leftKnee', rawLeftKnee);
-        const rightKneeAngle = getSmoothedAngle('rightKnee', rawRightKnee);
-        const leftHipAngle = getSmoothedAngle('leftHip', rawLeftHip);
-        const rightHipAngle = getSmoothedAngle('rightHip', rawRightHip);
-
-        // Update Live HUD UI
-        kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
-        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
-
-        // Movement Processing Logic & Sound Trigger
-        const exercise = exerciseSelect.value;
-        let isSafeFrame = true;
-        let statusMessage = "ท่าทางการเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
-        let statusClass = "status-safe";
-
-        if (exercise === 'squat') {
-          updateRepCounter('squat', Math.min(leftKneeAngle, rightKneeAngle));
-          const kneeDiff = Math.abs(leftKneeAngle - rightKneeAngle);
-
-          if (kneeDiff > 15) {
-            isSafeFrame = false;
-            statusMessage = "⚠️ เตือน: หัวเข่าซ้าย-ขวา ไม่สมดุล!";
-            statusClass = "status-warning";
-            playBeepSound(600, 'square', 0.12);
-          } else if (leftKneeAngle < 70 || rightKneeAngle < 70) {
-            isSafeFrame = false;
-            statusMessage = "🚫 เตือน: ย่อลึกเกินไป อาจส่งผลเสียต่อข้อเข่า!";
-            statusClass = "status-danger";
-            playBeepSound(950, 'sawtooth', 0.2);
-          }
-        } else if (exercise === 'jump') {
-          if (leftKneeAngle < 120 && rightKneeAngle < 120) {
-            const kneeDiff = Math.abs(leftKneeAngle - rightKneeAngle);
-            if (kneeDiff > 18) {
-              isSafeFrame = false;
-              statusMessage = "⚠️ เตือน: ลงสู่พื้นด้วยการรับน้ำหนักไม่เท่ากัน!";
-              statusClass = "status-danger";
-              playBeepSound(950, 'sawtooth', 0.2);
-            }
-          }
-        } else if (exercise === 'balance') {
-          const hipDiff = Math.abs(leftHipAngle - rightHipAngle);
-          if (hipDiff > 15) {
-            isSafeFrame = false;
-            statusMessage = "⚠️ เตือน: ลำตัวเอียง เสียการทรงตัว!";
-            statusClass = "status-warning";
-            playBeepSound(600, 'square', 0.12);
-          }
-        }
-
-        statusDisplay.innerText = statusMessage;
-        statusDisplay.className = statusClass;
-
-        if (isRecording) {
-          totalFrames++;
-          if (isSafeFrame) safeFrames++;
-          else warningCount++;
-
-          minLeftKnee = Math.min(minLeftKnee, leftKneeAngle);
-          minRightKnee = Math.min(minRightKnee, rightKneeAngle);
-
-          totalDiff += Math.abs(leftKneeAngle - rightKneeAngle);
-          diffFrames++;
-        }
-
-        // -------------------------------------------------------------
-        // 🎨 CUSTOM HIGH-VISIBILITY & CLEAN SKELETON RENDERER
-        // -------------------------------------------------------------
-        
-        // กำหนดจุดที่ไม่ต้องการวาด (ใบหน้า: 0-10, ปลายนิ้วมือ: 17-22)
-        const ignoredIndices = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 21, 22]);
-
-        // สีของเส้นสเกเรตัน (ฟ้า นีออน = ปลอดภัย | ชมพู/แดง นีออน = มีอันตราย)
-        const lineColor = isSafeFrame ? '#00f2fe' : '#ff0055';
-
-        // 1. วาดเส้นเชื่อม (Connectors) เฉพาะเส้นที่ไม่เกี่ยวกับใบหน้า/นิ้วมือ
-        POSE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
-          if (!ignoredIndices.has(startIdx) && !ignoredIndices.has(endIdx)) {
-            const startPoint = lm[startIdx];
-            const endPoint = lm[endIdx];
-
-            if (startPoint && endPoint && startPoint.visibility > 0.5 && endPoint.visibility > 0.5) {
-              canvasCtx.beginPath();
-              canvasCtx.moveTo(startPoint.x * canvasElement.width, startPoint.y * canvasElement.height);
-              canvasCtx.lineTo(endPoint.x * canvasElement.width, endPoint.y * canvasElement.height);
-              canvasCtx.lineWidth = 6;            // ขยายเส้นหนาขึ้นเป็น 6px (เห็นชัดเจน)
-              canvasCtx.strokeStyle = lineColor;
-              canvasCtx.lineCap = 'round';
-              canvasCtx.shadowColor = lineColor;   // เพิ่ม Glow เอฟเฟกต์เรืองแสง
-              canvasCtx.shadowBlur = 8;
-              canvasCtx.stroke();
-            }
-          }
-        });
-
-        // 2. วาดจุดข้อต่อ (Joint Landmarks) เฉพาะข้อต่อหลักร่างกาย
-        lm.forEach((landmark, index) => {
-          if (!ignoredIndices.has(index) && landmark.visibility > 0.5) {
-            const x = landmark.x * canvasElement.width;
-            const y = landmark.y * canvasElement.height;
-
-            canvasCtx.beginPath();
-            canvasCtx.arc(x, y, 8, 0, 2 * Math.PI); // ขนาดจุดใหญ่ขึ้น 8px
-            canvasCtx.fillStyle = '#ffe600';        // สีเหลืองสว่างสดใส (High Contrast)
-            canvasCtx.shadowColor = '#ffe600';
-            canvasCtx.shadowBlur = 10;
-            canvasCtx.fill();
-
-            // ขอบจุดข้อต่อสีขาว เพื่อความคมชัด
-            canvasCtx.lineWidth = 2.5;
-            canvasCtx.strokeStyle = '#ffffff';
-            canvasCtx.stroke();
-          }
-        });
-      }
-      canvasCtx.restore();
-    }
-
-    // --- MediaPipe High Precision Configuration ---
-    const pose = new Pose({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
-    });
-
-    pose.setOptions({
-      modelComplexity: 2,         // 🎯 โมเดลความละเอียดสูงสุด (Heavy Weight Model)
-      smoothLandmarks: true,       // 🎯 เปิดการเกลี่ยจุดเพื่อลดการกระตุก
-      enableSegmentation: false,
-      minDetectionConfidence: 0.7, // 🎯 ปรับเพิ่มความมั่นใจในการจับโครงร่างเป็น 70%
-      minTrackingConfidence: 0.7   // 🎯 ปรับเพิ่มความมั่นใจในการติดตามจุดเป็น 70%
-    });
-
-    pose.onResults(onResults);
-
-    // Initialize Camera Feed HD Resolution
-    const camera = new Camera(videoElement, {
-      onFrame: async () => {
-        await pose.send({ image: videoElement });
-      },
-      width: 1280, // 🎯 ความละเอียดกล้องระดับ HD 720p
-      height: 720
-    });
-
-    camera.start();
   </script>
 </body>
 </html>
