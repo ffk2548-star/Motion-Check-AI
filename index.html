@@ -1,1202 +1,980 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionCheck AI Pro - Sports Analytics Engine</title>
-  
-  <!-- MediaPipe Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MotionCheck AI Pro - Sports Analytics Engine</title>
+  
+  <!-- MediaPipe Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;1,700;1,800&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,600;0,700;0,800;1,700;1,800&display=swap');
 
-    :root {
-      --bg-color: #08090c;
-      --card-bg: rgba(18, 22, 31, 0.85);
-      --card-inner: rgba(10, 12, 18, 0.7);
-      --primary: #ff3b30;
-      --primary-glow: rgba(255, 59, 48, 0.4);
-      --accent-neon: #00f2fe;
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.35);
-      --danger: #ff2a55;
-      --warning: #ff9500;
-      --text-main: #ffffff;
-      --text-sub: #a1a1aa;
-      --border-color: rgba(255, 255, 255, 0.12);
-      --border-hover: rgba(255, 59, 48, 0.6);
-      --sports-skew: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
-      --sports-skew-btn: polygon(6% 0%, 100% 0%, 94% 100%, 0% 100%);
-    }
+    :root {
+      --bg-color: #08090c;
+      --card-bg: rgba(18, 22, 31, 0.85);
+      --card-inner: rgba(10, 12, 18, 0.7);
+      --primary: #ff3b30;
+      --primary-glow: rgba(255, 59, 48, 0.4);
+      --accent-neon: #00f2fe;
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      --danger: #ff2a55;
+      --warning: #ff9500;
+      --text-main: #ffffff;
+      --text-sub: #a1a1aa;
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 59, 48, 0.6);
+      --sports-skew: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
+      --sports-skew-btn: polygon(6% 0%, 100% 0%, 94% 100%, 0% 100%);
+    }
 
-    * { 
-      box-sizing: border-box; 
-      font-family: 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-    body {
-      background: radial-gradient(circle at top center, #1a1e29 0%, #08090c 100%);
-      color: var(--text-main);
-      margin: 0;
-      padding: 24px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
+    body {
+      background: radial-gradient(circle at top center, #1a1e29 0%, #08090c 100%);
+      color: var(--text-main);
+      margin: 0;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-    /* Header Styling */
-    .header { 
-      text-align: center; 
-      margin-bottom: 24px;
-      position: relative;
-    }
-    .header-badge {
-      display: inline-block;
-      padding: 4px 16px;
-      background: rgba(255, 59, 48, 0.15);
-      border: 1px solid var(--primary-glow);
-      border-radius: 4px;
-      color: var(--primary);
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-style: italic;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      clip-path: var(--sports-skew-btn);
-    }
-    .header h1 { 
-      margin: 0 0 6px 0; 
-      font-size: 2.5rem; 
-      font-weight: 800;
-      font-style: italic;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px; 
-    }
-    .header p { 
-      margin: 0; 
-      color: var(--text-sub); 
-      font-size: 0.95rem; 
-      font-weight: 300;
-    }
+    /* Header Styling - Sports Style */
+    .header { 
+      text-align: center; 
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .header-badge {
+      display: inline-block;
+      padding: 4px 16px;
+      background: rgba(255, 59, 48, 0.15);
+      border: 1px solid var(--primary-glow);
+      border-radius: 4px;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      clip-path: var(--sports-skew-btn);
+    }
+    .header h1 { 
+      margin: 0 0 6px 0; 
+      font-size: 2.5rem; 
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px; 
+    }
+    .header p { 
+      margin: 0; 
+      color: var(--text-sub); 
+      font-size: 0.95rem; 
+      font-weight: 300;
+    }
 
-    /* Banner Image */
-    .sports-hero-banner {
-      width: 100%;
-      max-width: 1080px;
-      height: 120px;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 20px;
-      position: relative;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .sports-hero-banner img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(0.5) contrast(1.2);
-    }
-    .sports-hero-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(90deg, rgba(8,9,12,0.9) 0%, rgba(8,9,12,0.2) 50%, rgba(255,59,48,0.3) 100%);
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-    }
-    .sports-hero-text {
-      font-size: 1.3rem;
-      font-weight: 800;
-      font-style: italic;
-      text-transform: uppercase;
-      color: #fff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-    }
-    .sports-hero-text span {
-      color: var(--primary);
-    }
+    /* Sports Banner Image */
+    .sports-hero-banner {
+      width: 100%;
+      max-width: 1080px;
+      height: 120px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      position: relative;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .sports-hero-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) contrast(1.2);
+    }
+    .sports-hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(8,9,12,0.9) 0%, rgba(8,9,12,0.2) 50%, rgba(255,59,48,0.3) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .sports-hero-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .sports-hero-text span {
+      color: var(--primary);
+    }
 
-    /* Layout */
-    .main-layout {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      width: 100%;
-      max-width: 1080px;
-      align-items: center;
-    }
+    /* Layout */
+    .main-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      max-width: 1080px;
+      align-items: center;
+    }
 
-    /* Camera Card */
-    .video-card {
-      position: relative;
-      width: 100%;
-      max-width: 640px;
-      aspect-ratio: 4 / 3;
-      background-color: #000;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border-color);
-      transition: border-color 0.3s;
-    }
-    .video-card:hover {
-      border-color: var(--border-hover);
-    }
+    /* Camera Card */
+    .video-card {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 4 / 3;
+      background-color: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border-color);
+      transition: border-color 0.3s;
+    }
+    .video-card:hover {
+      border-color: var(--border-hover);
+    }
 
-    #input_video { display: none; }
-    #output_canvas { 
-      width: 100%; 
-      height: 100%; 
-      display: block; 
-      object-fit: cover;
-    }
+    #input_video { display: none; }
+    #output_canvas { 
+      width: 100%; 
+      height: 100%; 
+      display: block; 
+      object-fit: cover;
+    }
 
-    /* Controls Panel */
-    .controls-panel {
-      width: 100%;
-      max-width: 640px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
+    /* Controls & Menu Panels */
+    .controls-panel {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      position: relative;
-    }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
 
-    .card-sports-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-color);
-    }
-    .card-sports-header img {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      object-fit: cover;
-      border: 1px solid var(--primary);
-    }
-    .card-sports-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      font-style: italic;
-      text-transform: uppercase;
-      color: #fff;
-    }
+    /* Sports Skew Header Bar on Cards */
+    .card-sports-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .card-sports-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--primary);
+    }
+    .card-sports-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
+    }
 
-    /* Input Form Styles */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
+    /* Input Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-    label { 
-      font-size: 0.8rem; 
-      color: var(--text-sub); 
-      font-weight: 600; 
-      text-transform: uppercase;
-      letter-spacing: 0.5px; 
-    }
+    label { 
+      font-size: 0.8rem; 
+      color: var(--text-sub); 
+      font-weight: 600; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px; 
+    }
 
-    input[type="text"], select {
-      width: 100%;
-      padding: 12px 14px;
-      background-color: var(--card-inner);
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      outline: none;
-      transition: all 0.2s ease;
-    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: var(--card-inner);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
+    }
 
-    input[type="text"]:focus, select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 12px var(--primary-glow);
-    }
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
 
-    /* Audio Toggle Switch Box */
-    .audio-setting-box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--card-inner);
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 16px;
-    }
-    .audio-setting-label {
-      font-size: 0.85rem;
-      color: var(--text-main);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    /* Buttons - Sports Skewed Style */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      font-style: italic;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
 
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-    }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #27272a;
-      transition: .3s;
-      border-radius: 24px;
-      border: 1px solid var(--border-color);
-    }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 16px; width: 16px;
-      left: 3px; bottom: 3px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
-    }
-    input:checked + .slider { background-color: var(--primary); }
-    input:checked + .slider:before { transform: translateX(20px); }
+    .btn-start { 
+      background: linear-gradient(135deg, #ff3b30 0%, #d32f2f 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .btn-start:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 22px var(--primary-glow);
+    }
 
-    /* Buttons */
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 1rem;
-      font-style: italic;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      letter-spacing: 0.5px;
-    }
+    .btn-stop { 
+      background: linear-gradient(135deg, #27272a 0%, #18181b 100%); 
+      color: var(--danger); 
+      border: 1px solid var(--danger);
+      box-shadow: 0 4px 16px rgba(255, 42, 85, 0.2);
+    }
+    .btn-stop:hover { 
+      background: var(--danger);
+      color: #fff;
+      transform: translateY(-2px); 
+    }
 
-    .btn-start { 
-      background: linear-gradient(135deg, #ff3b30 0%, #d32f2f 100%); 
-      color: #fff; 
-      box-shadow: 0 4px 16px var(--primary-glow);
-    }
-    .btn-start:hover { 
-      transform: translateY(-2px); 
-      box-shadow: 0 6px 22px var(--primary-glow);
-    }
+    .btn-save { 
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); 
+      color: #000; 
+      font-weight: 800;
+      margin-top: 16px; 
+      box-shadow: 0 4px 16px rgba(0, 242, 254, 0.3);
+    }
+    .btn-save:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+    }
+    .btn-save:disabled { 
+      background: #1e293b; 
+      color: #64748b; 
+      box-shadow: none;
+      cursor: not-allowed; 
+    }
+    
+    .btn-shortcut {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      margin-top: 10px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+    }
+    .btn-shortcut:hover {
+      background: rgba(255, 59, 48, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
 
-    .btn-stop { 
-      background: linear-gradient(135deg, #27272a 0%, #18181b 100%); 
-      color: var(--danger); 
-      border: 1px solid var(--danger);
-      box-shadow: 0 4px 16px rgba(255, 42, 85, 0.2);
-    }
-    .btn-stop:hover { 
-      background: var(--danger);
-      color: #fff;
-      transform: translateY(-2px); 
-    }
+    /* Live Display Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
 
-    .btn-save { 
-      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); 
-      color: #000; 
-      font-weight: 800;
-      margin-top: 16px; 
-      box-shadow: 0 4px 16px rgba(0, 242, 254, 0.3);
-    }
-    .btn-save:hover:not(:disabled) { 
-      transform: translateY(-2px); 
-      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
-    }
-    .btn-save:disabled { 
-      background: #1e293b; 
-      color: #64748b; 
-      box-shadow: none;
-      cursor: not-allowed; 
-    }
-    
-    .btn-shortcut {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-color);
-      color: var(--text-sub);
-      margin-top: 10px;
-      padding: 10px 14px;
-      font-size: 0.88rem;
-    }
-    .btn-shortcut:hover {
-      background: rgba(255, 59, 48, 0.1);
-      border-color: var(--primary);
-      color: var(--primary);
-    }
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 10px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+    .stat-box:hover {
+      border-color: var(--border-hover);
+    }
 
-    /* Live Display Dashboard */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
+    .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+    .stat-value { font-size: 1.4rem; font-weight: 800; font-style: italic; margin-top: 4px; color: var(--primary); }
 
-    .stat-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 10px;
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      transition: border-color 0.2s;
-    }
-    .stat-box:hover {
-      border-color: var(--border-hover);
-    }
+    .status-banner {
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
 
-    .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
-    .stat-value { font-size: 1.4rem; font-weight: 800; font-style: italic; margin-top: 4px; color: var(--primary); }
+    .status-safe { color: var(--success); }
+    .status-danger { color: var(--danger); }
+    .status-warning { color: var(--warning); }
 
-    .status-banner {
-      width: 100%;
-      text-align: center;
-      padding: 12px;
-      border-radius: 12px;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-    }
+    /* Summary Card Styling */
+    .summary-card {
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
+    }
 
-    .status-safe { color: var(--success); }
-    .status-danger { color: var(--danger); }
-    .status-warning { color: var(--warning); }
+    .summary-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
 
-    /* Summary Card Styling */
-    .summary-card {
-      border: 1px solid rgba(255, 59, 48, 0.3);
-      background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
-    }
+    .summary-title-text { font-size: 1.05rem; font-weight: 700; font-style: italic; text-transform: uppercase; color: var(--primary); }
 
-    .summary-header-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 14px;
-      margin-bottom: 16px;
-    }
+    .grade-badge {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-style: italic;
+      padding: 4px 18px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid currentColor;
+      box-shadow: 0 0 12px currentColor;
+    }
 
-    .summary-title-text { font-size: 1.05rem; font-weight: 700; font-style: italic; text-transform: uppercase; color: var(--primary); }
+    .progress-container { margin-bottom: 16px; }
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background-color: var(--card-inner);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff3b30 0%, #00f2fe 100%);
+      transition: width 0.6s ease;
+      border-radius: 6px;
+    }
 
-    .grade-badge {
-      font-size: 1.1rem;
-      font-weight: 800;
-      font-style: italic;
-      padding: 4px 18px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid currentColor;
-      box-shadow: 0 0 12px currentColor;
-    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
 
-    .progress-container { margin-bottom: 16px; }
-    .progress-label-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      color: var(--text-sub);
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-    .progress-bar-bg {
-      width: 100%;
-      height: 10px;
-      background-color: var(--card-inner);
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-    }
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #ff3b30 0%, #00f2fe 100%);
-      transition: width 0.6s ease;
-      border-radius: 6px;
-    }
+    .metric-item {
+      background: var(--card-inner);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
 
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
+    .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; text-transform: uppercase; font-weight: 600; }
+    .metric-item .value { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 3px; display: block; }
 
-    .metric-item {
-      background: var(--card-inner);
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
+    .feedback-box {
+      background: rgba(255, 59, 48, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
 
-    .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; text-transform: uppercase; font-weight: 600; }
-    .metric-item .value { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 3px; display: block; }
+    /* History Log Table Section */
+    .history-card {
+      display: none;
+      width: 100%;
+      max-width: 1080px;
+      margin-top: 12px;
+    }
 
-    .feedback-box {
-      background: rgba(255, 59, 48, 0.08);
-      border-left: 4px solid var(--primary);
-      padding: 12px 14px;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.88rem;
-      color: var(--text-main);
-      line-height: 1.5;
-    }
+    .history-table-wrapper {
+      overflow-x: auto;
+      margin-top: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
 
-    /* History Log Section */
-    .history-card {
-      display: none;
-      width: 100%;
-      max-width: 1080px;
-      margin-top: 12px;
-    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
 
-    .history-table-wrapper {
-      overflow-x: auto;
-      margin-top: 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-    }
+    .history-table th, .history-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
 
-    .history-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-      text-align: left;
-    }
+    .history-table th {
+      color: var(--text-sub);
+      background-color: var(--card-inner);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
 
-    .history-table th, .history-table td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-color);
-    }
+    .history-table tbody tr {
+      transition: background-color 0.2s;
+    }
 
-    .history-table th {
-      color: var(--text-sub);
-      background-color: var(--card-inner);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+    .history-table tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
 
-    .history-table tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.03);
-    }
+    .btn-view-detail {
+      background: rgba(255, 59, 48, 0.15);
+      color: var(--primary);
+      border: 1px solid var(--primary-glow);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-view-detail:hover {
+      background: var(--primary);
+      color: #fff;
+    }
 
-    .btn-view-detail {
-      background: rgba(255, 59, 48, 0.15);
-      color: var(--primary);
-      border: 1px solid var(--primary-glow);
-      padding: 5px 12px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-view-detail:hover {
-      background: var(--primary);
-      color: #fff;
-    }
+    /* Modal Component UI */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(8, 9, 12, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
 
-    /* Modal Component UI */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(8, 9, 12, 0.88);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-    }
+    .modal-content {
+      background: #12161f;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
 
-    .modal-content {
-      background: #12161f;
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 500px;
-      padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 14px;
-      margin-bottom: 18px;
-    }
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: var(--danger);
+      color: #fff;
+    }
 
-    .modal-close-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
-      color: var(--text-sub);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-    }
-    .modal-close-btn:hover {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    @media (min-width: 900px) {
-      .main-layout { flex-direction: row; align-items: flex-start; }
-      .controls-panel { max-width: 400px; }
-    }
-  </style>
+    @media (min-width: 900px) {
+      .main-layout { flex-direction: row; align-items: flex-start; }
+      .controls-panel { max-width: 400px; }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="header">
-    <span class="header-badge">PRO ATHLETE PERFORMANCE</span>
-    <h1>MotionCheck AI Pro</h1>
-    <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
-  </div>
-
-  <div class="sports-hero-banner">
-    <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
-    <div class="sports-hero-overlay">
-      <div class="sports-hero-text">
-        <span>POWER & PRECISION</span> ANALYTICS ENGINE
-      </div>
-    </div>
-  </div>
-
-  <div class="main-layout">
-    <div class="video-card">
-      <video id="input_video" playsinline muted></video>
-      <canvas id="output_canvas" width="640" height="480"></canvas>
-    </div>
-
-    <div class="controls-panel">
-      <!-- Sports Menu Card -->
-      <div class="card">
-        <div class="card-sports-header">
-          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
-          <span class="card-sports-title">ตั้งค่าการซ้อม (TRAINING MENU)</span>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="user_name">ชื่อนักกีฬา</label>
-            <input type="text" id="user_name" placeholder="ระบุชื่อ" value="Athlete01">
-          </div>
-
-          <div class="form-group">
-            <label for="exercise_select">เลือกโปรแกรมฝึก</label>
-            <select id="exercise_select">
-              <option value="squat">Squat (สควอช)</option>
-              <option value="jump">Jump Landing (กระโดดลงสู่พื้น)</option>
-              <option value="balance">Balance (การทรงตัว)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Audio Alert Switch -->
-        <div class="audio-setting-box">
-          <span class="audio-setting-label">🔔 เสียงเตือนเมื่อท่าทางเสี่ยง</span>
-          <label class="switch">
-            <input type="checkbox" id="audio_toggle" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <!-- Guide Preview Box -->
-        <div id="exercise_guide_box" style="margin-bottom: 16px; text-align: center; background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
-          <span style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">📌 ท่าทางตัวอย่างที่ถูกต้อง</span>
-          <img id="guide_img" src="https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o" 
-               alt="Exercise Guide" 
-               style="width: 100%; max-height: 160px; object-fit: contain; border-radius: 6px; background: rgba(0,0,0,0.3);">
-          <p id="guide_text" style="font-size: 0.78rem; color: var(--text-sub); margin: 8px 0 0 0; line-height: 1.4;">
-            Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า
-          </p>
-        </div>
-        
-        <button id="toggle_btn" class="btn btn-start">🔥 เริ่มบันทึกการซ้อม</button>
-        <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
-      </div>
-
-      <!-- Realtime Dashboard -->
-      <div class="dashboard-grid">
-        <div class="stat-box">
-          <span class="stat-label">จำนวนรอบ (REPS)</span>
-          <span id="rep_display" class="stat-value" style="color: var(--primary); font-size: 1.8rem;">0</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">มุมเข่า (L | R)</span>
-          <span id="knee_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">มุมสะโพก (L | R)</span>
-          <span id="hip_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
-        </div>
-      </div>
-
-      <div class="status-banner">
-        <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
-      </div>
-
-      <!-- Sports Performance Summary Card -->
-      <div class="card summary-card">
-        <div class="summary-header-box">
-          <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
-          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">GRADE -</span>
-        </div>
-
-        <div class="progress-container">
-          <div class="progress-label-row">
-            <span>PERFORMANCE SAFE SCORE</span>
-            <strong id="safe_score_text">0%</strong>
-          </div>
-          <div class="progress-bar-bg">
-            <div id="safe_score_fill" class="progress-bar-fill"></div>
-          </div>
-        </div>
-
-        <div class="metrics-grid">
-          <div class="metric-item">
-            <span class="title">จำนวนครั้งรวม</span>
-            <span id="total_reps_val" class="value" style="color: var(--primary);">0 ครั้ง</span>
-          </div>
-          <div class="metric-item">
-            <span class="title">องศาเข่าต่ำสุด (L / R)</span>
-            <span id="min_knee_val" class="value">- / -</span>
-          </div>
-          <div class="metric-item">
-            <span class="title">ความสมดุล ซ้าย-ขวา</span>
-            <span id="symmetry_val" class="value">-</span>
-          </div>
-          <div class="metric-item">
-            <span class="title">เตือนความเสี่ยง</span>
-            <span id="warning_count_val" class="value" style="color: var(--danger);">0 ครั้ง</span>
-          </div>
-        </div>
-
-        <div class="feedback-box">
-          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการซ้อม" เพื่อวิเคราะห์การเคลื่อนไหว</span>
-        </div>
-
-        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลลงคลาวด์</button>
-        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:8px;"></span>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- History Log Section -->
-  <div id="history_section" class="card history-card">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:700; font-style:italic; text-transform:uppercase;">🏆 ประวัติบันทึกการฝึกย้อนหลัง</h3>
-      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; padding:4px 8px; font-weight:600;">ลบประวัติทั้งหมด</button>
-    </div>
-    <div class="history-table-wrapper">
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th>วัน-เวลา</th>
-            <th>นักกีฬา</th>
-            <th>ท่าทาง</th>
-            <th>จำนวนครั้ง</th>
-            <th>Safe Score</th>
-            <th>Grade</th>
-            <th>จัดการ</th>
-          </tr>
-        </thead>
-        <tbody id="history_table_body">
-          <tr>
-            <td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Detail Modal -->
-  <div id="detail_modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 style="margin:0; color:var(--primary); font-size:1.1rem; font-style:italic; text-transform:uppercase;" id="modal_title">รายละเอียดการฝึกเชิงลึก</h3>
-        <button id="close_modal_btn" class="modal-close-btn">✖</button>
-      </div>
-      <div id="modal_body"></div>
-    </div>
-  </div>
-
-  <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
-
-    const videoElement = document.getElementById('input_video');
-    const canvasElement = document.getElementById('output_canvas');
-    const canvasCtx = canvasElement.getContext('2d');
-    
-    const userNameInput = document.getElementById('user_name');
-    const exerciseSelect = document.getElementById('exercise_select');
-    const audioToggle = document.getElementById('audio_toggle');
-    const toggleBtn = document.getElementById('toggle_btn');
-    const toggleHistoryBtn = document.getElementById('toggle_history_btn');
-    const historySection = document.getElementById('history_section');
-    const historyTableBody = document.getElementById('history_table_body');
-    const clearHistoryBtn = document.getElementById('clear_history_btn');
-    const saveCloudBtn = document.getElementById('save_cloud_btn');
-    const saveStatusMsg = document.getElementById('save_status_msg');
-
-    const detailModal = document.getElementById('detail_modal');
-    const closeModalBtn = document.getElementById('close_modal_btn');
-    const modalBody = document.getElementById('modal_body');
-    
-    const repDisplay = document.getElementById('rep_display');
-    const kneeDisplay = document.getElementById('knee_display');
-    const hipDisplay = document.getElementById('hip_display');
-    const statusDisplay = document.getElementById('status_display');
-
-    const summaryUsername = document.getElementById('summary_username');
-    const summaryGrade = document.getElementById('summary_grade');
-    const safeScoreText = document.getElementById('safe_score_text');
-    const safeScoreFill = document.getElementById('safe_score_fill');
-    const totalRepsVal = document.getElementById('total_reps_val');
-    const minKneeVal = document.getElementById('min_knee_val');
-    const symmetryVal = document.getElementById('symmetry_val');
-    const warningCountVal = document.getElementById('warning_count_val');
-    const aiFeedbackText = document.getElementById('ai_feedback_text');
-
-    const guideImg = document.getElementById('guide_img');
-    const guideText = document.getElementById('guide_text');
-
-    const exerciseGuides = {
-      squat: {
-        img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o",
-        text: "Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า"
-      },
-      jump: {
-        img: "https://cdn.shopify.com/s/files/1/1281/4359/files/E8398_135art.jpg",
-        text: "Jump Landing: ย่อเข่าและสะโพกเล็กน้อยเพื่อซับแรงกระแทก ลงน้ำหนัก 2 ข้างเท่าๆ กัน"
-      },
-      balance: {
-        img: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcRmd1X-5G4UwO5y6Y5SU-qWRUhb_Fk9xYA1DWc2HF7w6pZipmQZlBaNY_XdcxZhSXjT0i76PWM8YgM0efM",
-        text: "Balance: เกร็งแกนกลางลำตัว รักษาระดับไหล่และสะโพกให้ขนานกับพื้น"
-      }
-    };
-
-    exerciseSelect.addEventListener('change', (e) => {
-      const selected = e.target.value;
-      if (exerciseGuides[selected]) {
-        guideImg.src = exerciseGuides[selected].img;
-        guideText.innerText = exerciseGuides[selected].text;
-      }
-    });
-
-    /* --- Audio Synthesizer Setup (Web Audio API) --- */
-    let audioCtx = null;
-    let lastSoundTime = 0;
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    function playBeepWarning() {
-      if (!audioToggle.checked) return;
-      
-      const now = Date.now();
-      if (now - lastSoundTime < 350) return; // ควบคุมคูลดาวน์ป้องกันเสียงตีกัน (Interval > 350ms)
-      lastSoundTime = now;
-
-      try {
-        initAudio();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // โน้ต A5 เสียงแหลมเตือนภัย
-        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
-
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.15);
-      } catch (e) {
-        console.error("Audio Playback Error:", e);
-      }
-    }
-
-    let isRecording = false;
-    let totalFrames = 0, safeFrames = 0, warningCount = 0;
-    let minLeftKnee = 999, minRightKnee = 999;
-    let totalDiff = 0, diffFrames = 0;
-    let repCount = 0, stage = "UP";
-    let lastCalculatedData = null;
-
-    userNameInput.addEventListener('input', () => {
-      summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
-    });
-
-    toggleBtn.addEventListener('click', () => {
-      initAudio(); // กระตุ้น Web Audio context จาก user interaction
-      isRecording = !isRecording;
-      if (isRecording) {
-        toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
-        toggleBtn.className = "btn btn-stop";
-        saveCloudBtn.disabled = true;
-        saveStatusMsg.innerText = "";
-        resetStats();
-      } else {
-        toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
-        toggleBtn.className = "btn btn-start";
-        calculateSummary();
-      }
-    });
-
-    toggleHistoryBtn.addEventListener('click', () => {
-      if (historySection.style.display === "block") {
-        historySection.style.display = "none";
-        toggleHistoryBtn.innerText = "🏆 ดูประวัติสถิติการฝึก";
-      } else {
-        historySection.style.display = "block";
-        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติสถิติ";
-        renderHistoryTable();
-      }
-    });
-
-    closeModalBtn.addEventListener('click', () => {
-      detailModal.style.display = "none";
-    });
-
-    clearHistoryBtn.addEventListener('click', () => {
-      if (confirm('คุณต้องการลบประวัติการฝึกทั้งหมดใช่หรือไม่?')) {
-        localStorage.removeItem('motionCheck_history');
-        renderHistoryTable();
-      }
-    });
-
-    function resetStats() {
-      totalFrames = 0; safeFrames = 0; warningCount = 0;
-      minLeftKnee = 999; minRightKnee = 999;
-      totalDiff = 0; diffFrames = 0;
-      repCount = 0; stage = "UP";
-      
-      repDisplay.innerText = "0";
-      summaryGrade.innerText = "GRADE -";
-      summaryGrade.style.color = "var(--text-sub)";
-      safeScoreText.innerText = "0%";
-      safeScoreFill.style.width = "0%";
-      aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
-    }
-
-    function calculateAngle(firstLandmark, midLandmark, lastLandmark) {
-      const radians = Math.atan2(lastLandmark.y - midLandmark.y, lastLandmark.x - midLandmark.x) -
-                      Math.atan2(firstLandmark.y - midLandmark.y, firstLandmark.x - midLandmark.x);
-      let angle = Math.abs((radians * 180.0) / Math.PI);
-      if (angle > 180.0) {
-        angle = 360.0 - angle;
-      }
-      return Math.round(angle);
-    }
-
-    function updateRepCounter(mode, kneeAngle) {
-      if (!isRecording) return;
-      if (kneeAngle < 100 && stage === "UP") {
-        stage = "DOWN";
-      }
-      if (kneeAngle > 155 && stage === "DOWN") {
-        stage = "UP";
-        repCount++;
-        repDisplay.innerText = repCount;
-      }
-    }
-
-    function calculateSummary() {
-      if (totalFrames === 0) {
-        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองเริ่มใหม่อีกครั้ง";
-        return;
-      }
-
-      const safeRatio = Math.round((safeFrames / totalFrames) * 100);
-      safeScoreText.innerText = safeRatio + "%";
-      safeScoreFill.style.width = safeRatio + "%";
-
-      totalRepsVal.innerText = repCount + " ครั้ง";
-      warningCountVal.innerText = warningCount + " ครั้ง";
-      
-      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
-      minKneeVal.innerText = minKneeStr;
-
-      const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
-      let symStr = `-`;
-      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
-      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
-      else symStr = `ต่างกันมาก (${avgDiff}°)`;
-      symmetryVal.innerText = symStr;
-
-      let grade = "C";
-      let gradeColor = "var(--danger)";
-      let feedback = "";
-
-      if (safeRatio >= 90 && warningCount <= 1) { 
-        grade = "A+"; 
-        gradeColor = "var(--success)"; 
-        feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
-      } else if (safeRatio >= 75) { 
-        grade = "B"; 
-        gradeColor = "var(--accent-neon)"; 
-        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
-      } else {
-        grade = "C";
-        gradeColor = "var(--danger)";
-        feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
-      }
-      
-      summaryGrade.innerText = "GRADE " + grade;
-      summaryGrade.style.color = gradeColor;
-      aiFeedbackText.innerText = feedback;
-
-      const timestamp = new Date().toLocaleString('th-TH');
-
-      lastCalculatedData = {
-        timestamp: timestamp,
-        userName: userNameInput.value.trim() || "Athlete01",
-        exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
-        reps: repCount,
-        safeScore: safeRatio,
-        minKnee: minKneeStr,
-        symmetry: symStr,
-        warnings: warningCount,
-        grade: grade,
-        feedback: feedback
-      };
-
-      saveCloudBtn.disabled = false;
-    }
-
-    saveCloudBtn.addEventListener('click', async () => {
-      if (!lastCalculatedData) return;
-
-      saveCloudBtn.disabled = true;
-      saveStatusMsg.style.color = "var(--warning)";
-      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
-
-      saveLocalHistory(lastCalculatedData);
-
-      if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
-        try {
-          const response = await fetch(WEB_APP_URL, {
-            method: "POST",
-            mode: "cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify(lastCalculatedData)
-          });
-
-          const res = await response.json();
-          if (res.result === "success") {
-            saveStatusMsg.style.color = "var(--success)";
-            saveStatusMsg.innerText = "✅ บันทึกลง Google Sheets และระบบสำเร็จ!";
-          } else {
-            throw new Error(res.message);
-          }
-        } catch (err) {
-          saveStatusMsg.style.color = "var(--warning)";
-          saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
-          console.error(err);
-        }
-      } else {
-        saveStatusMsg.style.color = "var(--success)";
-        saveStatusMsg.innerText = "✅ บันทึกลงในประวัติการฝึกเรียบร้อย!";
-      }
-    });
-
-    function saveLocalHistory(data) {
-      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
-      history.unshift(data);
-      localStorage.setItem('motionCheck_history', JSON.stringify(history));
-      renderHistoryTable();
-    }
-
-    function renderHistoryTable() {
-      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
-      if (history.length === 0) {
-        historyTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>`;
-        return;
-      }
-
-      historyTableBody.innerHTML = history.map((item, index) => `
-        <tr>
-          <td>${item.timestamp}</td>
-          <td><strong>${item.userName}</strong></td>
-          <td>${item.exercise}</td>
-          <td>${item.reps} ครั้ง</td>
-          <td style="color:${item.safeScore >= 80 ? 'var(--success)' : 'var(--warning)'}; font-weight:700;">${item.safeScore}%</td>
-          <td><span style="font-weight:800; font-style:italic;">${item.grade}</span></td>
-          <td><button class="btn-view-detail" onclick="showHistoryDetail(${index})">ดูข้อมูล</button></td>
-        </tr>
-      `).join('');
-    }
-
-    function showHistoryDetail(index) {
-      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
-      const item = history[index];
-      if (!item) return;
-
-      modalBody.innerHTML = `
-        <div style="font-size:0.9rem; line-height:1.6; color:var(--text-main);">
-          <p><strong>นักกีฬา:</strong> ${item.userName}</p>
-          <p><strong>โปรแกรมฝึก:</strong> ${item.exercise}</p>
-          <p><strong>เวลาที่บันทึก:</strong> ${item.timestamp}</p>
-          <hr style="border:0; border-top:1px solid var(--border-color); margin:12px 0;">
-          <p><strong>จำนวนครั้งรวม:</strong> ${item.reps} ครั้ง</p>
-          <p><strong>Safe Score:</strong> ${item.safeScore}%</p>
-          <p><strong>เกรดประเมิน:</strong> ${item.grade}</p>
-          <p><strong>องศาเข่าต่ำสุด (L/R):</strong> ${item.minKnee}</p>
-          <p><strong>ความสมดุล:</strong> ${item.symmetry}</p>
-          <p><strong>เตือนความเสี่ยง:</strong> ${item.warnings} ครั้ง</p>
-          <div style="margin-top:14px; background:rgba(255,255,255,0.04); padding:10px; border-radius:6px; border-left:3px solid var(--primary);">
-            <strong>คำแนะนำ AI:</strong> ${item.feedback}
-          </div>
-        </div>
-      `;
-      detailModal.style.display = "flex";
-    }
-
-    // MediaPipe Pose & Camera Logic Setup
-    function onResults(results) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-      if (results.poseLandmarks) {
-        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00f2fe', lineWidth: 3 });
-        drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#ff3b30', lineWidth: 2, radius: 4 });
-
-        const lm = results.poseLandmarks;
-        const leftKneeAngle = calculateAngle(lm[23], lm[25], lm[27]);
-        const rightKneeAngle = calculateAngle(lm[24], lm[26], lm[28]);
-        const leftHipAngle = calculateAngle(lm[11], lm[23], lm[25]);
-        const rightHipAngle = calculateAngle(lm[12], lm[24], lm[26]);
-
-        kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
-        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
-
-        const mode = exerciseSelect.value;
-        const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
-        updateRepCounter(mode, avgKneeAngle);
-
-        if (isRecording) {
-          totalFrames++;
-          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
-          totalDiff += diff;
-          diffFrames++;
-
-          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
-          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
-
-          let isSafeFrame = true;
-          if (mode === "squat" && diff > 15) isSafeFrame = false;
-          if (mode === "jump" && (leftKneeAngle < 80 || rightKneeAngle < 80)) isSafeFrame = false;
-          if (mode === "balance" && diff > 10) isSafeFrame = false;
-
-          if (isSafeFrame) {
-            safeFrames++;
-            statusDisplay.className = "status-safe";
-            statusDisplay.innerText = "✅ การเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
-          } else {
-            warningCount++;
-            statusDisplay.className = "status-danger";
-            statusDisplay.innerText = "⚠️ คำเตือน: ตรวจพบความเสี่ยงของการเคลื่อนไหว!";
-            
-            // ส่งเสียงเตือน Beep เมื่อพบมุมที่เสี่ยง
-            playBeepWarning();
-          }
-        } else {
-          statusDisplay.className = "status-safe";
-          statusDisplay.innerText = "พร้อมสำหรับการบันทึกการซ้อม";
-        }
-      } else {
-        statusDisplay.className = "status-warning";
-        statusDisplay.innerText = "🔍 กำลังค้นหาร่างกายในกล้อง...";
-      }
-      canvasCtx.restore();
-    }
-
-    const pose = new Pose({
-      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
-    });
-
-    pose.setOptions({
-      modelComplexity: 1,
-      smoothLandmarks: true,
-      enableSegmentation: false,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
-    });
-
-    pose.onResults(onResults);
-
-    const camera = new Camera(videoElement, {
-      onFrame: async () => {
-        await pose.send({ image: videoElement });
-      },
-      width: 640,
-      height: 480
-    });
-
-    camera.start();
-  </script>
-</body>
-</html>
+  <div class="header">
+    <span class="header-badge">PRO ATHLETE PERFORMANCE</span>
+    <h1>MotionCheck AI Pro</h1>
+    <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
+  </div>
+
+  <!-- Sports Hero Banner Section -->
+  <div class="sports-hero-banner">
+    <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
+    <div class="sports-hero-overlay">
+      <div class="sports-hero-text">
+        <span>POWER & PRECISION</span> ANALYTICS ENGINE
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="video-card">
+      <video id="input_video" playsinline muted></video>
+      <canvas id="output_canvas" width="640" height="480"></canvas>
+    </div>
+
+    <div class="controls-panel">
+      <!-- Sports Menu Card -->
+      <div class="card">
+        <div class="card-sports-header">
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
+          <span class="card-sports-title">ตั้งค่าการซ้อม (TRAINING MENU)</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="user_name">ชื่อนักกีฬา</label>
+            <input type="text" id="user_name" placeholder="ระบุชื่อ" value="Athlete01">
+          </div>
+
+          <div class="form-group">
+            <label for="exercise_select">เลือกโปรแกรมฝึก</label>
+            <select id="exercise_select">
+              <option value="squat">Squat (สควอช)</option>
+              <option value="jump">Jump Landing (กระโดดลงสู่พื้น)</option>
+              <option value="balance">Balance (การทรงตัว)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Guide Preview Box -->
+        <div id="exercise_guide_box" style="margin-bottom: 16px; text-align: center; background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <span style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">📌 ท่าทางตัวอย่างที่ถูกต้อง</span>
+          <img id="guide_img" src="https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o" 
+               alt="Exercise Guide" 
+               style="width: 100%; max-height: 160px; object-fit: contain; border-radius: 6px; background: rgba(0,0,0,0.3);">
+          <p id="guide_text" style="font-size: 0.78rem; color: var(--text-sub); margin: 8px 0 0 0; line-height: 1.4;">
+            Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า
+          </p>
+        </div>
+        
+        <button id="toggle_btn" class="btn btn-start">🔥 เริ่มบันทึกการซ้อม</button>
+        <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
+      </div>
+
+      <!-- Realtime Dashboard -->
+      <div class="dashboard-grid">
+        <div class="stat-box">
+          <span class="stat-label">จำนวนรอบ (REPS)</span>
+          <span id="rep_display" class="stat-value" style="color: var(--primary); font-size: 1.8rem;">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">มุมเข่า (L | R)</span>
+          <span id="knee_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">มุมสะโพก (L | R)</span>
+          <span id="hip_display" class="stat-value" style="font-size: 1.1rem;">0° | 0°</span>
+        </div>
+      </div>
+
+      <div class="status-banner">
+        <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
+      </div>
+
+      <!-- Sports Performance Summary Card -->
+      <div class="card summary-card">
+        <div class="summary-header-box">
+          <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
+          <span id="summary_grade" class="grade-badge" style="color: var(--text-sub);">GRADE -</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-label-row">
+            <span>PERFORMANCE SAFE SCORE</span>
+            <strong id="safe_score_text">0%</strong>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="safe_score_fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="title">จำนวนครั้งรวม</span>
+            <span id="total_reps_val" class="value" style="color: var(--primary);">0 ครั้ง</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">องศาเข่าต่ำสุด (L / R)</span>
+            <span id="min_knee_val" class="value">- / -</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">ความสมดุล ซ้าย-ขวา</span>
+            <span id="symmetry_val" class="value">-</span>
+          </div>
+          <div class="metric-item">
+            <span class="title">เตือนความเสี่ยง</span>
+            <span id="warning_count_val" class="value" style="color: var(--danger);">0 ครั้ง</span>
+          </div>
+        </div>
+
+        <div class="feedback-box">
+          <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการซ้อม" เพื่อวิเคราะห์การเคลื่อนไหว</span>
+        </div>
+
+        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลลงคลาวด์</button>
+        <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:8px;"></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- History Log Section -->
+  <div id="history_section" class="card history-card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:700; font-style:italic; text-transform:uppercase;">🏆 ประวัติบันทึกการฝึกย้อนหลัง</h3>
+      <button id="clear_history_btn" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; padding:4px 8px; font-weight:600;">ลบประวัติทั้งหมด</button>
+    </div>
+    <div class="history-table-wrapper">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>วัน-เวลา</th>
+            <th>นักกีฬา</th>
+            <th>ท่าทาง</th>
+            <th>จำนวนครั้ง</th>
+            <th>Safe Score</th>
+            <th>Grade</th>
+            <th>จัดการ</th>
+          </tr>
+        </thead>
+        <tbody id="history_table_body">
+          <tr>
+            <td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="detail_modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin:0; color:var(--primary); font-size:1.1rem; font-style:italic; text-transform:uppercase;" id="modal_title">รายละเอียดการฝึกเชิงลึก</h3>
+        <button id="close_modal_btn" class="modal-close-btn">✖</button>
+      </div>
+      <div id="modal_body"></div>
+    </div>
+  </div>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
+
+    const videoElement = document.getElementById('input_video');
+    const canvasElement = document.getElementById('output_canvas');
+    const canvasCtx = canvasElement.getContext('2d');
+    
+    const userNameInput = document.getElementById('user_name');
+    const exerciseSelect = document.getElementById('exercise_select');
+    const toggleBtn = document.getElementById('toggle_btn');
+    const toggleHistoryBtn = document.getElementById('toggle_history_btn');
+    const historySection = document.getElementById('history_section');
+    const historyTableBody = document.getElementById('history_table_body');
+    const clearHistoryBtn = document.getElementById('clear_history_btn');
+    const saveCloudBtn = document.getElementById('save_cloud_btn');
+    const saveStatusMsg = document.getElementById('save_status_msg');
+
+    const detailModal = document.getElementById('detail_modal');
+    const closeModalBtn = document.getElementById('close_modal_btn');
+    const modalBody = document.getElementById('modal_body');
+    
+    const repDisplay = document.getElementById('rep_display');
+    const kneeDisplay = document.getElementById('knee_display');
+    const hipDisplay = document.getElementById('hip_display');
+    const statusDisplay = document.getElementById('status_display');
+
+    const summaryUsername = document.getElementById('summary_username');
+    const summaryGrade = document.getElementById('summary_grade');
+    const safeScoreText = document.getElementById('safe_score_text');
+    const safeScoreFill = document.getElementById('safe_score_fill');
+    const totalRepsVal = document.getElementById('total_reps_val');
+    const minKneeVal = document.getElementById('min_knee_val');
+    const symmetryVal = document.getElementById('symmetry_val');
+    const warningCountVal = document.getElementById('warning_count_val');
+    const aiFeedbackText = document.getElementById('ai_feedback_text');
+
+    const guideImg = document.getElementById('guide_img');
+    const guideText = document.getElementById('guide_text');
+
+    const exerciseGuides = {
+      squat: {
+        img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o",
+        text: "Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า"
+      },
+      jump: {
+        img: "https://cdn.shopify.com/s/files/1/1281/4359/files/E8398_135art.jpg",
+        text: "Jump Landing: ย่อเข่าและสะโพกเล็กน้อยเพื่อซับแรงกระแทก ลงน้ำหนัก 2 ข้างเท่าๆ กัน"
+      },
+      balance: {
+        img: "https://encrypted-tbn3.gstatic.com/licensed-image?q=tbn:ANd9GcRmd1X-5G4UwO5y6Y5SU-qWRUhb_Fk9xYA1DWc2HF7w6pZipmQZlBaNY_XdcxZhSXjT0i76PWM8YgM0efM",
+        text: "Balance: เกร็งแกนกลางลำตัว รักษาระดับไหล่และสะโพกให้ขนานกับพื้น"
+      }
+    };
+
+    exerciseSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      if (exerciseGuides[selected]) {
+        guideImg.src = exerciseGuides[selected].img;
+        guideText.innerText = exerciseGuides[selected].text;
+      }
+    });
+
+    let isRecording = false;
+    let totalFrames = 0, safeFrames = 0, warningCount = 0;
+    let minLeftKnee = 999, minRightKnee = 999;
+    let totalDiff = 0, diffFrames = 0;
+    let repCount = 0, stage = "UP";
+    let lastCalculatedData = null;
+
+    userNameInput.addEventListener('input', () => {
+      summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      isRecording = !isRecording;
+      if (isRecording) {
+        toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
+        toggleBtn.className = "btn btn-stop";
+        saveCloudBtn.disabled = true;
+        saveStatusMsg.innerText = "";
+        resetStats();
+      } else {
+        toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
+        toggleBtn.className = "btn btn-start";
+        calculateSummary();
+      }
+    });
+
+    toggleHistoryBtn.addEventListener('click', () => {
+      if (historySection.style.display === "block") {
+        historySection.style.display = "none";
+        toggleHistoryBtn.innerText = "🏆 ดูประวัติสถิติการฝึก";
+      } else {
+        historySection.style.display = "block";
+        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติสถิติ";
+        renderHistoryTable();
+      }
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      detailModal.style.display = "none";
+    });
+
+    clearHistoryBtn.addEventListener('click', () => {
+      if (confirm('คุณต้องการลบประวัติการฝึกทั้งหมดใช่หรือไม่?')) {
+        localStorage.removeItem('motionCheck_history');
+        renderHistoryTable();
+      }
+    });
+
+    function resetStats() {
+      totalFrames = 0; safeFrames = 0; warningCount = 0;
+      minLeftKnee = 999; minRightKnee = 999;
+      totalDiff = 0; diffFrames = 0;
+      repCount = 0; stage = "UP";
+      
+      repDisplay.innerText = "0";
+      summaryGrade.innerText = "GRADE -";
+      summaryGrade.style.color = "var(--text-sub)";
+      safeScoreText.innerText = "0%";
+      safeScoreFill.style.width = "0%";
+      aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
+    }
+
+    function calculateAngle(firstLandmark, midLandmark, lastLandmark) {
+      const radians = Math.atan2(lastLandmark.y - midLandmark.y, lastLandmark.x - midLandmark.x) -
+                      Math.atan2(firstLandmark.y - midLandmark.y, firstLandmark.x - midLandmark.x);
+      let angle = Math.abs((radians * 180.0) / Math.PI);
+      if (angle > 180.0) {
+        angle = 360.0 - angle;
+      }
+      return Math.round(angle);
+    }
+
+    function updateRepCounter(mode, kneeAngle) {
+      if (!isRecording) return;
+      if (kneeAngle < 100 && stage === "UP") {
+        stage = "DOWN";
+      }
+      if (kneeAngle > 155 && stage === "DOWN") {
+        stage = "UP";
+        repCount++;
+        repDisplay.innerText = repCount;
+      }
+    }
+
+    function calculateSummary() {
+      if (totalFrames === 0) {
+        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองเริ่มใหม่อีกครั้ง";
+        return;
+      }
+
+      const safeRatio = Math.round((safeFrames / totalFrames) * 100);
+      safeScoreText.innerText = safeRatio + "%";
+      safeScoreFill.style.width = safeRatio + "%";
+
+      totalRepsVal.innerText = repCount + " ครั้ง";
+      warningCountVal.innerText = warningCount + " ครั้ง";
+      
+      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
+      minKneeVal.innerText = minKneeStr;
+
+      const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
+      let symStr = `-`;
+      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
+      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
+      else symStr = `ต่างกันมาก (${avgDiff}°)`;
+      symmetryVal.innerText = symStr;
+
+      let grade = "C";
+      let gradeColor = "var(--danger)";
+      let feedback = "";
+
+      if (safeRatio >= 90 && warningCount <= 1) { 
+        grade = "A+"; 
+        gradeColor = "var(--success)"; 
+        feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
+      } else if (safeRatio >= 75) { 
+        grade = "B"; 
+        gradeColor = "var(--accent-neon)"; 
+        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
+      } else {
+        grade = "C";
+        gradeColor = "var(--danger)";
+        feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
+      }
+      
+      summaryGrade.innerText = "GRADE " + grade;
+      summaryGrade.style.color = gradeColor;
+      aiFeedbackText.innerText = feedback;
+
+      const timestamp = new Date().toLocaleString('th-TH');
+
+      lastCalculatedData = {
+        timestamp: timestamp,
+        userName: userNameInput.value.trim() || "Athlete01",
+        exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
+        reps: repCount,
+        safeScore: safeRatio,
+        minKnee: minKneeStr,
+        symmetry: symStr,
+        warnings: warningCount,
+        grade: grade,
+        feedback: feedback
+      };
+
+      saveCloudBtn.disabled = false;
+    }
+
+    saveCloudBtn.addEventListener('click', async () => {
+      if (!lastCalculatedData) return;
+
+      saveCloudBtn.disabled = true;
+      saveStatusMsg.style.color = "var(--warning)";
+      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
+
+      saveLocalHistory(lastCalculatedData);
+
+      if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
+        try {
+          const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(lastCalculatedData)
+          });
+
+          const res = await response.json();
+          if (res.result === "success") {
+            saveStatusMsg.style.color = "var(--success)";
+            saveStatusMsg.innerText = "✅ บันทึกลง Google Sheets และระบบสำเร็จ!";
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (err) {
+          saveStatusMsg.style.color = "var(--warning)";
+          saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
+          console.error(err);
+        }
+      } else {
+        saveStatusMsg.style.color = "var(--success)";
+        saveStatusMsg.innerText = "✅ บันทึกลงในประวัติการฝึกเรียบร้อย!";
+      }
+    });
+
+    function saveLocalHistory(data) {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      history.unshift(data);
+      localStorage.setItem('motionCheck_history', JSON.stringify(history));
+      renderHistoryTable();
+    }
+
+    function renderHistoryTable() {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      if (history.length === 0) {
+        historyTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr
