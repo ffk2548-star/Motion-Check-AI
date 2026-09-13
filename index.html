@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionCheck AI Pro - High Precision Motion Analytics Engine</title>
+  <title>MotionCheck AI Pro - Sports Analytics Engine</title>
   
   <!-- MediaPipe Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -17,20 +18,25 @@
       --bg-color: #08090c;
       --card-bg: rgba(18, 22, 31, 0.85);
       --card-inner: rgba(10, 12, 18, 0.7);
-      --primary: #ff3b30;
+      --primary: #ff3b30; /* Sports Racing Red / Neon Orange */
       --primary-glow: rgba(255, 59, 48, 0.4);
-      --accent-neon: #00f2fe;
+      --accent-neon: #00f2fe; /* Neon Blue */
       --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
       --danger: #ff2a55;
       --warning: #ff9500;
       --text-main: #ffffff;
       --text-sub: #a1a1aa;
       --border-color: rgba(255, 255, 255, 0.12);
       --border-hover: rgba(255, 59, 48, 0.6);
+      --sports-skew: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
       --sports-skew-btn: polygon(6% 0%, 100% 0%, 94% 100%, 0% 100%);
     }
 
-    * { box-sizing: border-box; font-family: 'Kanit', -apple-system, sans-serif; }
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Kanit', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
     body {
       background: radial-gradient(circle at top center, #1a1e29 0%, #08090c 100%);
@@ -43,7 +49,12 @@
       min-height: 100vh;
     }
 
-    .header { text-align: center; margin-bottom: 24px; }
+    /* Header Styling - Sports Style */
+    .header { 
+      text-align: center; 
+      margin-bottom: 24px;
+      position: relative;
+    }
     .header-badge {
       display: inline-block;
       padding: 4px 16px;
@@ -68,118 +79,474 @@
       background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px; 
     }
-    .header p { margin: 0; color: var(--text-sub); font-size: 0.95rem; font-weight: 300; }
+    .header p { 
+      margin: 0; 
+      color: var(--text-sub); 
+      font-size: 0.95rem; 
+      font-weight: 300;
+    }
 
+    /* Sports Banner Image */
     .sports-hero-banner {
-      width: 100%; max-width: 1080px; height: 120px;
-      border-radius: 16px; overflow: hidden; margin-bottom: 20px;
-      position: relative; border: 1px solid var(--border-color);
+      width: 100%;
+      max-width: 1080px;
+      height: 120px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      position: relative;
+      border: 1px solid var(--border-color);
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .sports-hero-banner img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5) contrast(1.2); }
-    .sports-hero-overlay {
-      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(90deg, rgba(8,9,12,0.9) 0%, rgba(8,9,12,0.2) 50%, rgba(255,59,48,0.3) 100%);
-      display: flex; align-items: center; padding: 0 24px;
+    .sports-hero-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5) contrast(1.2);
     }
-    .sports-hero-text { font-size: 1.3rem; font-weight: 800; font-style: italic; text-transform: uppercase; color: #fff; }
-    .sports-hero-text span { color: var(--primary); }
+    .sports-hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, rgba(8,9,12,0.9) 0%, rgba(8,9,12,0.2) 50%, rgba(255,59,48,0.3) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+    }
+    .sports-hero-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .sports-hero-text span {
+      color: var(--primary);
+    }
 
-    .main-layout { display: flex; flex-direction: column; gap: 24px; width: 100%; max-width: 1080px; align-items: center; }
+    /* Layout */
+    .main-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      max-width: 1080px;
+      align-items: center;
+    }
 
+    /* Camera Card */
     .video-card {
-      position: relative; width: 100%; max-width: 640px; aspect-ratio: 4 / 3;
-      background-color: #000; border-radius: 16px; overflow: hidden;
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 4 / 3;
+      background-color: #000;
+      border-radius: 16px;
+      overflow: hidden;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border-color);
       transition: border-color 0.3s;
     }
-    .video-card:hover { border-color: var(--border-hover); }
+    .video-card:hover {
+      border-color: var(--border-hover);
+    }
 
     #input_video { display: none; }
-    #output_canvas { width: 100%; height: 100%; display: block; object-fit: cover; }
+    #output_canvas { 
+      width: 100%; 
+      height: 100%; 
+      display: block; 
+      object-fit: cover;
+    }
 
-    .controls-panel { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 18px; }
+    /* Controls & Menu Panels */
+    .controls-panel {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
     .card {
-      background: var(--card-bg); backdrop-filter: blur(16px);
-      border-radius: 16px; padding: 20px; border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
 
-    .card-sports-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-    .card-title-group { display: flex; align-items: center; gap: 10px; }
-    .card-sports-header img { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid var(--primary); }
-    .card-sports-title { font-size: 1.1rem; font-weight: 700; font-style: italic; text-transform: uppercase; color: #fff; }
-
-    .sound-toggle-btn {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); color: var(--text-main);
-      padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+    /* Sports Skew Header Bar on Cards */
+    .card-sports-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
     }
-    .sound-toggle-btn:hover { background: rgba(255, 59, 48, 0.2); border-color: var(--primary); }
-    .sound-toggle-btn.muted { color: var(--text-sub); background: rgba(0, 0, 0, 0.3); }
+    .card-sports-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--primary);
+    }
+    .card-sports-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #fff;
+    }
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    label { font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
+    /* Input Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label { 
+      font-size: 0.8rem; 
+      color: var(--text-sub); 
+      font-weight: 600; 
+      text-transform: uppercase;
+      letter-spacing: 0.5px; 
+    }
 
     input[type="text"], select {
-      width: 100%; padding: 12px 14px; background-color: var(--card-inner); color: var(--text-main);
-      border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-weight: 500; outline: none;
+      width: 100%;
+      padding: 12px 14px;
+      background-color: var(--card-inner);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s ease;
     }
-    input[type="text"]:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 12px var(--primary-glow); }
 
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    /* Buttons - Sports Skewed Style */
     .btn {
-      width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem;
-      font-style: italic; text-transform: uppercase; cursor: pointer; transition: all 0.25s ease;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      font-style: italic;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
     }
-    .btn-start { background: linear-gradient(135deg, #ff3b30 0%, #d32f2f 100%); color: #fff; box-shadow: 0 4px 16px var(--primary-glow); }
-    .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 22px var(--primary-glow); }
-    .btn-stop { background: linear-gradient(135deg, #27272a 0%, #18181b 100%); color: var(--danger); border: 1px solid var(--danger); }
-    .btn-stop:hover { background: var(--danger); color: #fff; transform: translateY(-2px); }
-    .btn-save { background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); color: #000; font-weight: 800; margin-top: 16px; }
-    .btn-save:disabled { background: #1e293b; color: #64748b; cursor: not-allowed; }
-    .btn-shortcut { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); color: var(--text-sub); margin-top: 10px; padding: 10px 14px; font-size: 0.88rem; }
 
-    .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .stat-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 10px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); }
+    .btn-start { 
+      background: linear-gradient(135deg, #ff3b30 0%, #d32f2f 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+    .btn-start:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 22px var(--primary-glow);
+    }
+
+    .btn-stop { 
+      background: linear-gradient(135deg, #27272a 0%, #18181b 100%); 
+      color: var(--danger); 
+      border: 1px solid var(--danger);
+      box-shadow: 0 4px 16px rgba(255, 42, 85, 0.2);
+    }
+    .btn-stop:hover { 
+      background: var(--danger);
+      color: #fff;
+      transform: translateY(-2px); 
+    }
+
+    .btn-save { 
+      background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); 
+      color: #000; 
+      font-weight: 800;
+      margin-top: 16px; 
+      box-shadow: 0 4px 16px rgba(0, 242, 254, 0.3);
+    }
+    .btn-save:hover:not(:disabled) { 
+      transform: translateY(-2px); 
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+    }
+    .btn-save:disabled { 
+      background: #1e293b; 
+      color: #64748b; 
+      box-shadow: none;
+      cursor: not-allowed; 
+    }
+    
+    .btn-shortcut {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      margin-top: 10px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+    }
+    .btn-shortcut:hover {
+      background: rgba(255, 59, 48, 0.1);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Live Display Dashboard */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 10px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      transition: border-color 0.2s;
+    }
+    .stat-box:hover {
+      border-color: var(--border-hover);
+    }
+
     .stat-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase; }
     .stat-value { font-size: 1.4rem; font-weight: 800; font-style: italic; margin-top: 4px; color: var(--primary); }
 
-    .status-banner { width: 100%; text-align: center; padding: 12px; border-radius: 12px; background: var(--card-inner); border: 1px solid var(--border-color); font-size: 0.95rem; font-weight: 600; }
+    .status-banner {
+      width: 100%;
+      text-align: center;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
     .status-safe { color: var(--success); }
     .status-danger { color: var(--danger); }
     .status-warning { color: var(--warning); }
 
-    .summary-card { border: 1px solid rgba(255, 59, 48, 0.3); background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%); }
-    .summary-header-box { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 16px; }
+    /* Summary Card Styling */
+    .summary-card {
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
+    }
+
+    .summary-header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+
     .summary-title-text { font-size: 1.05rem; font-weight: 700; font-style: italic; text-transform: uppercase; color: var(--primary); }
-    .grade-badge { font-size: 1.1rem; font-weight: 800; font-style: italic; padding: 4px 18px; border-radius: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid currentColor; }
+
+    .grade-badge {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-style: italic;
+      padding: 4px 18px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid currentColor;
+      box-shadow: 0 0 12px currentColor;
+    }
 
     .progress-container { margin-bottom: 16px; }
-    .progress-label-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 8px; font-weight: 600; }
-    .progress-bar-bg { width: 100%; height: 10px; background-color: var(--card-inner); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); }
-    .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff3b30 0%, #00f2fe 100%); transition: width 0.6s ease; border-radius: 6px; }
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background-color: var(--card-inner);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ff3b30 0%, #00f2fe 100%);
+      transition: width 0.6s ease;
+      border-radius: 6px;
+    }
 
-    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .metric-item { background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric-item {
+      background: var(--card-inner);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
     .metric-item .title { font-size: 0.72rem; color: var(--text-sub); display: block; text-transform: uppercase; font-weight: 600; }
     .metric-item .value { font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 3px; display: block; }
 
-    .feedback-box { background: rgba(255, 59, 48, 0.08); border-left: 4px solid var(--primary); padding: 12px 14px; border-radius: 0 8px 8px 0; font-size: 0.88rem; color: var(--text-main); line-height: 1.5; }
+    .feedback-box {
+      background: rgba(255, 59, 48, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
 
-    .history-card { display: none; width: 100%; max-width: 1080px; margin-top: 12px; }
-    .history-table-wrapper { overflow-x: auto; margin-top: 14px; border-radius: 8px; border: 1px solid var(--border-color); }
-    .history-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
-    .history-table th, .history-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-    .history-table th { color: var(--text-sub); background-color: var(--card-inner); font-weight: 600; text-transform: uppercase; }
+    /* History Log Table Section */
+    .history-card {
+      display: none;
+      width: 100%;
+      max-width: 1080px;
+      margin-top: 12px;
+    }
 
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 9, 12, 0.88); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
-    .modal-content { background: #12161f; border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 500px; padding: 24px; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 18px; }
-    .modal-close-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-sub); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .history-table-wrapper {
+      overflow-x: auto;
+      margin-top: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+
+    .history-table th, .history-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table th {
+      color: var(--text-sub);
+      background-color: var(--card-inner);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .history-table tbody tr {
+      transition: background-color 0.2s;
+    }
+
+    .history-table tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-view-detail {
+      background: rgba(255, 59, 48, 0.15);
+      color: var(--primary);
+      border: 1px solid var(--primary-glow);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-view-detail:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Modal Component UI */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(8, 9, 12, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: #12161f;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .modal-close-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-sub);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close-btn:hover {
+      background: var(--danger);
+      color: #fff;
+    }
 
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
@@ -190,11 +557,12 @@
 <body>
 
   <div class="header">
-    <span class="header-badge">HIGH PRECISION ENGINE v2.0</span>
+    <span class="header-badge">PRO ATHLETE PERFORMANCE</span>
     <h1>MotionCheck AI Pro</h1>
-    <p>ระบบตรวจจับการเคลื่อนไหวความแม่นยำสูง กรองสัญญาณรบกวนอัตโนมัติ</p>
+    <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
   </div>
 
+  <!-- Sports Hero Banner Section -->
   <div class="sports-hero-banner">
     <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
     <div class="sports-hero-overlay">
@@ -207,19 +575,15 @@
   <div class="main-layout">
     <div class="video-card">
       <video id="input_video" playsinline muted></video>
-      <canvas id="output_canvas" width="1280" height="720"></canvas>
+      <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
 
     <div class="controls-panel">
+      <!-- Sports Menu Card -->
       <div class="card">
         <div class="card-sports-header">
-          <div class="card-title-group">
-            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
-            <span class="card-sports-title">ตั้งค่าการซ้อม</span>
-          </div>
-          <button id="sound_toggle_btn" class="sound-toggle-btn">
-            <span id="sound_icon">🔊</span> <span id="sound_text">เปิดเสียงเตือน</span>
-          </button>
+          <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
+          <span class="card-sports-title">ตั้งค่าการซ้อม (TRAINING MENU)</span>
         </div>
 
         <div class="form-grid">
@@ -238,10 +602,12 @@
           </div>
         </div>
 
+        <!-- Guide Preview Box -->
         <div id="exercise_guide_box" style="margin-bottom: 16px; text-align: center; background: var(--card-inner); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
           <span style="font-size: 0.8rem; color: var(--accent-neon); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase;">📌 ท่าทางตัวอย่างที่ถูกต้อง</span>
           <img id="guide_img" src="https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o" 
-               alt="Exercise Guide" style="width: 100%; max-height: 160px; object-fit: contain; border-radius: 6px; background: rgba(0,0,0,0.3);">
+               alt="Exercise Guide" 
+               style="width: 100%; max-height: 160px; object-fit: contain; border-radius: 6px; background: rgba(0,0,0,0.3);">
           <p id="guide_text" style="font-size: 0.78rem; color: var(--text-sub); margin: 8px 0 0 0; line-height: 1.4;">
             Squat: ย่อสะโพกไปด้านหลัง รักษาหลังให้ตรง หัวเข่าชี้ทิศเดียวกับปลายเท้า
           </p>
@@ -251,6 +617,7 @@
         <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
       </div>
 
+      <!-- Realtime Dashboard -->
       <div class="dashboard-grid">
         <div class="stat-box">
           <span class="stat-label">จำนวนรอบ (REPS)</span>
@@ -267,9 +634,10 @@
       </div>
 
       <div class="status-banner">
-        <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้องระดับ HD...</span>
+        <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
       </div>
 
+      <!-- Sports Performance Summary Card -->
       <div class="card summary-card">
         <div class="summary-header-box">
           <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
@@ -316,6 +684,7 @@
     </div>
   </div>
 
+  <!-- History Log Section -->
   <div id="history_section" class="card history-card">
     <div style="display:flex; justify-content:space-between; align-items:center;">
       <h3 style="margin:0; color:var(--primary); font-size:1.15rem; font-weight:700; font-style:italic; text-transform:uppercase;">🏆 ประวัติบันทึกการฝึกย้อนหลัง</h3>
@@ -335,12 +704,15 @@
           </tr>
         </thead>
         <tbody id="history_table_body">
-          <tr><td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>
+          <tr>
+            <td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
 
+  <!-- Detail Modal -->
   <div id="detail_modal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -352,6 +724,7 @@
   </div>
 
   <script>
+    // ตั้งค่า Web App URL ของ Google Apps Script ที่นี่ (ถ้ามี)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
 
     const videoElement = document.getElementById('input_video');
@@ -390,57 +763,7 @@
     const guideImg = document.getElementById('guide_img');
     const guideText = document.getElementById('guide_text');
 
-    const soundToggleBtn = document.getElementById('sound_toggle_btn');
-    const soundIcon = document.getElementById('sound_icon');
-    const soundText = document.getElementById('sound_text');
-    let isSoundMuted = false;
-    let audioCtx = null;
-    let lastBeepTime = 0;
-
-    // --- High Precision Audio Synthesizer ---
-    soundToggleBtn.addEventListener('click', () => {
-      isSoundMuted = !isSoundMuted;
-      if (isSoundMuted) {
-        soundIcon.innerText = "🔇";
-        soundText.innerText = "ปิดเสียงเตือน";
-        soundToggleBtn.classList.add('muted');
-      } else {
-        soundIcon.innerText = "🔊";
-        soundText.innerText = "เปิดเสียงเตือน";
-        soundToggleBtn.classList.remove('muted');
-        playBeepSound(600, 'sine', 0.1);
-      }
-    });
-
-    function playBeepSound(frequency = 880, type = 'sawtooth', duration = 0.15) {
-      if (isSoundMuted) return;
-      const now = Date.now();
-      if (now - lastBeepTime < 300) return;
-      lastBeepTime = now;
-
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = type;
-        osc.frequency.value = frequency;
-
-        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {
-        console.error("Audio error:", e);
-      }
-    }
-
+    // Guide info array
     const exerciseGuides = {
       squat: {
         img: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQZre9fbnzDFw6oTjB3-N89qY1WDpTOf-vXhvJdjvZRWwEiIwMacGQowWeVA_KBTte7xN4Hg-mYhtHZc2o",
@@ -501,7 +824,9 @@
       }
     });
 
-    closeModalBtn.addEventListener('click', () => detailModal.style.display = "none");
+    closeModalBtn.addEventListener('click', () => {
+      detailModal.style.display = "none";
+    });
 
     function resetStats() {
       totalFrames = 0; safeFrames = 0; warningCount = 0;
@@ -526,7 +851,6 @@
         stage = "UP";
         repCount++;
         repDisplay.innerText = repCount;
-        playBeepSound(523.25, 'sine', 0.1);
       }
     }
 
@@ -621,6 +945,7 @@
         } catch (err) {
           saveStatusMsg.style.color = "var(--warning)";
           saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
+          console.error(err);
         }
       } else {
         saveStatusMsg.style.color = "var(--success)";
@@ -701,7 +1026,7 @@
       }
     });
 
-    // --- Math & High Accuracy Signal Smooth Filters ---
+    // --- Math & Angle Calculation Helpers ---
     function calculateAngle(A, B, C) {
       let radians = Math.atan2(C.y - B.y, C.x - B.x) - Math.atan2(A.y - B.y, A.x - B.x);
       let angle = Math.abs((radians * 180.0) / Math.PI);
@@ -709,21 +1034,7 @@
       return Math.round(angle);
     }
 
-    // Moving Average Signal Filter (ลดอาการสั่นกระตุกของมุมข้อต่อ)
-    const angleBuffers = {
-      leftKnee: [], rightKnee: [],
-      leftHip: [], rightHip: []
-    };
-
-    function getSmoothedAngle(key, rawAngle, windowSize = 5) {
-      const buffer = angleBuffers[key];
-      buffer.push(rawAngle);
-      if (buffer.length > windowSize) buffer.shift();
-      const sum = buffer.reduce((acc, val) => acc + val, 0);
-      return Math.round(sum / buffer.length);
-    }
-
-    // --- High Accuracy & Clean Skeleton Rendering Pipeline ---
+    // --- MediaPipe Pose Engine Integration ---
     function onResults(results) {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -732,43 +1043,23 @@
       if (results.poseLandmarks) {
         const lm = results.poseLandmarks;
 
-        // Key Joints Extraction
+        // Key Points Extraction (MediaPipe Pose Landmark Indices)
         const leftHip = lm[23], rightHip = lm[24];
         const leftKnee = lm[25], rightKnee = lm[26];
         const leftAnkle = lm[27], rightAnkle = lm[28];
         const leftShoulder = lm[11], rightShoulder = lm[12];
 
-        // 1. Visibility Gate Check (ตรวจสอบความน่าเชื่อถือของการเห็นข้อต่อ > 65%)
-        const isLegsVisible = leftHip.visibility > 0.65 && rightHip.visibility > 0.65 &&
-                              leftKnee.visibility > 0.65 && rightKnee.visibility > 0.65 &&
-                              leftAnkle.visibility > 0.65 && rightAnkle.visibility > 0.65;
-
-        if (!isLegsVisible) {
-          statusDisplay.innerText = "⚠️ กรุณาถอยห่างจากกล้อง หรือจัดแสงให้เห็นช่วงขาชัดเจน";
-          statusDisplay.className = "status-warning";
-          
-          // วาด Skeleton แบบส้มเตือนโปร่งแสงเมื่อเห็นไม่ชัด
-          drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: 'rgba(255, 149, 0, 0.4)', lineWidth: 3 });
-          canvasCtx.restore();
-          return;
-        }
-
-        // 2. Raw Angle Calculation & Smooth Filtering
-        const rawLeftKnee = calculateAngle(leftHip, leftKnee, leftAnkle);
-        const rawRightKnee = calculateAngle(rightHip, rightKnee, rightAnkle);
-        const rawLeftHip = calculateAngle(leftShoulder, leftHip, leftKnee);
-        const rawRightHip = calculateAngle(rightShoulder, rightHip, rightKnee);
-
-        const leftKneeAngle = getSmoothedAngle('leftKnee', rawLeftKnee);
-        const rightKneeAngle = getSmoothedAngle('rightKnee', rawRightKnee);
-        const leftHipAngle = getSmoothedAngle('leftHip', rawLeftHip);
-        const rightHipAngle = getSmoothedAngle('rightHip', rawRightHip);
+        // Calculate Angles
+        const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+        const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+        const leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        const rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
 
         // Update Live HUD UI
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
         hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        // Movement Processing Logic & Sound Trigger
+        // Movement Processing Logic
         const exercise = exerciseSelect.value;
         let isSafeFrame = true;
         let statusMessage = "ท่าทางการเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
@@ -782,12 +1073,10 @@
             isSafeFrame = false;
             statusMessage = "⚠️ เตือน: หัวเข่าซ้าย-ขวา ไม่สมดุล!";
             statusClass = "status-warning";
-            playBeepSound(600, 'square', 0.12);
           } else if (leftKneeAngle < 70 || rightKneeAngle < 70) {
             isSafeFrame = false;
             statusMessage = "🚫 เตือน: ย่อลึกเกินไป อาจส่งผลเสียต่อข้อเข่า!";
             statusClass = "status-danger";
-            playBeepSound(950, 'sawtooth', 0.2);
           }
         } else if (exercise === 'jump') {
           if (leftKneeAngle < 120 && rightKneeAngle < 120) {
@@ -796,7 +1085,6 @@
               isSafeFrame = false;
               statusMessage = "⚠️ เตือน: ลงสู่พื้นด้วยการรับน้ำหนักไม่เท่ากัน!";
               statusClass = "status-danger";
-              playBeepSound(950, 'sawtooth', 0.2);
             }
           }
         } else if (exercise === 'balance') {
@@ -805,17 +1093,20 @@
             isSafeFrame = false;
             statusMessage = "⚠️ เตือน: ลำตัวเอียง เสียการทรงตัว!";
             statusClass = "status-warning";
-            playBeepSound(600, 'square', 0.12);
           }
         }
 
         statusDisplay.innerText = statusMessage;
         statusDisplay.className = statusClass;
 
+        // Accumulate statistics when recording
         if (isRecording) {
           totalFrames++;
-          if (isSafeFrame) safeFrames++;
-          else warningCount++;
+          if (isSafeFrame) {
+            safeFrames++;
+          } else {
+            warningCount++;
+          }
 
           minLeftKnee = Math.min(minLeftKnee, leftKneeAngle);
           minRightKnee = Math.min(minRightKnee, rightKneeAngle);
@@ -824,84 +1115,41 @@
           diffFrames++;
         }
 
-        // -------------------------------------------------------------
-        // 🎨 CUSTOM HIGH-VISIBILITY & CLEAN SKELETON RENDERER
-        // -------------------------------------------------------------
-        
-        // กำหนดจุดที่ไม่ต้องการวาด (ใบหน้า: 0-10, ปลายนิ้วมือ: 17-22)
-        const ignoredIndices = new Set([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 21, 22]);
-
-        // สีของเส้นสเกเรตัน (ฟ้า นีออน = ปลอดภัย | ชมพู/แดง นีออน = มีอันตราย)
-        const lineColor = isSafeFrame ? '#00f2fe' : '#ff0055';
-
-        // 1. วาดเส้นเชื่อม (Connectors) เฉพาะเส้นที่ไม่เกี่ยวกับใบหน้า/นิ้วมือ
-        POSE_CONNECTIONS.forEach(([startIdx, endIdx]) => {
-          if (!ignoredIndices.has(startIdx) && !ignoredIndices.has(endIdx)) {
-            const startPoint = lm[startIdx];
-            const endPoint = lm[endIdx];
-
-            if (startPoint && endPoint && startPoint.visibility > 0.5 && endPoint.visibility > 0.5) {
-              canvasCtx.beginPath();
-              canvasCtx.moveTo(startPoint.x * canvasElement.width, startPoint.y * canvasElement.height);
-              canvasCtx.lineTo(endPoint.x * canvasElement.width, endPoint.y * canvasElement.height);
-              canvasCtx.lineWidth = 6;            // ขยายเส้นหนาขึ้นเป็น 6px (เห็นชัดเจน)
-              canvasCtx.strokeStyle = lineColor;
-              canvasCtx.lineCap = 'round';
-              canvasCtx.shadowColor = lineColor;   // เพิ่ม Glow เอฟเฟกต์เรืองแสง
-              canvasCtx.shadowBlur = 8;
-              canvasCtx.stroke();
-            }
-          }
-        });
-
-        // 2. วาดจุดข้อต่อ (Joint Landmarks) เฉพาะข้อต่อหลักร่างกาย
-        lm.forEach((landmark, index) => {
-          if (!ignoredIndices.has(index) && landmark.visibility > 0.5) {
-            const x = landmark.x * canvasElement.width;
-            const y = landmark.y * canvasElement.height;
-
-            canvasCtx.beginPath();
-            canvasCtx.arc(x, y, 8, 0, 2 * Math.PI); // ขนาดจุดใหญ่ขึ้น 8px
-            canvasCtx.fillStyle = '#ffe600';        // สีเหลืองสว่างสดใส (High Contrast)
-            canvasCtx.shadowColor = '#ffe600';
-            canvasCtx.shadowBlur = 10;
-            canvasCtx.fill();
-
-            // ขอบจุดข้อต่อสีขาว เพื่อความคมชัด
-            canvasCtx.lineWidth = 2.5;
-            canvasCtx.strokeStyle = '#ffffff';
-            canvasCtx.stroke();
-          }
-        });
+        // Draw Skeleton Connections & Joints
+        drawConnectors(canvasCtx, lm, POSE_CONNECTIONS, { color: isSafeFrame ? '#00f2fe' : '#ff2a55', lineWidth: 3 });
+        drawLandmarks(canvasCtx, lm, { color: '#ff3b30', fillColor: '#ffffff', lineWidth: 2, radius: 4 });
       }
       canvasCtx.restore();
     }
 
-    // --- MediaPipe High Precision Configuration ---
+    // Initialize MediaPipe Pose Model
     const pose = new Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
     });
 
     pose.setOptions({
-      modelComplexity: 2,         // 🎯 โมเดลความละเอียดสูงสุด (Heavy Weight Model)
-      smoothLandmarks: true,       // 🎯 เปิดการเกลี่ยจุดเพื่อลดการกระตุก
+      modelComplexity: 1,
+      smoothLandmarks: true,
       enableSegmentation: false,
-      minDetectionConfidence: 0.7, // 🎯 ปรับเพิ่มความมั่นใจในการจับโครงร่างเป็น 70%
-      minTrackingConfidence: 0.7   // 🎯 ปรับเพิ่มความมั่นใจในการติดตามจุดเป็น 70%
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.6
     });
 
     pose.onResults(onResults);
 
-    // Initialize Camera Feed HD Resolution
+    // Initialize Camera Feed
     const camera = new Camera(videoElement, {
       onFrame: async () => {
         await pose.send({ image: videoElement });
       },
-      width: 1280, // 🎯 ความละเอียดกล้องระดับ HD 720p
-      height: 720
+      width: 640,
+      height: 480
     });
 
     camera.start();
   </script>
 </body>
 </html>
+
+
+
