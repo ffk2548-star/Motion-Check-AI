@@ -92,7 +92,21 @@
     }
 
     #input_video { display: none; }
-    #output_canvas { width: 100%; height: 100%; display: block; object-fit: cover; transform: scaleX(-1); }
+    #output_canvas { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+    .countdown-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 8rem;
+      font-weight: 800;
+      color: var(--accent-neon);
+      text-shadow: 0 0 30px var(--accent-neon);
+      z-index: 10;
+    }
 
     .controls-panel {
       width: 100%;
@@ -207,7 +221,7 @@
     .history-table-wrapper { overflow-x: auto; margin-top: 14px; border-radius: 8px; border: 1px solid var(--border-color); }
     .history-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
     .history-table th, .history-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-    .history-table th { color: var(--text-sub); background-color: var(--card-inner); font-weight: 600; uppercase; }
+    .history-table th { color: var(--text-sub); background-color: var(--card-inner); font-weight: 600; text-transform: uppercase; }
 
     @media (min-width: 900px) {
       .main-layout { flex-direction: row; align-items: flex-start; }
@@ -227,6 +241,7 @@
     <div class="video-card">
       <video id="input_video" playsinline muted></video>
       <canvas id="output_canvas" width="640" height="480"></canvas>
+      <div id="countdown_overlay" class="countdown-overlay">3</div>
     </div>
 
     <div class="controls-panel">
@@ -258,7 +273,7 @@
       <!-- Realtime Dashboard -->
       <div class="dashboard-grid">
         <div class="stat-box">
-          <span class="stat-label">จำนวนรอบ (REPS)</span>
+          <span id="rep_label" class="stat-label">จำนวนรอบ (REPS)</span>
           <span id="rep_display" class="stat-value" style="color: var(--primary); font-size: 1.8rem;">0</span>
         </div>
         <div class="stat-box">
@@ -294,7 +309,7 @@
 
         <div class="metrics-grid">
           <div class="metric-item">
-            <span class="title">จำนวนครั้งรวม</span>
+            <span id="total_metric_label" class="title">จำนวนครั้งรวม</span>
             <span id="total_reps_val" class="value" style="color: var(--primary);">0 ครั้ง</span>
           </div>
           <div class="metric-item">
@@ -334,7 +349,7 @@
             <th>วัน-เวลา</th>
             <th>นักกีฬา</th>
             <th>ท่าทาง</th>
-            <th>จำนวนครั้ง</th>
+            <th>ผลการฝึก</th>
             <th>Safe Score</th>
             <th>Grade</th>
           </tr>
@@ -349,11 +364,13 @@
   </div>
 
   <script>
+    // ระบุ Web App URL จาก Google Apps Script ที่สร้างขึ้นที่นี่
     const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
     const canvasElement = document.getElementById('output_canvas');
     const canvasCtx = canvasElement.getContext('2d');
+    const countdownOverlay = document.getElementById('countdown_overlay');
     
     const userNameInput = document.getElementById('user_name');
     const exerciseSelect = document.getElementById('exercise_select');
@@ -365,6 +382,7 @@
     const saveCloudBtn = document.getElementById('save_cloud_btn');
     const saveStatusMsg = document.getElementById('save_status_msg');
 
+    const repLabel = document.getElementById('rep_label');
     const repDisplay = document.getElementById('rep_display');
     const kneeDisplay = document.getElementById('knee_display');
     const hipDisplay = document.getElementById('hip_display');
@@ -374,6 +392,7 @@
     const summaryGrade = document.getElementById('summary_grade');
     const safeScoreText = document.getElementById('safe_score_text');
     const safeScoreFill = document.getElementById('safe_score_fill');
+    const totalMetricLabel = document.getElementById('total_metric_label');
     const totalRepsVal = document.getElementById('total_reps_val');
     const minKneeVal = document.getElementById('min_knee_val');
     const symmetryVal = document.getElementById('symmetry_val');
@@ -381,11 +400,26 @@
     const aiFeedbackText = document.getElementById('ai_feedback_text');
 
     let isRecording = false;
+    let isCountingDown = false;
     let totalFrames = 0, safeFrames = 0, warningCount = 0;
     let minLeftKnee = 999, minRightKnee = 999;
     let totalDiff = 0, diffFrames = 0;
     let repCount = 0, stage = "UP";
+    let balanceFrames = 0;
+    let isCurrentFrameSafe = true;
     let lastCalculatedData = null;
+
+    // เปลี่ยน Label เมื่อเปลี่ยนโปรแกรมฝึก
+    exerciseSelect.addEventListener('change', () => {
+      if (exerciseSelect.value === 'balance') {
+        repLabel.innerText = "เวลารวม (SEC)";
+        totalMetricLabel.innerText = "เวลาค้างรวม";
+      } else {
+        repLabel.innerText = "จำนวนรอบ (REPS)";
+        totalMetricLabel.innerText = "จำนวนครั้งรวม";
+      }
+      resetStats();
+    });
 
     // -------------------------------------------------------------
     // VECTOR ANGLE MATH ENGINE (คำนวณองศาด้วย 3 จุดพิกัด)
@@ -405,22 +439,29 @@
     function onResults(results) {
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      
+      // Mirroring ภาพจากกล้องผ่าน Canvas Context
+      canvasCtx.translate(canvasElement.width, 0);
+      canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
       if (results.poseLandmarks) {
-        // วาดเส้นและจุดบนข้อต่อ
-        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00f2fe', lineWidth: 3 });
-        drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#ff3b30', lineWidth: 1, radius: 4 });
+        // กำหนดสี Skeleton ตามความปลอดภัย
+        const skeletonColor = isCurrentFrameSafe ? '#00f2fe' : '#ff2a55';
+        const landmarkColor = isCurrentFrameSafe ? '#10b981' : '#ff3b30';
+
+        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: skeletonColor, lineWidth: 3 });
+        drawLandmarks(canvasCtx, results.poseLandmarks, { color: landmarkColor, lineWidth: 1, radius: 4 });
 
         const lm = results.poseLandmarks;
 
-        // ดึงจุดพิกัดหลักสำหรับการวิเคราะห์
+        // จุดพิกัดหลัก
         const leftHip = lm[23], rightHip = lm[24];
         const leftKnee = lm[25], rightKnee = lm[26];
         const leftAnkle = lm[27], rightAnkle = lm[28];
         const leftShoulder = lm[11], rightShoulder = lm[12];
 
-        // คำนวณองศาข้อเข่า และสะโพก
+        // คำนวณองศา
         const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
         const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
         const leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
@@ -433,45 +474,65 @@
         if (isRecording) {
           totalFrames++;
 
-          // เก็บค่าสถิติมุมต่ำสุด
           if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
           if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
 
-          // คำนวณความสมดุล (Symmetry)
           const diff = Math.abs(leftKneeAngle - rightKneeAngle);
           totalDiff += diff;
           diffFrames++;
 
-          // การตรวจจับความเสี่ยง (เข่าบิด หรือ เอียง)
-          let isSafe = true;
+          // ตรวจสอบความปลอดภัยและความสมดุล
           if (diff > 15) { 
-            isSafe = false;
+            isCurrentFrameSafe = false;
             statusDisplay.className = "status-danger";
             statusDisplay.innerText = "⚠️ คำเตือน: น้ำหนักลงขาสองข้างไม่เท่ากัน!";
           } else {
+            isCurrentFrameSafe = true;
             statusDisplay.className = "status-safe";
             statusDisplay.innerText = "✅ ท่าทางมีความปลอดภัยและเสถียร";
           }
 
-          if (isSafe) safeFrames++;
+          if (isCurrentFrameSafe) safeFrames++;
           else warningCount++;
 
-          // ลอจิกการนับรอบ Reps (Squat Pattern)
-          const avgKnee = (leftKneeAngle + rightKneeAngle) / 2;
-          updateRepCounter(avgKnee);
+          // ประมวลผลลอจิกตามโปรแกรมฝึกที่เลือก
+          processExerciseLogic(leftKneeAngle, rightKneeAngle);
         }
       }
       canvasCtx.restore();
     }
 
-    function updateRepCounter(avgKneeAngle) {
-      if (avgKneeAngle < 100 && stage === "UP") {
-        stage = "DOWN";
-      }
-      if (avgKneeAngle > 150 && stage === "DOWN") {
-        stage = "UP";
-        repCount++;
-        repDisplay.innerText = repCount;
+    // -------------------------------------------------------------
+    // EXERCISE LOGIC ENGINE (SQUAT / JUMP / BALANCE)
+    // -------------------------------------------------------------
+    function processExerciseLogic(leftKneeAngle, rightKneeAngle) {
+      const currentEx = exerciseSelect.value;
+      const avgKnee = (leftKneeAngle + rightKneeAngle) / 2;
+
+      if (currentEx === "squat") {
+        if (avgKnee < 100 && stage === "UP") {
+          stage = "DOWN";
+        }
+        if (avgKnee > 150 && stage === "DOWN") {
+          stage = "UP";
+          repCount++;
+          repDisplay.innerText = repCount;
+        }
+      } else if (currentEx === "jump") {
+        if (avgKnee < 115 && stage === "UP") {
+          stage = "LANDING";
+        }
+        if (avgKnee > 155 && stage === "LANDING") {
+          stage = "UP";
+          repCount++;
+          repDisplay.innerText = repCount;
+        }
+      } else if (currentEx === "balance") {
+        if (isCurrentFrameSafe) {
+          balanceFrames++;
+          const seconds = Math.floor(balanceFrames / 30); // สมมติ 30 FPS
+          repDisplay.innerText = seconds + "s";
+        }
       }
     }
 
@@ -509,19 +570,47 @@
     });
 
     toggleBtn.addEventListener('click', () => {
-      isRecording = !isRecording;
-      if (isRecording) {
-        toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
-        toggleBtn.className = "btn btn-stop";
-        saveCloudBtn.disabled = true;
-        saveStatusMsg.innerText = "";
-        resetStats();
+      if (isCountingDown) return;
+
+      if (!isRecording) {
+        startCountdown();
       } else {
-        toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
-        toggleBtn.className = "btn btn-start";
-        calculateSummary();
+        stopRecording();
       }
     });
+
+    function startCountdown() {
+      isCountingDown = true;
+      let count = 3;
+      countdownOverlay.innerText = count;
+      countdownOverlay.style.display = "flex";
+
+      const timer = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countdownOverlay.innerText = count;
+        } else {
+          clearInterval(timer);
+          countdownOverlay.style.display = "none";
+          isCountingDown = false;
+          
+          // เริ่มบันทึกจริง
+          isRecording = true;
+          toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
+          toggleBtn.className = "btn btn-stop";
+          saveCloudBtn.disabled = true;
+          saveStatusMsg.innerText = "";
+          resetStats();
+        }
+      }, 1000);
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
+      toggleBtn.className = "btn btn-start";
+      calculateSummary();
+    }
 
     toggleHistoryBtn.addEventListener('click', () => {
       if (historySection.style.display === "block") {
@@ -543,7 +632,7 @@
       totalFrames = 0; safeFrames = 0; warningCount = 0;
       minLeftKnee = 999; minRightKnee = 999;
       totalDiff = 0; diffFrames = 0;
-      repCount = 0; stage = "UP";
+      repCount = 0; balanceFrames = 0; stage = "UP";
       
       repDisplay.innerText = "0";
       summaryGrade.innerText = "GRADE -";
@@ -562,7 +651,17 @@
       safeScoreText.innerText = safeRatio + "%";
       safeScoreFill.style.width = safeRatio + "%";
 
-      totalRepsVal.innerText = repCount + " ครั้ง";
+      const currentEx = exerciseSelect.value;
+      let displayResult = "";
+
+      if (currentEx === "balance") {
+        const sec = Math.floor(balanceFrames / 30);
+        displayResult = sec + " วินาที";
+      } else {
+        displayResult = repCount + " ครั้ง";
+      }
+
+      totalRepsVal.innerText = displayResult;
       warningCountVal.innerText = warningCount + " ครั้ง";
       
       const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
@@ -603,7 +702,7 @@
         timestamp: timestamp,
         userName: userNameInput.value.trim() || "Athlete01",
         exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
-        reps: repCount,
+        reps: displayResult,
         safeScore: safeRatio,
         grade: grade,
         feedback: feedback
@@ -613,6 +712,9 @@
       saveLocalHistory(lastCalculatedData);
     }
 
+    // -------------------------------------------------------------
+    // LOCAL STORAGE & CLOUD SAVE API
+    // -------------------------------------------------------------
     function saveLocalHistory(data) {
       let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
       history.unshift(data);
@@ -632,12 +734,43 @@
           <td>${item.timestamp || '-'}</td>
           <td>${item.userName}</td>
           <td>${item.exercise}</td>
-          <td>${item.reps} ครั้ง</td>
+          <td>${item.reps}</td>
           <td>${item.safeScore}%</td>
           <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--accent-neon)' : 'var(--danger)'}">${item.grade}</strong></td>
         </tr>
       `).join('');
     }
+
+    saveCloudBtn.addEventListener('click', async () => {
+      if (!lastCalculatedData) return;
+      
+      if (!WEB_APP_URL) {
+        saveStatusMsg.innerText = "❌ กรุณาระบุ WEB_APP_URL ของ Google Apps Script ในโค้ด";
+        saveStatusMsg.style.color = "var(--danger)";
+        return;
+      }
+
+      saveCloudBtn.disabled = true;
+      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูลลง Cloud...";
+      saveStatusMsg.style.color = "var(--text-sub)";
+
+      try {
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(lastCalculatedData)
+        });
+        
+        saveStatusMsg.innerText = "✅ บันทึกข้อมูลลง Google Sheets เรียบร้อยแล้ว!";
+        saveStatusMsg.style.color = "var(--success)";
+      } catch (error) {
+        console.error("Cloud Save Error:", error);
+        saveStatusMsg.innerText = "❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+        saveStatusMsg.style.color = "var(--danger)";
+        saveCloudBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
