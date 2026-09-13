@@ -754,11 +754,53 @@
     let repCount = 0, stage = "UP";
     let lastCalculatedData = null;
 
+    // ระบบสร้างเสียงเตือนด้วย Web Audio API (ไม่จำเป็นต้องมีไฟล์เสียงเพิ่มเติม)
+    let audioCtx = null;
+    let lastSoundTime = 0;
+
+    function playAlertSound() {
+      const now = Date.now();
+      // ตั้งระยะห่างการส่งเสียงเตือนอย่างน้อยทุกๆ 500ms เพื่อไม่ให้เสียงซ้อนกันถี่เกินไป
+      if (now - lastSoundTime < 500) return;
+      lastSoundTime = now;
+
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime); // ความถี่เสียง 600 Hz (เสียง Beep เตือน)
+        
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2); // เสียงสั้น 0.2 วินาที
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      } catch (e) {
+        console.error("Audio play failed:", e);
+      }
+    }
+
     userNameInput.addEventListener('input', () => {
       summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
     });
 
     toggleBtn.addEventListener('click', () => {
+      // เปิดใช้ AudioContext เมื่อผู้ใช้คลิกปุ่ม (ป้องกัน Browser Autoplay Block)
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      
       isRecording = !isRecording;
       if (isRecording) {
         toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
@@ -1113,6 +1155,11 @@
         statusDisplay.innerText = statusText;
         statusDisplay.className = statusClass;
 
+        // หากไม่อยู่ในเกณฑ์ความปลอดภัย (!isSafe) ให้ส่งเสียงเตือน
+        if (!isSafe) {
+          playAlertSound();
+        }
+
         if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
           totalFrames++;
           if (isSafe) safeFrames++; else warningCount++;
@@ -1165,4 +1212,3 @@
   </script>
 </body>
 </html>
-
