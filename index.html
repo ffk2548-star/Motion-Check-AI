@@ -48,7 +48,7 @@
       min-height: 100vh;
     }
 
-    /* Header Styling - Sports Style */
+    /* Header Styling */
     .header { 
       text-align: center; 
       margin-bottom: 24px;
@@ -87,7 +87,7 @@
       font-weight: 300;
     }
 
-    /* Sports Banner Image */
+    /* Banner Image */
     .sports-hero-banner {
       width: 100%;
       max-width: 1080px;
@@ -159,7 +159,7 @@
       object-fit: cover;
     }
 
-    /* Controls & Menu Panels */
+    /* Controls Panel */
     .controls-panel {
       width: 100%;
       max-width: 640px;
@@ -179,7 +179,6 @@
       position: relative;
     }
 
-    /* Sports Skew Header Bar on Cards */
     .card-sports-header {
       display: flex;
       align-items: center;
@@ -208,7 +207,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .form-group {
@@ -243,7 +242,55 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    /* Buttons - Sports Skewed Style */
+    /* Audio Toggle Switch Box */
+    .audio-setting-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-inner);
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+    .audio-setting-label {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #27272a;
+      transition: .3s;
+      border-radius: 24px;
+      border: 1px solid var(--border-color);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px; width: 16px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--primary); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* Buttons */
     .btn {
       width: 100%;
       padding: 14px;
@@ -438,7 +485,7 @@
       line-height: 1.5;
     }
 
-    /* History Log Table Section */
+    /* History Log Section */
     .history-card {
       display: none;
       width: 100%;
@@ -470,10 +517,6 @@
       background-color: var(--card-inner);
       font-weight: 600;
       text-transform: uppercase;
-    }
-
-    .history-table tbody tr {
-      transition: background-color 0.2s;
     }
 
     .history-table tbody tr:hover {
@@ -561,7 +604,6 @@
     <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
   </div>
 
-  <!-- Sports Hero Banner Section -->
   <div class="sports-hero-banner">
     <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
     <div class="sports-hero-overlay">
@@ -599,6 +641,15 @@
               <option value="balance">Balance (การทรงตัว)</option>
             </select>
           </div>
+        </div>
+
+        <!-- Audio Alert Switch -->
+        <div class="audio-setting-box">
+          <span class="audio-setting-label">🔔 เสียงเตือนเมื่อท่าทางเสี่ยง</span>
+          <label class="switch">
+            <input type="checkbox" id="audio_toggle" checked>
+            <span class="slider"></span>
+          </label>
         </div>
 
         <!-- Guide Preview Box -->
@@ -731,6 +782,7 @@
     
     const userNameInput = document.getElementById('user_name');
     const exerciseSelect = document.getElementById('exercise_select');
+    const audioToggle = document.getElementById('audio_toggle');
     const toggleBtn = document.getElementById('toggle_btn');
     const toggleHistoryBtn = document.getElementById('toggle_history_btn');
     const historySection = document.getElementById('history_section');
@@ -784,6 +836,48 @@
       }
     });
 
+    /* --- Audio Synthesizer Setup (Web Audio API) --- */
+    let audioCtx = null;
+    let lastSoundTime = 0;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playBeepWarning() {
+      if (!audioToggle.checked) return;
+      
+      const now = Date.now();
+      if (now - lastSoundTime < 350) return; // ควบคุมคูลดาวน์ป้องกันเสียงตีกัน (Interval > 350ms)
+      lastSoundTime = now;
+
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(880, audioCtx.currentTime); // โน้ต A5 เสียงแหลมเตือนภัย
+        osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {
+        console.error("Audio Playback Error:", e);
+      }
+    }
+
     let isRecording = false;
     let totalFrames = 0, safeFrames = 0, warningCount = 0;
     let minLeftKnee = 999, minRightKnee = 999;
@@ -796,6 +890,7 @@
     });
 
     toggleBtn.addEventListener('click', () => {
+      initAudio(); // กระตุ้น Web Audio context จาก user interaction
       isRecording = !isRecording;
       if (isRecording) {
         toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
@@ -983,42 +1078,102 @@
 
       historyTableBody.innerHTML = history.map((item, index) => `
         <tr>
-          <td>${item.timestamp || '-'}</td>
-          <td>${item.userName}</td>
+          <td>${item.timestamp}</td>
+          <td><strong>${item.userName}</strong></td>
           <td>${item.exercise}</td>
           <td>${item.reps} ครั้ง</td>
-          <td>${item.safeScore}%</td>
-          <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--accent-neon)' : 'var(--danger)'}">${item.grade}</strong></td>
-          <td><button class="btn-view-detail" onclick="viewHistoryDetail(${index})">ดูข้อมูล</button></td>
+          <td style="color:${item.safeScore >= 80 ? 'var(--success)' : 'var(--warning)'}; font-weight:700;">${item.safeScore}%</td>
+          <td><span style="font-weight:800; font-style:italic;">${item.grade}</span></td>
+          <td><button class="btn-view-detail" onclick="showHistoryDetail(${index})">ดูข้อมูล</button></td>
         </tr>
       `).join('');
     }
 
-    function viewHistoryDetail(index) {
+    function showHistoryDetail(index) {
       let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
       const item = history[index];
       if (!item) return;
 
       modalBody.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:12px;">
-          <div><span style="color:var(--text-sub); font-size:0.8rem;">วัน-เวลา:</span> <strong>${item.timestamp}</strong></div>
-          <div><span style="color:var(--text-sub); font-size:0.8rem;">นักกีฬา:</span> <strong>${item.userName}</strong></div>
-          <div><span style="color:var(--text-sub); font-size:0.8rem;">โปรแกรมฝึก:</span> <strong>${item.exercise}</strong></div>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:6px;">
-            <div class="metric-item"><span class="title">จำนวนครั้ง</span><span class="value" style="color:var(--primary);">${item.reps} ครั้ง</span></div>
-            <div class="metric-item"><span class="title">Safe Score</span><span class="value">${item.safeScore}%</span></div>
-            <div class="metric-item"><span class="title">มุมเข่าต่ำสุด</span><span class="value">${item.minKnee}</span></div>
-            <div class="metric-item"><span class="title">ความสมดุล</span><span class="value">${item.symmetry}</span></div>
-          </div>
-          <div class="feedback-box" style="margin-top:6px;">
-            <strong>คำแนะนำ AI:</strong><br>${item.feedback}
+        <div style="font-size:0.9rem; line-height:1.6; color:var(--text-main);">
+          <p><strong>นักกีฬา:</strong> ${item.userName}</p>
+          <p><strong>โปรแกรมฝึก:</strong> ${item.exercise}</p>
+          <p><strong>เวลาที่บันทึก:</strong> ${item.timestamp}</p>
+          <hr style="border:0; border-top:1px solid var(--border-color); margin:12px 0;">
+          <p><strong>จำนวนครั้งรวม:</strong> ${item.reps} ครั้ง</p>
+          <p><strong>Safe Score:</strong> ${item.safeScore}%</p>
+          <p><strong>เกรดประเมิน:</strong> ${item.grade}</p>
+          <p><strong>องศาเข่าต่ำสุด (L/R):</strong> ${item.minKnee}</p>
+          <p><strong>ความสมดุล:</strong> ${item.symmetry}</p>
+          <p><strong>เตือนความเสี่ยง:</strong> ${item.warnings} ครั้ง</p>
+          <div style="margin-top:14px; background:rgba(255,255,255,0.04); padding:10px; border-radius:6px; border-left:3px solid var(--primary);">
+            <strong>คำแนะนำ AI:</strong> ${item.feedback}
           </div>
         </div>
       `;
       detailModal.style.display = "flex";
     }
 
-    // MediaPipe Pose Setup
+    // MediaPipe Pose & Camera Logic Setup
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.poseLandmarks) {
+        drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#00f2fe', lineWidth: 3 });
+        drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#ff3b30', lineWidth: 2, radius: 4 });
+
+        const lm = results.poseLandmarks;
+        const leftKneeAngle = calculateAngle(lm[23], lm[25], lm[27]);
+        const rightKneeAngle = calculateAngle(lm[24], lm[26], lm[28]);
+        const leftHipAngle = calculateAngle(lm[11], lm[23], lm[25]);
+        const rightHipAngle = calculateAngle(lm[12], lm[24], lm[26]);
+
+        kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
+        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
+
+        const mode = exerciseSelect.value;
+        const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
+        updateRepCounter(mode, avgKneeAngle);
+
+        if (isRecording) {
+          totalFrames++;
+          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
+          totalDiff += diff;
+          diffFrames++;
+
+          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
+          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
+
+          let isSafeFrame = true;
+          if (mode === "squat" && diff > 15) isSafeFrame = false;
+          if (mode === "jump" && (leftKneeAngle < 80 || rightKneeAngle < 80)) isSafeFrame = false;
+          if (mode === "balance" && diff > 10) isSafeFrame = false;
+
+          if (isSafeFrame) {
+            safeFrames++;
+            statusDisplay.className = "status-safe";
+            statusDisplay.innerText = "✅ การเคลื่อนไหวอยู่ในเกณฑ์ปลอดภัย";
+          } else {
+            warningCount++;
+            statusDisplay.className = "status-danger";
+            statusDisplay.innerText = "⚠️ คำเตือน: ตรวจพบความเสี่ยงของการเคลื่อนไหว!";
+            
+            // ส่งเสียงเตือน Beep เมื่อพบมุมที่เสี่ยง
+            playBeepWarning();
+          }
+        } else {
+          statusDisplay.className = "status-safe";
+          statusDisplay.innerText = "พร้อมสำหรับการบันทึกการซ้อม";
+        }
+      } else {
+        statusDisplay.className = "status-warning";
+        statusDisplay.innerText = "🔍 กำลังค้นหาร่างกายในกล้อง...";
+      }
+      canvasCtx.restore();
+    }
+
     const pose = new Pose({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
     });
@@ -1033,104 +1188,6 @@
 
     pose.onResults(onResults);
 
-    function onResults(results) {
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
-      if (results.poseLandmarks) {
-        const lm = results.poseLandmarks;
-        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27];
-        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28];
-        const leftShoulder = lm[11], rightShoulder = lm[12];
-
-        let isSafeFrame = true;
-
-        if (leftHip && leftKnee && leftAnkle && rightHip && rightKnee && rightAnkle) {
-          const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
-          const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
-          const leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
-          const rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
-
-          kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
-          hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
-
-          const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
-          const selectedExercise = exerciseSelect.value;
-          updateRepCounter(selectedExercise, avgKneeAngle);
-
-          if (isRecording) {
-            totalFrames++;
-            if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
-            if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
-
-            const diff = Math.abs(leftKneeAngle - rightKneeAngle);
-            totalDiff += diff;
-            diffFrames++;
-
-            if (selectedExercise === 'squat' || selectedExercise === 'jump') {
-              if (diff > 15) {
-                isSafeFrame = false;
-                statusDisplay.innerText = "⚠️ น้ำหนักลงสองข้างไม่เท่ากัน!";
-                statusDisplay.className = "status-banner status-warning";
-              } else if (avgKneeAngle < 75) {
-                isSafeFrame = false;
-                statusDisplay.innerText = "❌ ย่อลึกเกินไป เสี่ยงเจ็บเข่า!";
-                statusDisplay.className = "status-banner status-danger";
-              } else {
-                statusDisplay.innerText = "✅ ท่าทางถูกต้อง ปลอดภัย";
-                statusDisplay.className = "status-banner status-safe";
-              }
-            } else if (selectedExercise === 'balance') {
-              const shoulderDiff = Math.abs(leftShoulder.y - rightShoulder.y);
-              if (shoulderDiff > 0.08) {
-                isSafeFrame = false;
-                statusDisplay.innerText = "⚠️ ไหล่ไม่เสมอกัน แกนกลางไม่นิ่ง!";
-                statusDisplay.className = "status-banner status-warning";
-              } else {
-                statusDisplay.innerText = "✅ ทรงตัวดีเยี่ยม";
-                statusDisplay.className = "status-banner status-safe";
-              }
-            }
-
-            if (isSafeFrame) {
-              safeFrames++;
-            } else {
-              warningCount++;
-            }
-          } else {
-            statusDisplay.innerText = "พร้อมใช้งาน - กดเริ่มบันทึกการซ้อม";
-            statusDisplay.className = "status-banner status-safe";
-          }
-        }
-
-        // กำหนดสีของสเกเลตัน (เขียว/ฟ้า = ปลอดภัย, แดง = มีความเสี่ยง)
-        const skeletonColor = isSafeFrame ? '#00f2fe' : '#ff2a55';
-        const jointColor = isSafeFrame ? '#ffffff' : '#ff3b30';
-
-        // วาดเส้นเชื่อมต่อ (Connectors) ยกเว้นเส้นที่เชื่อมกับใบหน้า (Index <= 10)
-        const filteredConnections = POSE_CONNECTIONS.filter(([start, end]) => start > 10 && end > 10);
-        drawConnectors(canvasCtx, results.poseLandmarks, filteredConnections, { 
-          color: skeletonColor, 
-          lineWidth: 4 
-        });
-
-        // วาดจุดข้อต่อ (Landmarks) ซ่อนจุดบนใบหน้า (Index 0 ถึง 10)
-        const bodyLandmarks = results.poseLandmarks.map((pt, index) => index <= 10 ? { x: 0, y: 0, z: 0, visibility: 0 } : pt);
-        drawLandmarks(canvasCtx, bodyLandmarks, { 
-          color: jointColor, 
-          fillColor: skeletonColor,
-          lineWidth: 2, 
-          radius: 4 
-        });
-
-      } else {
-        statusDisplay.innerText = "⚠️ ไม่พบร่างกายในกล้อง";
-        statusDisplay.className = "status-banner status-warning";
-      }
-      canvasCtx.restore();
-    }
-
     const camera = new Camera(videoElement, {
       onFrame: async () => {
         await pose.send({ image: videoElement });
@@ -1139,13 +1196,7 @@
       height: 480
     });
 
-    camera.start().then(() => {
-      statusDisplay.innerText = "กล้องพร้อมใช้งาน - กดเริ่มบันทึกการซ้อม";
-    }).catch(err => {
-      console.error(err);
-      statusDisplay.innerText = "❌ ไม่สามารถเข้าถึงกล้องได้";
-      statusDisplay.className = "status-banner status-danger";
-    });
+    camera.start();
   </script>
 </body>
 </html>
