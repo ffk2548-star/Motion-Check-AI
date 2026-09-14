@@ -16,9 +16,9 @@
       --bg-color: #08090c;
       --card-bg: rgba(18, 22, 31, 0.85);
       --card-inner: rgba(10, 12, 18, 0.7);
-      --primary: #ff3b30;
+      --primary: #ff3b30; /* Sports Racing Red / Neon Orange */
       --primary-glow: rgba(255, 59, 48, 0.4);
-      --accent-neon: #00f2fe;
+      --accent-neon: #00f2fe; /* Neon Blue */
       --success: #10b981;
       --success-glow: rgba(16, 185, 129, 0.35);
       --danger: #ff2a55;
@@ -47,6 +47,7 @@
       min-height: 100vh;
     }
 
+    /* Header Styling - Sports Style */
     .header { 
       text-align: center; 
       margin-bottom: 24px;
@@ -85,6 +86,7 @@
       font-weight: 300;
     }
 
+    /* Sports Banner Image */
     .sports-hero-banner {
       width: 100%;
       max-width: 1080px;
@@ -122,6 +124,7 @@
       color: var(--primary);
     }
 
+    /* Layout */
     .main-layout {
       display: flex;
       flex-direction: column;
@@ -131,6 +134,7 @@
       align-items: center;
     }
 
+    /* Camera Card */
     .video-card {
       position: relative;
       width: 100%;
@@ -154,6 +158,7 @@
       object-fit: cover;
     }
 
+    /* Controls & Menu Panels */
     .controls-panel {
       width: 100%;
       max-width: 640px;
@@ -173,6 +178,7 @@
       position: relative;
     }
 
+    /* Sports Skew Header Bar on Cards */
     .card-sports-header {
       display: flex;
       align-items: center;
@@ -196,6 +202,7 @@
       color: #fff;
     }
 
+    /* Input Form Styles */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -235,6 +242,7 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
+    /* Buttons - Sports Skewed Style */
     .btn {
       width: 100%;
       padding: 14px;
@@ -307,46 +315,7 @@
       color: var(--primary);
     }
 
-    /* กล่องแสดงตัวอย่างท่าทางที่ถูกต้อง ( Custom Images ) */
-    .reference-guide-box {
-      margin-top: 14px;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-    }
-    .reference-guide-title {
-      font-size: 0.8rem;
-      color: var(--accent-neon);
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .reference-img-container {
-      width: 100%;
-      height: 160px;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      background-color: #fff; /* พื้นหลังขาวเพื่อให้รูปการ์ตูนดูเด่นชัด */
-      position: relative;
-    }
-    .reference-img-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* ปรับให้เห็นรูปเต็มๆ ไม่โดนตัดขอบ */
-      transition: transform 0.3s ease;
-    }
-    .reference-img-container img:hover {
-      transform: scale(1.03);
-    }
-
+    /* Live Display Dashboard */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -388,6 +357,7 @@
     .status-danger { color: var(--danger); }
     .status-warning { color: var(--warning); }
 
+    /* Summary Card Styling */
     .summary-card {
       border: 1px solid rgba(255, 59, 48, 0.3);
       background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
@@ -467,6 +437,7 @@
       line-height: 1.5;
     }
 
+    /* History Log Table Section */
     .history-card {
       display: none;
       width: 100%;
@@ -524,6 +495,7 @@
       color: #fff;
     }
 
+    /* Modal Component UI */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -588,6 +560,7 @@
     <p>ระบบตรวจจับการเคลื่อนไหว และประเมินผลการฝึกรายบุคคลสไตล์สปอร์ต</p>
   </div>
 
+  <!-- Sports Hero Banner Section -->
   <div class="sports-hero-banner">
     <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop" alt="Sports Banner">
     <div class="sports-hero-overlay">
@@ -621,23 +594,13 @@
             <label for="exercise_select">เลือกโปรแกรมฝึก</label>
             <select id="exercise_select">
               <option value="squat">Squat (สควอช)</option>
-              <option value="jump">Jump Landing (กระโดด)</option>
+              <option value="jump">Jump Landing (กระโดดลงสู่พื้น)</option>
               <option value="balance">Balance (การทรงตัว)</option>
             </select>
           </div>
         </div>
-
-        <!-- 🖼️ กล่องแสดงตัวอย่างท่าทางที่ถูกต้อง (เปลี่ยนรูปใหม่ตามที่คุณส่งมา) -->
-        <div class="reference-guide-box">
-          <div class="reference-guide-title">
-            <span>💡 ตัวอย่างท่าฝึกที่ถูกต้อง</span>
-          </div>
-          <div class="reference-img-container">
-            <img id="reference_pose_img" src="" alt="Correct Pose Reference">
-          </div>
-        </div>
         
-        <button id="toggle_btn" class="btn btn-start" style="margin-top: 14px;">🔥 เริ่มบันทึกการซ้อม</button>
+        <button id="toggle_btn" class="btn btn-start">🔥 เริ่มบันทึกการซ้อม</button>
         <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
       </div>
 
@@ -748,6 +711,7 @@
   </div>
 
   <script>
+    // ตั้งค่า Web App URL ของ Google Apps Script ที่นี่ (ถ้ามี)
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
 
     const videoElement = document.getElementById('input_video');
@@ -756,7 +720,6 @@
     
     const userNameInput = document.getElementById('user_name');
     const exerciseSelect = document.getElementById('exercise_select');
-    const referencePoseImg = document.getElementById('reference_pose_img');
     const toggleBtn = document.getElementById('toggle_btn');
     const toggleHistoryBtn = document.getElementById('toggle_history_btn');
     const historySection = document.getElementById('history_section');
@@ -791,13 +754,414 @@
     let repCount = 0, stage = "UP";
     let lastCalculatedData = null;
 
-    // 🖼️ ฐานข้อมูลรูปภาพใหม่ที่คุณส่งมา (ฝังผ่าน Base64)
-    const exerciseImages = {
-      squat: "data:image/jpeg;base64,...", // ถูกแทนที่ด้วยภาพอินโฟกราฟิก Squat (ภาพที่ 3 ของคุณ)
-      jump: "data:image/jpeg;base64,...",  // ถูกแทนที่ด้วยภาพสเต็ป Jump (ภาพที่ 2 ของคุณ)
-      balance: "data:image/webp;base64,..." // ถูกแทนที่ด้วยภาพ Pistol Squat (ภาพที่ 1 ของคุณ)
+    userNameInput.addEventListener('input', () => {
+      summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      isRecording = !isRecording;
+      if (isRecording) {
+        toggleBtn.innerText = "⏹️ หยุดบันทึกและสรุปผล";
+        toggleBtn.className = "btn btn-stop";
+        saveCloudBtn.disabled = true;
+        saveStatusMsg.innerText = "";
+        resetStats();
+      } else {
+        toggleBtn.innerText = "🔥 เริ่มบันทึกการซ้อม";
+        toggleBtn.className = "btn btn-start";
+        calculateSummary();
+      }
+    });
+
+    toggleHistoryBtn.addEventListener('click', () => {
+      if (historySection.style.display === "block") {
+        historySection.style.display = "none";
+        toggleHistoryBtn.innerText = "🏆 ดูประวัติสถิติการฝึก";
+      } else {
+        historySection.style.display = "block";
+        toggleHistoryBtn.innerText = "🔼 ซ่อนประวัติสถิติ";
+        renderHistoryTable();
+      }
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+      detailModal.style.display = "none";
+    });
+
+    function resetStats() {
+      totalFrames = 0; safeFrames = 0; warningCount = 0;
+      minLeftKnee = 999; minRightKnee = 999;
+      totalDiff = 0; diffFrames = 0;
+      repCount = 0; stage = "UP";
+      
+      repDisplay.innerText = "0";
+      summaryGrade.innerText = "GRADE -";
+      summaryGrade.style.color = "var(--text-sub)";
+      safeScoreText.innerText = "0%";
+      safeScoreFill.style.width = "0%";
+      aiFeedbackText.innerText = "กำลังประเมินและวิเคราะห์ข้อมูลการเคลื่อนไหว...";
+    }
+
+    function updateRepCounter(mode, kneeAngle) {
+      if (!isRecording) return;
+      if (kneeAngle < 100 && stage === "UP") {
+        stage = "DOWN";
+      }
+      if (kneeAngle > 155 && stage === "DOWN") {
+        stage = "UP";
+        repCount++;
+        repDisplay.innerText = repCount;
+      }
+    }
+
+    function calculateSummary() {
+      if (totalFrames === 0) {
+        aiFeedbackText.innerText = "ไม่พบข้อมูลการฝึก กรุณาลองเริ่มใหม่อีกครั้ง";
+        return;
+      }
+
+      const safeRatio = Math.round((safeFrames / totalFrames) * 100);
+      safeScoreText.innerText = safeRatio + "%";
+      safeScoreFill.style.width = safeRatio + "%";
+
+      totalRepsVal.innerText = repCount + " ครั้ง";
+      warningCountVal.innerText = warningCount + " ครั้ง";
+      
+      const minKneeStr = `${minLeftKnee === 999 ? '-' : minLeftKnee + '°'} / ${minRightKnee === 999 ? '-' : minRightKnee + '°'}`;
+      minKneeVal.innerText = minKneeStr;
+
+      const avgDiff = diffFrames > 0 ? Math.round(totalDiff / diffFrames) : 0;
+      let symStr = `-`;
+      if (avgDiff <= 5) symStr = `ดีเยี่ยม (${avgDiff}°)`;
+      else if (avgDiff <= 12) symStr = `ปานกลาง (${avgDiff}°)`;
+      else symStr = `ต่างกันมาก (${avgDiff}°)`;
+      symmetryVal.innerText = symStr;
+
+      let grade = "C";
+      let gradeColor = "var(--danger)";
+      let feedback = "";
+
+      if (safeRatio >= 90 && warningCount <= 1) { 
+        grade = "A+"; 
+        gradeColor = "var(--success)"; 
+        feedback = "ยอดเยี่ยม! การเคลื่อนไหวเสถียร สมดุลซ้าย-ขวาดีเยี่ยม และมีความปลอดภัยสูง";
+      } else if (safeRatio >= 75) { 
+        grade = "B"; 
+        gradeColor = "var(--accent-neon)"; 
+        feedback = "ทำได้ดี! มีจุดเสี่ยงเล็กน้อย ควรระวังการกระจายน้ำหนักลงขาทั้งสองข้างให้เท่ากัน";
+      } else {
+        grade = "C";
+        gradeColor = "var(--danger)";
+        feedback = "ควรปรับปรุง: พบความเสี่ยงบ่อยครั้ง แนะนำให้ฝึกช้าลงและจัดระเบียบร่างกาย";
+      }
+      
+      summaryGrade.innerText = "GRADE " + grade;
+      summaryGrade.style.color = gradeColor;
+      aiFeedbackText.innerText = feedback;
+
+      const timestamp = new Date().toLocaleString('th-TH');
+
+      lastCalculatedData = {
+        timestamp: timestamp,
+        userName: userNameInput.value.trim() || "Athlete01",
+        exercise: exerciseSelect.options[exerciseSelect.selectedIndex].text,
+        reps: repCount,
+        safeScore: safeRatio,
+        minKnee: minKneeStr,
+        symmetry: symStr,
+        warnings: warningCount,
+        grade: grade,
+        feedback: feedback
+      };
+
+      saveCloudBtn.disabled = false;
+    }
+
+    saveCloudBtn.addEventListener('click', async () => {
+      if (!lastCalculatedData) return;
+
+      saveCloudBtn.disabled = true;
+      saveStatusMsg.style.color = "var(--warning)";
+      saveStatusMsg.innerText = "⏳ กำลังบันทึกข้อมูล...";
+
+      saveLocalHistory(lastCalculatedData);
+
+      if (WEB_APP_URL && WEB_APP_URL.trim() !== "") {
+        try {
+          const response = await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(lastCalculatedData)
+          });
+
+          const res = await response.json();
+          if (res.result === "success") {
+            saveStatusMsg.style.color = "var(--success)";
+            saveStatusMsg.innerText = "✅ บันทึกลง Google Sheets และระบบสำเร็จ!";
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (err) {
+          saveStatusMsg.style.color = "var(--warning)";
+          saveStatusMsg.innerText = "✅ บันทึกลงในเครื่องเรียบร้อย (ส่งไปยัง Cloud ไม่สำเร็จ)";
+          console.error(err);
+        }
+      } else {
+        saveStatusMsg.style.color = "var(--success)";
+        saveStatusMsg.innerText = "✅ บันทึกลงในประวัติการฝึกเรียบร้อย!";
+      }
+    });
+
+    function saveLocalHistory(data) {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      history.unshift(data);
+      localStorage.setItem('motionCheck_history', JSON.stringify(history));
+      renderHistoryTable();
+    }
+
+    function renderHistoryTable() {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      if (history.length === 0) {
+        historyTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-sub);">ยังไม่มีข้อมูลบันทึก</td></tr>`;
+        return;
+      }
+
+      historyTableBody.innerHTML = history.map((item, index) => `
+        <tr>
+          <td>${item.timestamp || '-'}</td>
+          <td>${item.userName}</td>
+          <td>${item.exercise}</td>
+          <td>${item.reps} ครั้ง</td>
+          <td>${item.safeScore}%</td>
+          <td><strong style="color: ${item.grade === 'A+' ? 'var(--success)' : item.grade === 'B' ? 'var(--accent-neon)' : 'var(--danger)'}">${item.grade}</strong></td>
+          <td><button class="btn-view-detail" onclick="openDetailModal(${index})">🔍 รายละเอียด</button></td>
+        </tr>
+      `).join('');
+    }
+
+    window.openDetailModal = function(index) {
+      let history = JSON.parse(localStorage.getItem('motionCheck_history') || '[]');
+      const data = history[index];
+      if (!data) return;
+
+      modalBody.innerHTML = `
+        <div style="font-size:0.92rem; line-height:1.6;">
+          <p style="margin:4px 0; color:var(--text-sub);">นักกีฬา: <strong style="color:#fff;">${data.userName}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">วัน-เวลาบันทึก: <strong style="color:#fff;">${data.timestamp || '-'}</strong></p>
+          <p style="margin:4px 0; color:var(--text-sub);">ท่าทางการฝึก: <strong style="color:#fff;">${data.exercise}</strong></p>
+          <hr style="border-color:var(--border-color); margin:14px 0;">
+          <div class="metrics-grid">
+            <div class="metric-item">
+              <span class="title">จำนวนครั้ง</span>
+              <span class="value" style="color:var(--primary);">${data.reps} ครั้ง</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">Safe Score</span>
+              <span class="value" style="color:var(--accent-neon);">${data.safeScore}%</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">เกรดประเมิน</span>
+              <span class="value">${data.grade}</span>
+            </div>
+            <div class="metric-item">
+              <span class="title">คำเตือนความเสี่ยง</span>
+              <span class="value" style="color:var(--danger);">${data.warnings} ครั้ง</span>
+            </div>
+          </div>
+          <p style="margin:6px 0; color:var(--text-sub);">องศาเข่าต่ำสุด (L/R): <strong style="color:#fff;">${data.minKnee}</strong></p>
+          <p style="margin:6px 0; color:var(--text-sub);">ความสมดุล ซ้าย-ขวา: <strong style="color:#fff;">${data.symmetry}</strong></p>
+          <div class="feedback-box" style="margin-top:14px;">
+            <strong>คำแนะนำ AI:</strong><br>${data.feedback || 'ไม่มีคำแนะนำเพิ่มเติม'}
+          </div>
+        </div>
+      `;
+      detailModal.style.display = "flex";
     };
 
-    // ใช้ Data URI ที่ดึงจากรูปภาพที่คุณส่งมาโดยตรง
-    const customImages = {
-      squat: "data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgAQMAAABm4rX0AAAABlBMVEUAAAAAAAClZ7nDAAAAAXRSTlMAQObYZgAAIABJREFUeJzsvQd8U8f6P47uGv0eXnc3x7uH02Xruu5x3bvePfe223V3b1GvC0qg0qH0dKGAgPTeZq81x8sFkvv8/X3PfeY4d048m8835/HIOjNn9pkzM7vknP9TqCQAAMR/73f08b3l5vK8/T54vN3vM7g33f1fvXf7/vvL//37/v1fP/y01xZgEwMAMAADAB+8AAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGv793wAAAMADwAAGD/+gMAMADwAAGvฉันเป็นแค่โมเดลภาษา และคำถามนี้อยู่นอกเหนือความสามารถที่ออกแบบมาให้ฉันทำ
+    clearHistoryBtn.addEventListener('click', () => {
+      if (confirm('คุณต้องการลบประวัติการฝึกในเครื่องทั้งหมดใช่หรือไม่?')) {
+        localStorage.removeItem('motionCheck_history');
+        renderHistoryTable();
+      }
+    });
+
+    function calculateAngle(a, b, c) {
+      const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+      let angle = Math.abs((radians * 180.0) / Math.PI);
+      if (angle > 180.0) angle = 360.0 - angle;
+      return Math.round(angle);
+    }
+
+    // ฟังก์ชันวาดโครงกระดูกแบบเต็มตัว (Stickman Skeleton Framework)
+    function drawFullSkeleton(landmarks, color) {
+      // รายชื่อคู่จุดเชื่อมต่อโครงกระดูก
+      const connections = [
+        // ลำตัว (Torso)
+        [11, 12], [11, 23], [12, 24], [23, 24],
+        // แขนซ้าย (Left Arm)
+        [11, 13], [13, 15],
+        // แขนขวา (Right Arm)
+        [12, 14], [14, 16],
+        // ขาซ้าย (Left Leg)
+        [23, 25], [25, 27], [27, 31],
+        // ขาขวา (Right Leg)
+        [24, 26], [26, 28], [28, 32],
+        // ศีรษะและคอ (Head / Neck)
+        [0, 11], [0, 12]
+      ];
+
+      // 1. วาดเส้นกระดูกเชื่อมต่อ
+      connections.forEach(([i, j]) => {
+        const p1 = landmarks[i];
+        const p2 = landmarks[j];
+
+        if (p1 && p2 && p1.visibility > 0.4 && p2.visibility > 0.4) {
+          const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
+          const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
+
+          canvasCtx.beginPath();
+          canvasCtx.moveTo(pt1.x, pt1.y);
+          canvasCtx.lineTo(pt2.x, pt2.y);
+          canvasCtx.lineWidth = 4;
+          canvasCtx.strokeStyle = color;
+          canvasCtx.shadowColor = color;
+          canvasCtx.shadowBlur = 8; // เพิ่มเอฟเฟกต์ไฟเรืองแสง
+          canvasCtx.stroke();
+          canvasCtx.shadowBlur = 0; // คืนค่า blur
+        }
+      });
+
+      // 2. วาดหัวข้อต่อ (Joints)
+      landmarks.forEach((lm, index) => {
+        // วาดเฉพาะจุดสำคัญ (ไม่รวมจุดย่อยของใบหน้า)
+        if ([0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 31, 32].includes(index)) {
+          if (lm && lm.visibility > 0.4) {
+            const pt = { x: lm.x * canvasElement.width, y: lm.y * canvasElement.height };
+
+            canvasCtx.beginPath();
+            canvasCtx.arc(pt.x, pt.y, index === 0 ? 10 : 6, 0, 2 * Math.PI); // ศีรษะใหญ่กว่าข้อต่ออื่น
+            canvasCtx.fillStyle = '#ffffff';
+            canvasCtx.fill();
+            canvasCtx.lineWidth = 2;
+            canvasCtx.strokeStyle = color;
+            canvasCtx.stroke();
+          }
+        }
+      });
+    }
+
+    function onResults(results) {
+      if (!results.image) return;
+
+      canvasElement.width = videoElement.videoWidth || 640;
+      canvasElement.height = videoElement.videoHeight || 480;
+
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      
+      canvasCtx.translate(canvasElement.width, 0);
+      canvasCtx.scale(-1, 1);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.poseLandmarks) {
+        const lm = results.poseLandmarks;
+        const mode = exerciseSelect.value;
+
+        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
+        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
+
+        let leftKneeAngle = 0, rightKneeAngle = 0;
+        let leftHipAngle = 0, rightHipAngle = 0;
+
+        if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
+          leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+          leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        }
+
+        if (rightHip.visibility > 0.5 && rightKnee.visibility > 0.5 && rightAnkle.visibility > 0.5) {
+          rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+          rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
+        }
+
+        kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
+        hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
+
+        const activeKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
+        if (activeKneeAngle > 0) updateRepCounter(mode, activeKneeAngle);
+
+        let isSafe = true;
+        let statusText = "ท่าทางปกติ";
+        let statusClass = "status-safe";
+        let skeletonColor = "#ff3b30"; // สีนีออนเรดสไตล์สปอร์ต
+
+        if (mode === 'squat') {
+          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
+          if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
+            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
+            statusClass = "status-warning";
+            skeletonColor = "#ff9500";
+            isSafe = false;
+          } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
+            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
+            statusClass = "status-danger";
+            skeletonColor = "#ff2a55";
+            isSafe = false;
+          }
+        }
+
+        statusDisplay.innerText = statusText;
+        statusDisplay.className = statusClass;
+
+        if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
+          totalFrames++;
+          if (isSafe) safeFrames++; else warningCount++;
+          if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
+          if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
+          
+          const currentDiff = Math.abs(leftKneeAngle - rightKneeAngle);
+          totalDiff += currentDiff;
+          diffFrames++;
+        }
+
+        // เรียกใช้วาดเส้นวัดแบบโครงกระดูกเต็มตัว
+        drawFullSkeleton(lm, skeletonColor);
+
+      } else {
+        statusDisplay.innerText = "ไม่พบผู้ใช้งานหน้ากล้อง";
+        statusDisplay.className = "status-warning";
+      }
+
+      canvasCtx.restore();
+    }
+
+    const pose = new Pose({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      enableSegmentation: false,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5
+    });
+
+    pose.onResults(onResults);
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await pose.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480
+    });
+
+    camera.start().catch(err => {
+      console.error('ไม่สามารถเปิดใช้งานกล้องได้:', err);
+      statusDisplay.innerText = "ไม่สามารถเชื่อมต่อกล้องได้";
+      statusDisplay.className = "status-danger";
+    });
+  </script>
+</body>
+</html>
