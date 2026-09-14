@@ -1023,1482 +1023,652 @@ id="tip">
 <script>
 
 
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const video =
-document.getElementById("video");
-
-const canvas =
-document.getElementById("canvas");
-
-const ctx =
-canvas.getContext("2d");
-
-const cameraStatus =
-document.getElementById("cameraStatus");
-
-const repCount =
-document.getElementById("repCount");
-
-const score =
-document.getElementById("score");
-
-const poseStatus =
-document.getElementById("poseStatus");
-
-const tip =
-document.getElementById("tip");
-
-const exerciseTitle =
-document.getElementById("exerciseTitle");
-
-
 
 /* =========================================================
-   VARIABLES
+   BODY POINT - APP SCRIPT
 ========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
 
-let selectedExercise =
-"squat";
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-let camera =
-null;
+    const cameraStatus = document.getElementById("cameraStatus");
+    const repCount = document.getElementById("repCount");
+    const score = document.getElementById("score");
+    const poseStatus = document.getElementById("poseStatus");
+    const tip = document.getElementById("tip");
+    const exerciseTitle = document.getElementById("exerciseTitle");
 
-let pose =
-null;
+    const startButton = document.getElementById("startButton");
+    const stopButton = document.getElementById("stopButton");
 
-let stream =
-null;
+    const userNameInput = document.getElementById("userName");
+    const saveNameButton = document.getElementById("saveNameButton");
 
+    const startRecordingButton = document.getElementById("startRecordingButton");
+    const stopRecordingButton = document.getElementById("stopRecordingButton");
+    const recordingStatus = document.getElementById("recordingStatus");
+    const recordingDot = document.getElementById("recordingDot");
 
-/*
-State สำหรับการนับครั้ง
-*/
+    const historyList = document.getElementById("historyList");
+    const clearHistoryButton = document.getElementById("clearHistoryButton");
 
-let movementState =
-"up";
+    let selectedExercise = "squat";
+    let camera = null;
+    let pose = null;
+    let stream = null;
+    let cameraRunning = false;
 
+    let movementState = "up";
+    let repetitions = 0;
+    let lastRepTime = 0;
+    let plankStart = null;
 
-/*
-จำนวนครั้ง
-*/
+    let isRecording = false;
+    let recordingStartedAt = null;
 
-let repetitions =
-0;
+    const MIN_VISIBILITY = 0.55;
+    const HISTORY_KEY = "bodyPointTestHistory";
+    const USER_NAME_KEY = "bodyPointUserName";
 
+    const exerciseNames = {
+        squat: "Squat",
+        lunge: "Lunge",
+        pushup: "Push-up",
+        plank: "Plank"
+    };
 
-/*
-ป้องกันการนับเร็วเกินไป
-*/
+    function safeText(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-let lastRepTime =
-0;
+    function getHistory() {
+        try {
+            return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+        } catch (e) {
+            console.error("History read error:", e);
+            return [];
+        }
+    }
 
+    function saveHistory(items) {
+        try {
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+            return true;
+        } catch (e) {
+            console.error("History save error:", e);
+            alert("ไม่สามารถบันทึกข้อมูลในเครื่องได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์");
+            return false;
+        }
+    }
 
-/*
-เวลาสำหรับ Plank
-*/
+    function formatDate(value) {
+        try {
+            return new Date(value).toLocaleString("th-TH", {
+                dateStyle: "medium",
+                timeStyle: "short"
+            });
+        } catch (e) {
+            return new Date(value).toLocaleString("th-TH");
+        }
+    }
 
-let plankStart =
-null;
+    function visible(point) {
+        if (!point) return false;
+        if (point.visibility === undefined) return true;
+        return point.visibility >= MIN_VISIBILITY;
+    }
 
+    function enough(points) {
+        return points.every(visible);
+    }
 
-/*
-สถานะกล้อง
-*/
+    function calculateAngle(a, b, c) {
+        if (!a || !b || !c) return NaN;
 
-let cameraRunning =
-false;
+        const ABx = a.x - b.x;
+        const ABy = a.y - b.y;
+        const CBx = c.x - b.x;
+        const CBy = c.y - b.y;
 
+        const dot = ABx * CBx + ABy * CBy;
+        const magAB = Math.hypot(ABx, ABy);
+        const magCB = Math.hypot(CBx, CBy);
 
-/*
-MediaPipe confidence
-*/
+        if (!magAB || !magCB) return NaN;
 
-const MIN_VISIBILITY =
-0.55;
+        let value = dot / (magAB * magCB);
+        value = Math.max(-1, Math.min(1, value));
 
+        return Math.acos(value) * 180 / Math.PI;
+    }
 
-/* =========================================================
-   EXERCISE SELECT
-========================================================= */
+    function setResult(scoreValue, status, statusClass, message) {
+        score.textContent =
+            scoreValue === null || Number.isNaN(scoreValue)
+                ? "--"
+                : Math.round(Math.max(0, Math.min(100, scoreValue))) + "%";
 
-document
-.querySelectorAll(".exercise")
-.forEach(button => {
+        poseStatus.textContent = status;
+        poseStatus.className = statusClass || "";
+        tip.textContent = message;
+    }
 
-    button.addEventListener(
-        "click",
-        () => {
+    function resetExercise() {
+        repetitions = 0;
+        movementState = "up";
+        lastRepTime = 0;
+        plankStart = null;
 
-            if(isRecording){
+        repCount.textContent = "0";
+        score.textContent = "--";
+        poseStatus.textContent = "รอการตรวจ";
+        poseStatus.className = "";
+        tip.textContent = "💡 จัดตำแหน่งร่างกายให้เห็นชัด แล้วเริ่มออกกำลังกาย";
+    }
+
+    /* ---------- Exercise selection ---------- */
+    document.querySelectorAll(".exercise").forEach(card => {
+        card.addEventListener("click", () => {
+            if (isRecording) {
                 alert("กรุณาหยุดและบันทึกผลก่อนเปลี่ยนท่าออกกำลังกาย");
                 return;
             }
 
-            document
-            .querySelectorAll(".exercise")
-            .forEach(item => {
-
-                item.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-            button.classList.add(
-                "active"
+            document.querySelectorAll(".exercise").forEach(item =>
+                item.classList.remove("active")
             );
 
+            card.classList.add("active");
+            selectedExercise = card.dataset.exercise;
 
-            selectedExercise =
-                button.dataset.exercise;
-
-
-            exerciseTitle.textContent =
-                "ตรวจท่า " +
-                button.textContent.trim();
-
-
-            if(isRecording){
-                stopRecording();
-            }
+            exerciseTitle.textContent = "ตรวจท่า " + exerciseNames[selectedExercise];
             resetExercise();
+        });
+    });
 
+    /* ---------- Camera ---------- */
+    async function startCamera() {
+        if (cameraRunning) return;
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert("เบราว์เซอร์นี้ไม่รองรับการใช้งานกล้อง");
+            return;
         }
-    );
 
-});
-
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-function resetExercise(){
-
-    repetitions =
-        0;
-
-    movementState =
-        "up";
-
-    lastRepTime =
-        0;
-
-    plankStart =
-        null;
-
-
-    repCount.textContent =
-        "0";
-
-
-    score.textContent =
-        "--";
-
-
-    poseStatus.textContent =
-        "รอการตรวจ";
-
-
-    poseStatus.className =
-        "";
-
-
-    tip.textContent =
-        "💡 จัดตำแหน่งร่างกายให้เห็นชัด แล้วเริ่มออกกำลังกาย";
-
-}
-
-
-
-/* =========================================================
-   CHECK LANDMARK VISIBILITY
-========================================================= */
-
-function visible(point){
-
-    if(!point)
-        return false;
-
-
-    if(point.visibility === undefined)
-        return true;
-
-
-    return (
-        point.visibility >=
-        MIN_VISIBILITY
-    );
-
-}
-
-
-
-function enough(points){
-
-    return points.every(
-        point => visible(point)
-    );
-
-}
-
-
-
-/* =========================================================
-   CALCULATE ANGLE
-========================================================= */
-
-function calculateAngle(
-    a,
-    b,
-    c
-){
-
-    const ABx =
-        a.x - b.x;
-
-    const ABy =
-        a.y - b.y;
-
-
-    const CBx =
-        c.x - b.x;
-
-    const CBy =
-        c.y - b.y;
-
-
-    const dot =
-        ABx * CBx +
-        ABy * CBy;
-
-
-    const magAB =
-        Math.hypot(
-            ABx,
-            ABy
-        );
-
-
-    const magCB =
-        Math.hypot(
-            CBx,
-            CBy
-        );
-
-
-    if(
-        magAB === 0 ||
-        magCB === 0
-    ){
-
-        return NaN;
-
-    }
-
-
-    let value =
-        dot /
-        (magAB * magCB);
-
-
-    value =
-        Math.max(
-            -1,
-            Math.min(
-                1,
-                value
-            )
-        );
-
-
-    return (
-        Math.acos(value)
-        *
-        180
-        /
-        Math.PI
-    );
-
-}
-
-
-
-/* =========================================================
-   SET RESULT
-========================================================= */
-
-function setResult(
-    scoreValue,
-    status,
-    statusClass,
-    message
-){
-
-    if(scoreValue === null){
-
-        score.textContent =
-            "--";
-
-    }
-
-    else{
-
-        score.textContent =
-            Math.round(
-                scoreValue
-            ) + "%";
-
-    }
-
-
-    poseStatus.textContent =
-        status;
-
-
-    poseStatus.className =
-        statusClass || "";
-
-
-    tip.textContent =
-        message;
-
-}
-
-
-
-/* =========================================================
-   START CAMERA
-========================================================= */
-
-async function startCamera(){
-
-    if(cameraRunning)
-        return;
-
-
-    try{
-
-        if(
-            !navigator.mediaDevices ||
-            !navigator.mediaDevices.getUserMedia
-        ){
+        try {
+            cameraStatus.textContent = "🟡 กำลังเปิดกล้อง...";
+            tip.textContent = "💡 กรุณารอสักครู่ ระบบกำลังเตรียม AI";
+
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
+            });
+
+            video.srcObject = stream;
+            await video.play();
+
+            pose = new Pose({
+                locateFile: file =>
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/pose/" + file
+            });
+
+            pose.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                enableSegmentation: false,
+                minDetectionConfidence: 0.55,
+                minTrackingConfidence: 0.55
+            });
+
+            pose.onResults(processPose);
+
+            camera = new Camera(video, {
+                onFrame: async () => {
+                    if (pose && cameraRunning) {
+                        await pose.send({ image: video });
+                    }
+                },
+                width: 1280,
+                height: 720
+            });
+
+            cameraRunning = true;
+            camera.start();
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            startRecordingButton.disabled = false;
+            stopRecordingButton.disabled = true;
+
+            cameraStatus.textContent = "🟢 กำลังตรวจจับ";
+            recordingStatus.textContent = "พร้อมบันทึกข้อมูล";
+            tip.textContent = "💡 ระบบกำลังค้นหาตำแหน่งร่างกาย";
+
+        } catch (error) {
+            console.error(error);
+
+            cameraRunning = false;
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            video.srcObject = null;
+
+            cameraStatus.textContent = "⚠️ เปิดกล้องไม่สำเร็จ";
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            startRecordingButton.disabled = true;
+            stopRecordingButton.disabled = true;
 
             alert(
-                "เบราว์เซอร์นี้ไม่รองรับการใช้งานกล้อง"
+                "ไม่สามารถเปิดกล้องได้\n\n" +
+                "• กรุณาอนุญาตการใช้ Camera\n" +
+                "• GitHub Pages ต้องเปิดผ่าน HTTPS\n" +
+                "• แนะนำ Chrome หรือ Safari รุ่นล่าสุด"
             );
+        }
+    }
 
-            return;
-
+    function stopCamera() {
+        if (isRecording) {
+            stopRecording(true);
         }
 
+        cameraRunning = false;
 
-        stream =
-            await navigator
-            .mediaDevices
-            .getUserMedia({
+        if (camera) {
+            try { camera.stop(); } catch (e) {}
+            camera = null;
+        }
 
-                video:{
-                    facingMode:"user",
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
 
-                    width:{
-                        ideal:1280
-                    },
+        video.srcObject = null;
 
-                    height:{
-                        ideal:720
-                    }
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        startRecordingButton.disabled = true;
+        stopRecordingButton.disabled = true;
 
-                },
+        cameraStatus.textContent = "กล้องปิดแล้ว";
+        recordingStatus.textContent = "ยังไม่ได้เริ่มบันทึกข้อมูล";
+        recordingDot.classList.remove("on");
+    }
 
-                audio:false
+    /* ---------- Pose processing ---------- */
+    function processPose(results) {
+        if (!video.videoWidth) return;
 
-            });
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        video.srcObject =
-            stream;
+        const landmarks = results.poseLandmarks;
 
+        if (!landmarks) {
+            cameraStatus.textContent = "⚠️ ไม่พบร่างกาย";
 
-        await video.play();
+            setResult(
+                null,
+                "ไม่พบร่างกาย",
+                "bad",
+                "💡 ถอยกล้องออกและให้เห็นร่างกายเต็มตัว"
+            );
+            return;
+        }
 
-
-        /*
-        สร้าง MediaPipe Pose
-        */
-
-        pose =
-            new Pose({
-
-                locateFile:
-                function(file){
-
-                    return (
-                        "https://cdn.jsdelivr.net/npm/@mediapipe/pose/"
-                        +
-                        file
-                    );
-
-                }
-
-            });
-
-
-        pose.setOptions({
-
-            modelComplexity:1,
-
-            smoothLandmarks:true,
-
-            enableSegmentation:false,
-
-            minDetectionConfidence:
-                0.55,
-
-            minTrackingConfidence:
-                0.55
-
+        drawConnectors(ctx, landmarks, POSE_CONNECTIONS, {
+            color: "#00ff88",
+            lineWidth: 4
         });
 
+        drawLandmarks(ctx, landmarks, {
+            color: "#ffffff",
+            lineWidth: 2,
+            radius: 5
+        });
 
-        pose.onResults(
-            processPose
-        );
+        cameraStatus.textContent = "🟢 ตรวจพบร่างกาย";
 
+        if (selectedExercise === "squat") analyzeSquat(landmarks);
+        else if (selectedExercise === "lunge") analyzeLunge(landmarks);
+        else if (selectedExercise === "pushup") analyzePushup(landmarks);
+        else if (selectedExercise === "plank") analyzePlank(landmarks);
+    }
 
-        /*
-        Camera utility
-        */
+    /* ---------- Squat ---------- */
+    function analyzeSquat(lm) {
+        const required = [lm[23], lm[25], lm[27], lm[24], lm[26], lm[28]];
 
-        camera =
-            new Camera(
-                video,
-                {
+        if (!enough(required)) {
+            setResult(null, "จัดตำแหน่ง", "warning",
+                "💡 ให้เห็นสะโพก เข่า และข้อเท้าทั้งสองข้าง");
+            return;
+        }
 
-                    onFrame:
-                    async function(){
+        const leftAngle = calculateAngle(lm[23], lm[25], lm[27]);
+        const rightAngle = calculateAngle(lm[24], lm[26], lm[28]);
+        const kneeAngle = (leftAngle + rightAngle) / 2;
+        const symmetry = Math.abs(leftAngle - rightAngle);
 
-                        if(pose){
+        let quality = 100 - Math.min(30, symmetry * 1.5);
+        quality = Math.max(0, quality);
 
-                            await pose.send({
-                                image:video
-                            });
+        if (kneeAngle < 115) {
+            movementState = "down";
+            setResult(quality, "⬇️ กำลังลง", "warning",
+                "💡 ควบคุมการลง รักษาเข่าให้มั่นคงและหลังอยู่ในท่าที่เหมาะสม");
+        } else if (kneeAngle > 160) {
+            if (
+                movementState === "down" &&
+                Date.now() - lastRepTime > 500
+            ) {
+                repetitions++;
+                lastRepTime = Date.now();
+                movementState = "up";
+                repCount.textContent = repetitions;
+            }
 
-                        }
+            setResult(quality, "🟢 พร้อม", "good",
+                "💡 ท่าดี ควบคุมการเคลื่อนไหวและรักษาสมดุล");
+        } else {
+            setResult(Math.max(0, quality - 5), "กำลังเคลื่อนไหว", "warning",
+                "💡 เคลื่อนไหวอย่างช้าและควบคุม");
+        }
+    }
 
-                    },
+    /* ---------- Lunge ---------- */
+    function analyzeLunge(lm) {
+        const required = [lm[23], lm[25], lm[27], lm[24], lm[26], lm[28]];
 
-                    width:1280,
+        if (!enough(required)) {
+            setResult(null, "จัดตำแหน่ง", "warning",
+                "💡 ให้เห็นขาทั้งสองข้างเต็มเฟรม");
+            return;
+        }
 
-                    height:720
+        const leftKnee = calculateAngle(lm[23], lm[25], lm[27]);
+        const rightKnee = calculateAngle(lm[24], lm[26], lm[28]);
 
-                }
-            );
+        const front = Math.min(leftKnee, rightKnee);
+        const back = Math.max(leftKnee, rightKnee);
 
+        let quality = 100 -
+            Math.min(25, Math.abs(leftKnee - rightKnee) * 0.4);
 
-        camera.start();
+        if (front < 110 && back > 130) {
+            movementState = "down";
+            setResult(quality, "⬇️ กำลังลง", "warning",
+                "💡 รักษาลำตัวตรงและควบคุมเข่าหน้า");
+        } else if (front > 160 && back > 160) {
+            if (
+                movementState === "down" &&
+                Date.now() - lastRepTime > 500
+            ) {
+                repetitions++;
+                lastRepTime = Date.now();
+                movementState = "up";
+                repCount.textContent = repetitions;
+            }
 
+            setResult(quality, "🟢 พร้อม", "good",
+                "💡 กลับสู่ท่ายืนอย่างควบคุม");
+        } else {
+            setResult(Math.max(0, quality - 10), "กำลังเคลื่อนไหว", "warning",
+                "💡 ย่อเข่าอย่างควบคุมและรักษาสมดุล");
+        }
+    }
 
-        cameraRunning =
-            true;
+    /* ---------- Push-up ---------- */
+    function analyzePushup(lm) {
+        const required = [lm[11], lm[13], lm[15], lm[23], lm[25], lm[27]];
 
+        if (!enough(required)) {
+            setResult(null, "จัดตำแหน่ง", "warning",
+                "💡 หันด้านข้างและให้ไหล่ ศอก สะโพก เข่า และข้อเท้าเห็นชัด");
+            return;
+        }
 
-        cameraStatus.textContent =
-            "🟢 กำลังตรวจจับ";
+        const elbow = calculateAngle(lm[11], lm[13], lm[15]);
+        const body = calculateAngle(lm[11], lm[23], lm[27]);
+        const bodyDeviation = Math.abs(180 - body);
 
-        startRecordingButton.disabled = false;
-        stopRecordingButton.disabled = true;
-        recordingStatus.textContent = "พร้อมบันทึกข้อมูล";
+        let quality = Math.max(0, Math.min(100, 100 - bodyDeviation * 3));
 
+        if (elbow < 100) {
+            movementState = "down";
+            setResult(quality, "⬇️ ลง", "warning",
+                "💡 ลดตัวลงโดยรักษาแนวลำตัวให้ตรง");
+        } else if (elbow > 155) {
+            if (
+                movementState === "down" &&
+                Date.now() - lastRepTime > 500
+            ) {
+                repetitions++;
+                lastRepTime = Date.now();
+                movementState = "up";
+                repCount.textContent = repetitions;
+            }
+
+            setResult(quality, "🟢 พร้อม", "good",
+                "💡 ดันตัวขึ้นและรักษาแนวลำตัว");
+        } else {
+            setResult(Math.max(0, quality - 5), "กำลังเคลื่อนไหว", "warning",
+                "💡 ควบคุมข้อศอกและรักษาลำตัวให้เป็นแนวเดียว");
+        }
+    }
+
+    /* ---------- Plank ---------- */
+    function analyzePlank(lm) {
+        const required = [lm[11], lm[23], lm[27]];
+
+        if (!enough(required)) {
+            plankStart = null;
+            repCount.textContent = "0";
+            setResult(null, "จัดตำแหน่ง", "warning",
+                "💡 หันด้านข้างและให้ไหล่ สะโพก และข้อเท้าเห็นชัด");
+            return;
+        }
+
+        const bodyAngle = calculateAngle(lm[11], lm[23], lm[27]);
+        const deviation = Math.abs(180 - bodyAngle);
+
+        let quality = Math.max(0, Math.min(100, 100 - deviation * 3));
+
+        if (bodyAngle >= 165) {
+            if (plankStart === null) plankStart = Date.now();
+
+            const seconds = Math.floor((Date.now() - plankStart) / 1000);
+            repCount.textContent = seconds + "s";
+
+            setResult(quality, "🟢 ถูกต้อง", "good",
+                "💡 รักษาศีรษะ หลัง สะโพก และข้อเท้าให้อยู่ในแนวเดียวกัน");
+        } else {
+            plankStart = null;
+            repCount.textContent = "0";
+
+            setResult(quality, "⚠️ ปรับท่า", "bad",
+                "💡 ปรับสะโพกให้ลำตัวเป็นเส้นตรง");
+        }
+    }
+
+    /* ---------- User name ---------- */
+    const savedName = localStorage.getItem(USER_NAME_KEY);
+    if (savedName) userNameInput.value = savedName;
+
+    saveNameButton.addEventListener("click", () => {
+        const name = userNameInput.value.trim();
+
+        if (!name) {
+            alert("กรุณากรอกชื่อผู้ทำการทดสอบก่อน");
+            userNameInput.focus();
+            return;
+        }
+
+        localStorage.setItem(USER_NAME_KEY, name);
+        alert("บันทึกชื่อเรียบร้อยแล้ว");
+    });
+
+    /* ---------- Recording ---------- */
+    function startRecording() {
+        const name = userNameInput.value.trim();
+
+        if (!name) {
+            alert("กรุณากรอกชื่อผู้ทำการทดสอบก่อนเริ่มบันทึก");
+            userNameInput.focus();
+            return;
+        }
+
+        if (!cameraRunning) {
+            alert("กรุณากด “เปิดกล้อง” ก่อนเริ่มบันทึกข้อมูล");
+            return;
+        }
+
+        if (isRecording) return;
+
+        localStorage.setItem(USER_NAME_KEY, name);
+
+        isRecording = true;
+        recordingStartedAt = Date.now();
+
+        recordingDot.classList.add("on");
+        recordingStatus.textContent = "🔴 กำลังบันทึกข้อมูล";
+        startRecordingButton.disabled = true;
+        stopRecordingButton.disabled = false;
 
         tip.textContent =
-            "💡 ระบบกำลังค้นหาตำแหน่งร่างกาย";
-
+            "🔴 กำลังบันทึกผลการทดสอบ... เมื่อเสร็จแล้วกด “หยุดและบันทึกผล”";
     }
 
+    function stopRecording(silent = false) {
+        if (!isRecording) return;
 
-    catch(error){
-
-        console.error(error);
-
-
-        cameraStatus.textContent =
-            "⚠️ เปิดกล้องไม่สำเร็จ";
-
-
-        alert(
-            "ไม่สามารถเปิดกล้องได้\n\n" +
-
-            "1. กรุณาอนุญาต Camera\n" +
-
-            "2. ต้องเปิดเว็บไซต์ผ่าน HTTPS\n" +
-
-            "3. แนะนำให้ใช้ Chrome หรือ Safari"
+        const durationSeconds = Math.max(
+            0,
+            Math.round((Date.now() - recordingStartedAt) / 1000)
         );
 
+        const metric = repCount.textContent || "0";
+        const scoreText = score.textContent || "--";
+        const scoreValue =
+            scoreText === "--" ? null : parseInt(scoreText, 10);
+
+        const record = {
+            id: Date.now(),
+            name: userNameInput.value.trim(),
+            exercise: exerciseNames[selectedExercise],
+            exerciseKey: selectedExercise,
+            result: metric,
+            score: Number.isFinite(scoreValue) ? scoreValue : null,
+            status: poseStatus.textContent || "รอการตรวจ",
+            durationSeconds,
+            createdAt: new Date().toISOString()
+        };
+
+        const history = getHistory();
+        history.unshift(record);
+
+        if (saveHistory(history.slice(0, 100))) {
+            renderHistory();
+        }
+
+        isRecording = false;
+        recordingStartedAt = null;
+
+        recordingDot.classList.remove("on");
+        recordingStatus.textContent = "✅ บันทึกผลเรียบร้อย";
+        startRecordingButton.disabled = !cameraRunning;
+        stopRecordingButton.disabled = true;
+
+        if (!silent) {
+            alert("บันทึกผลการทดสอบเรียบร้อยแล้ว");
+        }
     }
 
-}
+    startRecordingButton.addEventListener("click", startRecording);
+    stopRecordingButton.addEventListener("click", () => stopRecording(false));
 
+    /* ---------- History ---------- */
+    function renderHistory() {
+        const history = getHistory();
 
+        if (!history.length) {
+            historyList.innerHTML =
+                '<div class="history-empty">ยังไม่มีข้อมูลการทดสอบย้อนหลัง</div>';
+            return;
+        }
 
-/* =========================================================
-   STOP CAMERA
-========================================================= */
+        historyList.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="history-top">
+                    <div class="history-name">👤 ${safeText(item.name)}</div>
+                    <div class="history-date">${formatDate(item.createdAt)}</div>
+                </div>
 
-function stopCamera(){
+                <div style="font-weight:700;margin-bottom:9px;">
+                    🏋️ ${safeText(item.exercise)}
+                </div>
 
-    if(isRecording){
-        stopRecording();
+                <div class="history-meta">
+                    <div>📊 ผล: <strong>${safeText(item.result)}</strong></div>
+                    <div>⭐ คะแนน: <strong>${
+                        item.score === null || item.score === undefined
+                            ? "--"
+                            : safeText(item.score) + "%"
+                    }</strong></div>
+                    <div>⏱️ เวลา: <strong>${safeText(item.durationSeconds)}s</strong></div>
+                </div>
+            </div>
+        `).join("");
     }
 
+    clearHistoryButton.addEventListener("click", () => {
+        const history = getHistory();
+
+        if (!history.length) {
+            alert("ยังไม่มีประวัติให้ล้าง");
+            return;
+        }
+
+        if (confirm("ต้องการล้างประวัติการทดสอบทั้งหมดหรือไม่?")) {
+            localStorage.removeItem(HISTORY_KEY);
+            renderHistory();
+        }
+    });
+
+    /* ---------- Camera buttons ---------- */
+    startButton.addEventListener("click", startCamera);
+    stopButton.addEventListener("click", stopCamera);
+
+    window.addEventListener("beforeunload", () => {
+        if (isRecording) stopRecording(true);
+        if (stream) stream.getTracks().forEach(track => track.stop());
+    });
+
+    /* ---------- Initial UI ---------- */
+    stopButton.disabled = true;
     startRecordingButton.disabled = true;
     stopRecordingButton.disabled = true;
-    recordingStatus.textContent = "กล้องปิดแล้ว";
-    recordingDot.classList.remove("on");
+    renderHistory();
+});
 
-    if(camera){
-
-        camera.stop();
-
-        camera =
-            null;
-
-    }
-
-
-    if(stream){
-
-        stream
-        .getTracks()
-        .forEach(
-            track =>
-            track.stop()
-        );
-
-        stream =
-            null;
-
-    }
-
-
-    video.srcObject =
-        null;
-
-
-    cameraRunning =
-        false;
-
-
-    cameraStatus.textContent =
-        "กล้องปิดแล้ว";
-
-}
-
-
-
-/* =========================================================
-   PROCESS POSE
-========================================================= */
-
-function processPose(results){
-
-    if(!video.videoWidth)
-        return;
-
-
-    canvas.width =
-        video.videoWidth;
-
-    canvas.height =
-        video.videoHeight;
-
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    const landmarks =
-        results.poseLandmarks;
-
-
-    /*
-    ไม่พบร่างกาย
-    */
-
-    if(!landmarks){
-
-        cameraStatus.textContent =
-            "⚠️ ไม่พบร่างกาย";
-
-
-        setResult(
-            null,
-
-            "ไม่พบร่างกาย",
-
-            "bad",
-
-            "💡 ถอยกล้องออกและให้เห็นร่างกายเต็มตัว"
-        );
-
-
-        return;
-
-    }
-
-
-    /*
-    วาดโครงร่าง
-    */
-
-    drawConnectors(
-        ctx,
-        landmarks,
-        POSE_CONNECTIONS,
-        {
-            color:"#00ff88",
-            lineWidth:4
-        }
-    );
-
-
-    /*
-    วาดจุดข้อต่อ
-    */
-
-    drawLandmarks(
-        ctx,
-        landmarks,
-        {
-            color:"#ffffff",
-            lineWidth:2,
-            radius:5
-        }
-    );
-
-
-    cameraStatus.textContent =
-        "🟢 ตรวจพบร่างกาย";
-
-
-    /*
-    วิเคราะห์ท่า
-    */
-
-    if(
-        selectedExercise ===
-        "squat"
-    ){
-
-        analyzeSquat(
-            landmarks
-        );
-
-    }
-
-
-    else if(
-        selectedExercise ===
-        "lunge"
-    ){
-
-        analyzeLunge(
-            landmarks
-        );
-
-    }
-
-
-    else if(
-        selectedExercise ===
-        "pushup"
-    ){
-
-        analyzePushup(
-            landmarks
-        );
-
-    }
-
-
-    else if(
-        selectedExercise ===
-        "plank"
-    ){
-
-        analyzePlank(
-            landmarks
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   SQUAT
-========================================================= */
-
-function analyzeSquat(lm){
-
-    const required = [
-
-        lm[23],
-        lm[25],
-        lm[27],
-
-        lm[24],
-        lm[26],
-        lm[28]
-
-    ];
-
-
-    if(
-        !enough(required)
-    ){
-
-        setResult(
-            null,
-
-            "จัดตำแหน่ง",
-
-            "warning",
-
-            "💡 ให้เห็นสะโพก เข่า และข้อเท้าทั้งสองข้าง"
-        );
-
-        return;
-
-    }
-
-
-    const leftAngle =
-        calculateAngle(
-            lm[23],
-            lm[25],
-            lm[27]
-        );
-
-
-    const rightAngle =
-        calculateAngle(
-            lm[24],
-            lm[26],
-            lm[28]
-        );
-
-
-    const kneeAngle =
-        (
-            leftAngle +
-            rightAngle
-        ) / 2;
-
-
-    const symmetry =
-        Math.abs(
-            leftAngle -
-            rightAngle
-        );
-
-
-    /*
-    คะแนนเบื้องต้น
-    */
-
-    let quality =
-        100 -
-        Math.min(
-            30,
-            symmetry * 1.5
-        );
-
-
-    quality =
-        Math.max(
-            0,
-            quality
-        );
-
-
-    /*
-    ลง
-    */
-
-    if(
-        kneeAngle < 115
-    ){
-
-        if(
-            movementState !==
-            "down"
-        ){
-
-            movementState =
-                "down";
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "⬇️ กำลังลง",
-
-            "warning",
-
-            "💡 ควบคุมการลง รักษาเข่าให้มั่นคงและหลังอยู่ในท่าที่เหมาะสม"
-
-        );
-
-    }
-
-
-    /*
-    ขึ้น
-    */
-
-    else if(
-        kneeAngle > 160
-    ){
-
-        if(
-            movementState ===
-            "down" &&
-
-            Date.now() -
-            lastRepTime >
-            500
-        ){
-
-            repetitions++;
-
-            lastRepTime =
-                Date.now();
-
-            movementState =
-                "up";
-
-
-            repCount.textContent =
-                repetitions;
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "🟢 พร้อม",
-
-            "good",
-
-            "💡 ท่าดี ควบคุมการเคลื่อนไหวและรักษาสมดุล"
-
-        );
-
-    }
-
-
-    /*
-    กลาง
-    */
-
-    else{
-
-        setResult(
-
-            Math.max(
-                0,
-                quality - 5
-            ),
-
-            "กำลังเคลื่อนไหว",
-
-            "warning",
-
-            "💡 เคลื่อนไหวอย่างช้าและควบคุม"
-
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   LUNGE
-========================================================= */
-
-function analyzeLunge(lm){
-
-    const required = [
-
-        lm[23],
-        lm[25],
-        lm[27],
-
-        lm[24],
-        lm[26],
-        lm[28]
-
-    ];
-
-
-    if(
-        !enough(required)
-    ){
-
-        setResult(
-            null,
-
-            "จัดตำแหน่ง",
-
-            "warning",
-
-            "💡 ให้เห็นขาทั้งสองข้างเต็มเฟรม"
-        );
-
-        return;
-
-    }
-
-
-    const leftKnee =
-        calculateAngle(
-            lm[23],
-            lm[25],
-            lm[27]
-        );
-
-
-    const rightKnee =
-        calculateAngle(
-            lm[24],
-            lm[26],
-            lm[28]
-        );
-
-
-    const front =
-        Math.min(
-            leftKnee,
-            rightKnee
-        );
-
-
-    const back =
-        Math.max(
-            leftKnee,
-            rightKnee
-        );
-
-
-    let quality =
-        100 -
-        Math.min(
-            25,
-            Math.abs(
-                leftKnee -
-                rightKnee
-            ) * .4
-        );
-
-
-    /*
-    ลง
-    */
-
-    if(
-        front < 110 &&
-        back > 130
-    ){
-
-        if(
-            movementState !==
-            "down"
-        ){
-
-            movementState =
-                "down";
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "⬇️ กำลังลง",
-
-            "warning",
-
-            "💡 รักษาลำตัวตรงและควบคุมเข่าหน้า"
-
-        );
-
-    }
-
-
-    /*
-    กลับขึ้น
-    */
-
-    else if(
-        front > 160 &&
-        back > 160
-    ){
-
-        if(
-            movementState ===
-            "down" &&
-
-            Date.now() -
-            lastRepTime >
-            500
-        ){
-
-            repetitions++;
-
-            lastRepTime =
-                Date.now();
-
-            movementState =
-                "up";
-
-
-            repCount.textContent =
-                repetitions;
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "🟢 พร้อม",
-
-            "good",
-
-            "💡 กลับสู่ท่ายืนอย่างควบคุม"
-
-        );
-
-    }
-
-
-    else{
-
-        setResult(
-
-            Math.max(
-                0,
-                quality - 10
-            ),
-
-            "กำลังเคลื่อนไหว",
-
-            "warning",
-
-            "💡 ย่อเข่าอย่างควบคุมและรักษาสมดุล"
-
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   PUSH UP
-========================================================= */
-
-function analyzePushup(lm){
-
-    const required = [
-
-        lm[11],
-        lm[13],
-        lm[15],
-
-        lm[23],
-        lm[25],
-        lm[27]
-
-    ];
-
-
-    if(
-        !enough(required)
-    ){
-
-        setResult(
-
-            null,
-
-            "จัดตำแหน่ง",
-
-            "warning",
-
-            "💡 หันด้านข้างและให้ไหล่ ศอก สะโพก เข่า และข้อเท้าเห็นชัด"
-
-        );
-
-        return;
-
-    }
-
-
-    /*
-    ข้อศอก
-    */
-
-    const elbow =
-        calculateAngle(
-            lm[11],
-            lm[13],
-            lm[15]
-        );
-
-
-    /*
-    แนวลำตัว
-    */
-
-    const body =
-        calculateAngle(
-            lm[11],
-            lm[23],
-            lm[27]
-        );
-
-
-    const bodyDeviation =
-        Math.abs(
-            180 - body
-        );
-
-
-    let quality =
-        100 -
-        bodyDeviation * 3;
-
-
-    quality =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                quality
-            )
-        );
-
-
-    /*
-    ลง
-    */
-
-    if(
-        elbow < 100
-    ){
-
-        if(
-            movementState !==
-            "down"
-        ){
-
-            movementState =
-                "down";
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "⬇️ ลง",
-
-            "warning",
-
-            "💡 ลดตัวลงโดยรักษาแนวลำตัวให้ตรง"
-
-        );
-
-    }
-
-
-    /*
-    ขึ้น
-    */
-
-    else if(
-        elbow > 155
-    ){
-
-        if(
-            movementState ===
-            "down" &&
-
-            Date.now() -
-            lastRepTime >
-            500
-        ){
-
-            repetitions++;
-
-            lastRepTime =
-                Date.now();
-
-            movementState =
-                "up";
-
-
-            repCount.textContent =
-                repetitions;
-
-        }
-
-
-        setResult(
-
-            quality,
-
-            "🟢 พร้อม",
-
-            "good",
-
-            "💡 ดันตัวขึ้นและรักษาแนวลำตัว"
-
-        );
-
-    }
-
-
-    else{
-
-        setResult(
-
-            Math.max(
-                0,
-                quality - 5
-            ),
-
-            "กำลังเคลื่อนไหว",
-
-            "warning",
-
-            "💡 ควบคุมข้อศอกและรักษาลำตัวให้เป็นแนวเดียว"
-
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   PLANK
-========================================================= */
-
-function analyzePlank(lm){
-
-    const required = [
-
-        lm[11],
-        lm[23],
-        lm[27]
-
-    ];
-
-
-    if(
-        !enough(required)
-    ){
-
-        plankStart =
-            null;
-
-
-        repCount.textContent =
-            "0";
-
-
-        setResult(
-
-            null,
-
-            "จัดตำแหน่ง",
-
-            "warning",
-
-            "💡 หันด้านข้างและให้ไหล่ สะโพก และข้อเท้าเห็นชัด"
-
-        );
-
-        return;
-
-    }
-
-
-    /*
-    มุมลำตัว
-    */
-
-    const bodyAngle =
-        calculateAngle(
-            lm[11],
-            lm[23],
-            lm[27]
-        );
-
-
-    const deviation =
-        Math.abs(
-            180 -
-            bodyAngle
-        );
-
-
-    let quality =
-        100 -
-        deviation * 3;
-
-
-    quality =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                quality
-            )
-        );
-
-
-    /*
-    ท่าถูก
-    */
-
-    if(
-        bodyAngle >= 165
-    ){
-
-        if(
-            plankStart ===
-            null
-        ){
-
-            plankStart =
-                Date.now();
-
-        }
-
-
-        const seconds =
-            Math.floor(
-                (
-                    Date.now() -
-                    plankStart
-                ) / 1000
-            );
-
-
-        repCount.textContent =
-            seconds + "s";
-
-
-        setResult(
-
-            quality,
-
-            "🟢 ถูกต้อง",
-
-            "good",
-
-            "💡 รักษาศีรษะ หลัง สะโพก และข้อเท้าให้อยู่ในแนวเดียวกัน"
-
-        );
-
-    }
-
-
-    /*
-    ท่าผิด
-    */
-
-    else{
-
-        plankStart =
-            null;
-
-
-        repCount.textContent =
-            "0";
-
-
-        setResult(
-
-            quality,
-
-            "⚠️ ปรับท่า",
-
-            "bad",
-
-            "💡 ปรับสะโพกให้ลำตัวเป็นเส้นตรง"
-
-        );
-
-    }
-
-}
-
-
-
-/* =========================================================
-   BUTTONS
-========================================================= */
-
-document
-.getElementById("startButton")
-.addEventListener(
-    "click",
-    startCamera
-);
-
-
-document
-.getElementById("stopButton")
-.addEventListener(
-    "click",
-    stopCamera
-);
-
-
-/* ปิดกล้องเมื่อออกจากหน้า */
-
-window.addEventListener(
-    "beforeunload",
-    stopCamera
-);
 
 
 </script>
