@@ -16,9 +16,9 @@
       --bg-color: #08090c;
       --card-bg: rgba(18, 22, 31, 0.85);
       --card-inner: rgba(10, 12, 18, 0.7);
-      --primary: #ff3b30; /* Sports Racing Red / Neon Orange */
+      --primary: #ff3b30;
       --primary-glow: rgba(255, 59, 48, 0.4);
-      --accent-neon: #00f2fe; /* Neon Blue */
+      --accent-neon: #00f2fe;
       --success: #10b981;
       --success-glow: rgba(16, 185, 129, 0.35);
       --danger: #ff2a55;
@@ -27,7 +27,6 @@
       --text-sub: #a1a1aa;
       --border-color: rgba(255, 255, 255, 0.12);
       --border-hover: rgba(255, 59, 48, 0.6);
-      --sports-skew: polygon(4% 0%, 100% 0%, 96% 100%, 0% 100%);
       --sports-skew-btn: polygon(6% 0%, 100% 0%, 94% 100%, 0% 100%);
     }
 
@@ -47,7 +46,7 @@
       min-height: 100vh;
     }
 
-    /* Header Styling - Sports Style */
+    /* Header */
     .header { 
       text-align: center; 
       margin-bottom: 24px;
@@ -86,7 +85,7 @@
       font-weight: 300;
     }
 
-    /* Sports Banner Image */
+    /* Sports Hero Banner */
     .sports-hero-banner {
       width: 100%;
       max-width: 1080px;
@@ -158,7 +157,7 @@
       object-fit: cover;
     }
 
-    /* Controls & Menu Panels */
+    /* Controls Panel */
     .controls-panel {
       width: 100%;
       max-width: 640px;
@@ -178,7 +177,6 @@
       position: relative;
     }
 
-    /* Sports Skew Header Bar on Cards */
     .card-sports-header {
       display: flex;
       align-items: center;
@@ -202,7 +200,7 @@
       color: #fff;
     }
 
-    /* Input Form Styles */
+    /* Form Elements */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -242,7 +240,7 @@
       box-shadow: 0 0 12px var(--primary-glow);
     }
 
-    /* Buttons - Sports Skewed Style */
+    /* Buttons */
     .btn {
       width: 100%;
       padding: 14px;
@@ -315,7 +313,7 @@
       color: var(--primary);
     }
 
-    /* Live Display Dashboard */
+    /* Dashboard */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -357,7 +355,7 @@
     .status-danger { color: var(--danger); }
     .status-warning { color: var(--warning); }
 
-    /* Summary Card Styling */
+    /* Summary Card */
     .summary-card {
       border: 1px solid rgba(255, 59, 48, 0.3);
       background: radial-gradient(circle at top right, rgba(255, 59, 48, 0.12) 0%, rgba(10, 12, 18, 0.9) 100%);
@@ -437,7 +435,7 @@
       line-height: 1.5;
     }
 
-    /* History Log Table Section */
+    /* History Log Section */
     .history-card {
       display: none;
       width: 100%;
@@ -493,6 +491,23 @@
     .btn-view-detail:hover {
       background: var(--primary);
       color: #fff;
+    }
+
+    /* Form Guide Card Styling */
+    .guide-img-container {
+      width: 100%;
+      height: 180px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .guide-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* Modal Component UI */
@@ -577,7 +592,7 @@
     </div>
 
     <div class="controls-panel">
-      <!-- Sports Menu Card -->
+      <!-- Training Menu Card -->
       <div class="card">
         <div class="card-sports-header">
           <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop" alt="Athlete">
@@ -604,6 +619,22 @@
         <button id="toggle_history_btn" class="btn btn-shortcut">🏆 ดูประวัติสถิติการฝึก</button>
       </div>
 
+      <!-- Live Form Guide Card (Dynamic Content based on exercise selected) -->
+      <div class="card">
+        <div class="card-sports-header">
+          <span class="card-sports-title">📌 ตัวอย่างท่าทางที่ถูกต้อง (PRO FORM GUIDE)</span>
+        </div>
+        
+        <div class="guide-img-container">
+          <img id="guide_img" src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop" alt="Exercise Form Guide">
+        </div>
+
+        <div id="guide_text_box" style="font-size: 0.85rem; color: var(--text-sub); line-height: 1.5;">
+          <strong id="guide_title" style="color: var(--primary); font-size:0.95rem; display:block; margin-bottom:4px;">Bodyweight Squat</strong>
+          <span id="guide_desc">วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงเหมือนนั่งเก้าอี้ ลำตัวตรง และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)</span>
+        </div>
+      </div>
+
       <!-- Realtime Dashboard -->
       <div class="dashboard-grid">
         <div class="stat-box">
@@ -624,7 +655,7 @@
         <span id="status_display" class="status-safe">กำลังเชื่อมต่อกล้อง...</span>
       </div>
 
-      <!-- Sports Performance Summary Card -->
+      <!-- Summary Card -->
       <div class="card summary-card">
         <div class="summary-header-box">
           <span class="summary-title-text">⚡ สรุปสมรรถภาพ: <span id="summary_username" style="color:#fff;">Athlete01</span></span>
@@ -664,7 +695,7 @@
           <span id="ai_feedback_text">กดปุ่ม "เริ่มบันทึกการซ้อม" เพื่อวิเคราะห์การเคลื่อนไหว</span>
         </div>
 
-        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลลงคลาวด์</button>
+        <button id="save_cloud_btn" class="btn btn-save" disabled>💾 บันทึกผลลงระบบ</button>
         <span id="save_status_msg" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-sub); margin-top:8px;"></span>
       </div>
 
@@ -711,8 +742,8 @@
   </div>
 
   <script>
-    // ตั้งค่า Web App URL ของ Google Apps Script ที่นี่ (ถ้ามี)
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwMi3rwtdSWYj44FqhsYmKwl4ETEkCy_xa3_PXEqAx-nAranA-Uq8BKobtH754r7qgL/exec"; 
+    // URL สำหรับ Google Apps Script (ถ้ามี)
+    const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
     const canvasElement = document.getElementById('output_canvas');
@@ -727,6 +758,10 @@
     const clearHistoryBtn = document.getElementById('clear_history_btn');
     const saveCloudBtn = document.getElementById('save_cloud_btn');
     const saveStatusMsg = document.getElementById('save_status_msg');
+
+    const guideImg = document.getElementById('guide_img');
+    const guideTitle = document.getElementById('guide_title');
+    const guideDesc = document.getElementById('guide_desc');
 
     const detailModal = document.getElementById('detail_modal');
     const closeModalBtn = document.getElementById('close_modal_btn');
@@ -754,8 +789,37 @@
     let repCount = 0, stage = "UP";
     let lastCalculatedData = null;
 
+    // Form Guide Data Dictionary
+    const formGuides = {
+      squat: {
+        title: "Bodyweight Squat",
+        img: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop",
+        desc: "วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงเหมือนนั่งเก้าอี้ ลำตัวตรง และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)"
+      },
+      jump: {
+        title: "Jump Landing",
+        img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop",
+        desc: "เมื่อเท้าสัมผัสพื้นให้หย่อนเข่าและสะโพกลงทันทีเพื่อซับแรง (Soft Landing) ห้ามลงพื้นด้วยขาตึงเด็ดขาด"
+      },
+      balance: {
+        title: "Single-Leg Balance",
+        img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
+        desc: "ยกขาขึ้นหนึ่งข้าง เกร็งแกนกลางลำตัว รักษาระดับข้อสะโพกให้เสมอกัน และมองตรงไปข้างหน้าเพื่อรักษาเสถียรภาพ"
+      }
+    };
+
+    // Event Listeners
     userNameInput.addEventListener('input', () => {
       summaryUsername.innerText = userNameInput.value.trim() || "Athlete01";
+    });
+
+    exerciseSelect.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      if (formGuides[selected]) {
+        guideImg.src = formGuides[selected].img;
+        guideTitle.innerText = formGuides[selected].title;
+        guideDesc.innerText = formGuides[selected].desc;
+      }
     });
 
     toggleBtn.addEventListener('click', () => {
@@ -986,153 +1050,129 @@
       }
     });
 
+    // Helper: Trigonometric Angle Calculation
     function calculateAngle(a, b, c) {
       const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
       let angle = Math.abs((radians * 180.0) / Math.PI);
-      if (angle > 180.0) angle = 360.0 - angle;
+      if (angle > 180.0) angle = 360 - angle;
       return Math.round(angle);
     }
 
-    // ฟังก์ชันวาดโครงกระดูกแบบเต็มตัว (Stickman Skeleton Framework)
-    function drawFullSkeleton(landmarks, color) {
-      // รายชื่อคู่จุดเชื่อมต่อโครงกระดูก
-      const connections = [
-        // ลำตัว (Torso)
-        [11, 12], [11, 23], [12, 24], [23, 24],
-        // แขนซ้าย (Left Arm)
-        [11, 13], [13, 15],
-        // แขนขวา (Right Arm)
-        [12, 14], [14, 16],
-        // ขาซ้าย (Left Leg)
-        [23, 25], [25, 27], [27, 31],
-        // ขาขวา (Right Leg)
-        [24, 26], [26, 28], [28, 32],
-        // ศีรษะและคอ (Head / Neck)
-        [0, 11], [0, 12]
-      ];
-
-      // 1. วาดเส้นกระดูกเชื่อมต่อ
-      connections.forEach(([i, j]) => {
-        const p1 = landmarks[i];
-        const p2 = landmarks[j];
-
-        if (p1 && p2 && p1.visibility > 0.4 && p2.visibility > 0.4) {
-          const pt1 = { x: p1.x * canvasElement.width, y: p1.y * canvasElement.height };
-          const pt2 = { x: p2.x * canvasElement.width, y: p2.y * canvasElement.height };
-
-          canvasCtx.beginPath();
-          canvasCtx.moveTo(pt1.x, pt1.y);
-          canvasCtx.lineTo(pt2.x, pt2.y);
-          canvasCtx.lineWidth = 4;
-          canvasCtx.strokeStyle = color;
-          canvasCtx.shadowColor = color;
-          canvasCtx.shadowBlur = 8; // เพิ่มเอฟเฟกต์ไฟเรืองแสง
-          canvasCtx.stroke();
-          canvasCtx.shadowBlur = 0; // คืนค่า blur
-        }
-      });
-
-      // 2. วาดหัวข้อต่อ (Joints)
-      landmarks.forEach((lm, index) => {
-        // วาดเฉพาะจุดสำคัญ (ไม่รวมจุดย่อยของใบหน้า)
-        if ([0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 31, 32].includes(index)) {
-          if (lm && lm.visibility > 0.4) {
-            const pt = { x: lm.x * canvasElement.width, y: lm.y * canvasElement.height };
-
-            canvasCtx.beginPath();
-            canvasCtx.arc(pt.x, pt.y, index === 0 ? 10 : 6, 0, 2 * Math.PI); // ศีรษะใหญ่กว่าข้อต่ออื่น
-            canvasCtx.fillStyle = '#ffffff';
-            canvasCtx.fill();
-            canvasCtx.lineWidth = 2;
-            canvasCtx.strokeStyle = color;
-            canvasCtx.stroke();
-          }
-        }
-      });
-    }
-
+    // MediaPipe Processing Results
     function onResults(results) {
-      if (!results.image) return;
-
-      canvasElement.width = videoElement.videoWidth || 640;
-      canvasElement.height = videoElement.videoHeight || 480;
-
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      
-      canvasCtx.translate(canvasElement.width, 0);
-      canvasCtx.scale(-1, 1);
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
       if (results.poseLandmarks) {
         const lm = results.poseLandmarks;
-        const mode = exerciseSelect.value;
 
-        const leftHip = lm[23], leftKnee = lm[25], leftAnkle = lm[27], leftShoulder = lm[11];
-        const rightHip = lm[24], rightKnee = lm[26], rightAnkle = lm[28], rightShoulder = lm[12];
+        const leftHip = lm[23], rightHip = lm[24];
+        const leftKnee = lm[25], rightKnee = lm[26];
+        const leftAnkle = lm[27], rightAnkle = lm[28];
+        const leftShoulder = lm[11], rightShoulder = lm[12];
 
-        let leftKneeAngle = 0, rightKneeAngle = 0;
-        let leftHipAngle = 0, rightHipAngle = 0;
-
-        if (leftHip.visibility > 0.5 && leftKnee.visibility > 0.5 && leftAnkle.visibility > 0.5) {
-          leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
-          leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
-        }
-
-        if (rightHip.visibility > 0.5 && rightKnee.visibility > 0.5 && rightAnkle.visibility > 0.5) {
-          rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
-          rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
-        }
+        const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+        const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+        const leftHipAngle = calculateAngle(leftShoulder, leftHip, leftKnee);
+        const rightHipAngle = calculateAngle(rightShoulder, rightHip, rightKnee);
 
         kneeDisplay.innerText = `${leftKneeAngle}° | ${rightKneeAngle}°`;
         hipDisplay.innerText = `${leftHipAngle}° | ${rightHipAngle}°`;
 
-        const activeKneeAngle = Math.max(leftKneeAngle, rightKneeAngle);
-        if (activeKneeAngle > 0) updateRepCounter(mode, activeKneeAngle);
+        const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
+        const kneeDiff = Math.abs(leftKneeAngle - rightKneeAngle);
 
-        let isSafe = true;
-        let statusText = "ท่าทางปกติ";
+        let currentStatus = "ท่าทางปกติ / ปลอดภัย";
         let statusClass = "status-safe";
-        let skeletonColor = "#ff3b30"; // สีนีออนเรดสไตล์สปอร์ต
+        let isFrameSafe = true;
 
-        if (mode === 'squat') {
-          const diff = Math.abs(leftKneeAngle - rightKneeAngle);
-          if (diff > 12 && leftKneeAngle > 0 && rightKneeAngle > 0) {
-            statusText = `เตือน: ลงน้ำหนักไม่เท่ากัน (ต่างกัน ${diff}°)`;
+        const selectedExercise = exerciseSelect.value;
+
+        if (selectedExercise === "squat") {
+          updateRepCounter("squat", avgKneeAngle);
+
+          if (kneeDiff > 18) {
+            currentStatus = "⚠️ คำเตือน: น้ำหนักลงขาทั้งสองข้างไม่เท่ากัน";
             statusClass = "status-warning";
-            skeletonColor = "#ff9500";
-            isSafe = false;
-          } else if ((leftKneeAngle > 0 && leftKneeAngle < 75) || (rightKneeAngle > 0 && rightKneeAngle < 75)) {
-            statusText = "เตือน: ย่อตัวต่ำเกินเกณฑ์ความปลอดภัย";
+            isFrameSafe = false;
+          } else if (avgKneeAngle < 65) {
+            currentStatus = "🚨 คำเตือน: ย่อเข่าลึกเกินไป อาจเกิดแรงกดสะโพก/ข้อเข่าสูง";
             statusClass = "status-danger";
-            skeletonColor = "#ff2a55";
-            isSafe = false;
+            isFrameSafe = false;
+          }
+        } else if (selectedExercise === "jump") {
+          if (avgKneeAngle > 165) {
+            currentStatus = "🚨 คำเตือน: เข่าตึงเกินไปขณะลงสู่พื้น (ควรย่อเข่าเพื่อซับแรง)";
+            statusClass = "status-danger";
+            isFrameSafe = false;
+          } else if (kneeDiff > 15) {
+            currentStatus = "⚠️ คำเตือน: เสี่ยงต่อการลงน้ำหนักเอียงข้าง";
+            statusClass = "status-warning";
+            isFrameSafe = false;
+          }
+        } else if (selectedExercise === "balance") {
+          if (kneeDiff > 25) {
+            currentStatus = "⚠️ การทรงตัวเริ่มไม่เสถียร";
+            statusClass = "status-warning";
+            isFrameSafe = false;
           }
         }
 
-        statusDisplay.innerText = statusText;
+        statusDisplay.innerText = currentStatus;
         statusDisplay.className = statusClass;
 
-        if (isRecording && leftKneeAngle > 0 && rightKneeAngle > 0) {
+        if (isRecording) {
           totalFrames++;
-          if (isSafe) safeFrames++; else warningCount++;
+          if (isFrameSafe) safeFrames++;
+          else warningCount++;
+
           if (leftKneeAngle < minLeftKnee) minLeftKnee = leftKneeAngle;
           if (rightKneeAngle < minRightKnee) minRightKnee = rightKneeAngle;
-          
-          const currentDiff = Math.abs(leftKneeAngle - rightKneeAngle);
-          totalDiff += currentDiff;
+
+          totalDiff += kneeDiff;
           diffFrames++;
         }
 
-        // เรียกใช้วาดเส้นวัดแบบโครงกระดูกเต็มตัว
-        drawFullSkeleton(lm, skeletonColor);
-
+        drawLandmarksAndConnectors(canvasCtx, lm);
       } else {
-        statusDisplay.innerText = "ไม่พบผู้ใช้งานหน้ากล้อง";
+        statusDisplay.innerText = "ไม่พบตัวบุคคลในกล้อง";
         statusDisplay.className = "status-warning";
       }
-
       canvasCtx.restore();
+    }
+
+    function drawLandmarksAndConnectors(ctx, landmarks) {
+      const connections = [
+        [11, 12], [11, 23], [12, 24], [23, 24],
+        [23, 25], [24, 26], [25, 27], [26, 28]
+      ];
+
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = "#00f2fe";
+
+      connections.forEach(([i, j]) => {
+        const p1 = landmarks[i];
+        const p2 = landmarks[j];
+        if (p1 && p2 && p1.visibility > 0.5 && p2.visibility > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(p1.x * canvasElement.width, p1.y * canvasElement.height);
+          ctx.lineTo(p2.x * canvasElement.width, p2.y * canvasElement.height);
+          ctx.stroke();
+        }
+      });
+
+      landmarks.forEach((p, idx) => {
+        if ([11, 12, 23, 24, 25, 26, 27, 28].includes(idx) && p.visibility > 0.5) {
+          ctx.beginPath();
+          ctx.arc(p.x * canvasElement.width, p.y * canvasElement.height, 6, 0, 2 * Math.PI);
+          ctx.fillStyle = "#ff3b30";
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#ffffff";
+          ctx.stroke();
+        }
+      });
     }
 
     const pose = new Pose({
@@ -1157,10 +1197,12 @@
       height: 480
     });
 
-    camera.start().catch(err => {
-      console.error('ไม่สามารถเปิดใช้งานกล้องได้:', err);
+    camera.start().then(() => {
+      statusDisplay.innerText = "ระบบพร้อมทำงาน - พร้อมบันทึกการฝึก";
+    }).catch(err => {
       statusDisplay.innerText = "ไม่สามารถเชื่อมต่อกล้องได้";
       statusDisplay.className = "status-danger";
+      console.error(err);
     });
   </script>
 </body>
