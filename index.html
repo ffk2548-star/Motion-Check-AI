@@ -496,18 +496,19 @@
     /* Form Guide Card Styling */
     .guide-img-container {
       width: 100%;
-      height: 180px;
+      height: 220px;
       border-radius: 8px;
       overflow: hidden;
       border: 1px solid var(--border-color);
       margin-bottom: 12px;
       position: relative;
+      background-color: #0d1117;
     }
 
     .guide-img-container img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     /* Modal Component UI */
@@ -626,12 +627,12 @@
         </div>
         
         <div class="guide-img-container">
-          <img id="guide_img" src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop" alt="Exercise Form Guide">
+          <img id="guide_img" src="https://images.bannerbear.com/direct/4mGpW3zwpg0ZK0AxQw/requests/000/101/575/659/Nxmo39RaVQ9027oy6AOe2Ewg5/561a2e458c2e776ca4f2e3b255974c387b58119b.jpg" alt="Proper Squat Form Guide">
         </div>
 
         <div id="guide_text_box" style="font-size: 0.85rem; color: var(--text-sub); line-height: 1.5;">
-          <strong id="guide_title" style="color: var(--primary); font-size:0.95rem; display:block; margin-bottom:4px;">Bodyweight Squat</strong>
-          <span id="guide_desc">วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงเหมือนนั่งเก้าอี้ ลำตัวตรง และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)</span>
+          <strong id="guide_title" style="color: var(--primary); font-size:0.95rem; display:block; margin-bottom:4px;">Bodyweight Squat Form</strong>
+          <span id="guide_desc">วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงโดยรักษาหลังให้ตรง เกร็งแกนกลางลำตัว และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)</span>
         </div>
       </div>
 
@@ -742,7 +743,7 @@
   </div>
 
   <script>
-    // URL สำหรับ Google Apps Script (ถ้ามี)
+    // URL สำหรับ Google Apps Script (ถ้าต้องการใช้งานส่งข้อมูลขึ้น Cloud)
     const WEB_APP_URL = ""; 
 
     const videoElement = document.getElementById('input_video');
@@ -789,22 +790,22 @@
     let repCount = 0, stage = "UP";
     let lastCalculatedData = null;
 
-    // Form Guide Data Dictionary
+    // Form Guide Data Dictionary (อ้างอิงภาพมาตรฐานเชิงกลศาสตร์)
     const formGuides = {
       squat: {
-        title: "Bodyweight Squat",
-        img: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop",
-        desc: "วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงเหมือนนั่งเก้าอี้ ลำตัวตรง และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)"
+        title: "Proper Squat Form Guide",
+        img: "https://images.bannerbear.com/direct/4mGpW3zwpg0ZK0AxQw/requests/000/101/575/659/Nxmo39RaVQ9027oy6AOe2Ewg5/561a2e458c2e776ca4f2e3b255974c387b58119b.jpg",
+        desc: "วางเท้ากว้างเท่าช่วงไหล่ ย่อสะโพกลงโดยรักษาหลังให้ตรง เกร็งแกนกลางลำตัว และระวังไม่ให้หัวเข่าบิดเข้าด้านใน (Knee Valgus)"
       },
       jump: {
-        title: "Jump Landing",
-        img: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop",
-        desc: "เมื่อเท้าสัมผัสพื้นให้หย่อนเข่าและสะโพกลงทันทีเพื่อซับแรง (Soft Landing) ห้ามลงพื้นด้วยขาตึงเด็ดขาด"
+        title: "Safe Jump Landing Guide",
+        img: "https://lookaside.fbsbx.com/lookaside/crawler/media/?media_id=122188736420900483",
+        desc: "หย่อนเข่าและสะโพกลงทันทีเมื่อเท้าสัมผัสพื้น (Soft Landing) รักษาแนวเข่าให้อยู่ตรงกับปลายเท้าเพื่อป้องกันเอ็น ACL บาดเจ็บ"
       },
       balance: {
-        title: "Single-Leg Balance",
-        img: "https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop",
-        desc: "ยกขาขึ้นหนึ่งข้าง เกร็งแกนกลางลำตัว รักษาระดับข้อสะโพกให้เสมอกัน และมองตรงไปข้างหน้าเพื่อรักษาเสถียรภาพ"
+        title: "Single-Leg Balance Posture",
+        img: "https://encrypted-tbn3.gstatic.com/licensed-image?q=bn:ANd9GcTuq-S9L4afyWFKFuT9OlOej15Fdi_liJjygUVWELK9qiMyBMx8vnPSSHA5O2TAFjvFZqNB0s7SDy2TTFs",
+        desc: "ยืนขาเดียวอย่างมั่นคง รักษาระดับข้อสะโพกทั้งสองข้างให้ขนานกับพื้น เกร็งลำตัวตรงเพื่อสร้างความเสถียรภาพ"
       }
     };
 
