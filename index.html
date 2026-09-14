@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -9,7 +8,238 @@
 <title>BODY POINT</title>
 
 <!-- MediaPipe -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js">
+/* =========================================================
+   USER / RECORDING / HISTORY
+========================================================= */
+
+const userNameInput = document.getElementById("userName");
+const saveNameButton = document.getElementById("saveNameButton");
+const startRecordingButton = document.getElementById("startRecordingButton");
+const stopRecordingButton = document.getElementById("stopRecordingButton");
+const recordingStatus = document.getElementById("recordingStatus");
+const recordingDot = document.getElementById("recordingDot");
+const historyList = document.getElementById("historyList");
+const clearHistoryButton = document.getElementById("clearHistoryButton");
+
+const HISTORY_KEY = "bodyPointTestHistory";
+const USER_NAME_KEY = "bodyPointUserName";
+
+let isRecording = false;
+let recordingStartedAt = null;
+let recordingSnapshot = {
+    repetitions: 0,
+    plankSeconds: 0,
+    score: null,
+    status: "รอการตรวจ"
+};
+
+function getHistory(){
+    try{
+        return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    }catch(error){
+        console.error(error);
+        return [];
+    }
+}
+
+function saveHistory(history){
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function formatDate(dateValue){
+    const date = new Date(dateValue);
+    return date.toLocaleString("th-TH", {
+        dateStyle:"medium",
+        timeStyle:"short"
+    });
+}
+
+function exerciseLabel(){
+    const map = {
+        squat:"Squat",
+        lunge:"Lunge",
+        pushup:"Push-up",
+        plank:"Plank"
+    };
+    return map[selectedExercise] || selectedExercise;
+}
+
+function currentMetric(){
+    return repCount.textContent || "0";
+}
+
+function currentScore(){
+    const text = score.textContent;
+    if(!text || text === "--") return null;
+    const value = parseInt(text, 10);
+    return Number.isFinite(value) ? value : null;
+}
+
+function startRecording(){
+    const name = userNameInput.value.trim();
+
+    if(!name){
+        alert("กรุณากรอกชื่อผู้ทำการทดสอบก่อนเริ่มบันทึกข้อมูล");
+        userNameInput.focus();
+        return;
+    }
+
+    if(!cameraRunning){
+        alert("กรุณากด “เปิดกล้อง” ก่อนเริ่มบันทึกข้อมูล");
+        return;
+    }
+
+    if(isRecording) return;
+
+    isRecording = true;
+    recordingStartedAt = Date.now();
+    recordingSnapshot = {
+        repetitions: 0,
+        plankSeconds: 0,
+        score: null,
+        status: "กำลังบันทึก"
+    };
+
+    recordingDot.classList.add("on");
+    recordingStatus.textContent = "🔴 กำลังบันทึกข้อมูล";
+    startRecordingButton.disabled = true;
+    stopRecordingButton.disabled = false;
+    tip.textContent = "🔴 กำลังบันทึกผลการทดสอบ... เมื่อเสร็จแล้วกด “หยุดและบันทึกผล”";
+}
+
+function stopRecording(){
+    if(!isRecording) return;
+
+    const durationSeconds = Math.max(
+        0,
+        Math.round((Date.now() - recordingStartedAt) / 1000)
+    );
+
+    const metricText = currentMetric();
+    let repetitionsValue = 0;
+    let plankSecondsValue = 0;
+
+    if(selectedExercise === "plank"){
+        plankSecondsValue = parseInt(metricText, 10) || 0;
+    }else{
+        repetitionsValue = parseInt(metricText, 10) || 0;
+    }
+
+    const record = {
+        id: Date.now(),
+        name: userNameInput.value.trim(),
+        exercise: exerciseLabel(),
+        exerciseKey: selectedExercise,
+        repetitions: repetitionsValue,
+        plankSeconds: plankSecondsValue,
+        metric: metricText,
+        score: currentScore(),
+        status: poseStatus.textContent || "รอการตรวจ",
+        durationSeconds: durationSeconds,
+        createdAt: new Date().toISOString()
+    };
+
+    const history = getHistory();
+    history.unshift(record);
+    saveHistory(history.slice(0, 100));
+
+    isRecording = false;
+    recordingStartedAt = null;
+
+    recordingDot.classList.remove("on");
+    recordingStatus.textContent = "✅ บันทึกผลเรียบร้อย";
+    startRecordingButton.disabled = !cameraRunning;
+    stopRecordingButton.disabled = true;
+
+    renderHistory();
+
+    alert("บันทึกผลการทดสอบเรียบร้อยแล้ว");
+}
+
+function renderHistory(){
+    const history = getHistory();
+
+    if(!history.length){
+        historyList.innerHTML = '<div class="history-empty">ยังไม่มีข้อมูลการทดสอบย้อนหลัง</div>';
+        return;
+    }
+
+    historyList.innerHTML = history.map(item => {
+        const metric = item.exerciseKey === "plank"
+            ? `${item.plankSeconds || 0} วินาที`
+            : `${item.repetitions || 0} ครั้ง`;
+
+        const scoreText = item.score === null || item.score === undefined
+            ? "--"
+            : `${item.score}%`;
+
+        return `
+            <div class="history-item">
+                <div class="history-top">
+                    <div class="history-name">👤 ${escapeHtml(item.name)}</div>
+                    <div class="history-date">${formatDate(item.createdAt)}</div>
+                </div>
+                <div style="font-weight:700;margin-bottom:9px;">
+                    ${escapeHtml(item.exercise)}
+                </div>
+                <div class="history-meta">
+                    <div>📊 ผล: <strong>${metric}</strong></div>
+                    <div>⭐ คะแนน: <strong>${scoreText}</strong></div>
+                    <div>⏱️ เวลา: <strong>${item.durationSeconds || 0}s</strong></div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function escapeHtml(value){
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+saveNameButton.addEventListener("click", () => {
+    const name = userNameInput.value.trim();
+
+    if(!name){
+        alert("กรุณากรอกชื่อก่อน");
+        userNameInput.focus();
+        return;
+    }
+
+    localStorage.setItem(USER_NAME_KEY, name);
+    alert("บันทึกชื่อเรียบร้อยแล้ว");
+});
+
+startRecordingButton.addEventListener("click", startRecording);
+stopRecordingButton.addEventListener("click", stopRecording);
+
+clearHistoryButton.addEventListener("click", () => {
+    const history = getHistory();
+
+    if(!history.length){
+        alert("ยังไม่มีประวัติให้ล้าง");
+        return;
+    }
+
+    if(confirm("ต้องการล้างประวัติการทดสอบทั้งหมดหรือไม่?")){
+        localStorage.removeItem(HISTORY_KEY);
+        renderHistory();
+    }
+});
+
+const savedUserName = localStorage.getItem(USER_NAME_KEY);
+if(savedUserName){
+    userNameInput.value = savedUserName;
+}
+
+renderHistory();
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
 
@@ -351,6 +581,143 @@ button.stop{
 
 }
 
+
+/* USER / RECORDING / HISTORY */
+.user-section{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:end;
+}
+.field label{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+.field input{
+    width:100%;
+    border:2px solid #e5e7eb;
+    border-radius:14px;
+    padding:14px 15px;
+    font-size:16px;
+    outline:none;
+    transition:.2s;
+}
+.field input:focus{
+    border-color:#111827;
+    box-shadow:0 0 0 4px rgba(17,24,39,.08);
+}
+.recording-bar{
+    margin-top:15px;
+    padding:14px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+}
+.recording-status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    margin-bottom:10px;
+    color:#6b7280;
+}
+.recording-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#9ca3af;
+}
+.recording-dot.on{
+    background:#dc2626;
+    box-shadow:0 0 0 5px rgba(220,38,38,.12);
+}
+.record-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+button.record{
+    background:#16a34a;
+}
+button.record.stop-record{
+    background:#dc2626;
+}
+button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+.history-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+}
+.history-actions{
+    display:flex;
+    gap:8px;
+}
+.small-button{
+    padding:9px 12px;
+    font-size:13px;
+    background:#e5e7eb;
+    color:#111827;
+}
+.history-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+.history-item{
+    border:1px solid #e5e7eb;
+    border-radius:16px;
+    padding:15px;
+    background:#fafafa;
+}
+.history-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+}
+.history-name{
+    font-weight:800;
+}
+.history-date{
+    color:#6b7280;
+    font-size:12px;
+}
+.history-meta{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    font-size:13px;
+}
+.history-meta div{
+    background:white;
+    border-radius:10px;
+    padding:9px;
+}
+.history-empty{
+    text-align:center;
+    color:#6b7280;
+    padding:25px 10px;
+}
+@media(max-width:700px){
+    .user-section{
+        grid-template-columns:1fr;
+    }
+    .history-header{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+    .history-meta{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
 </style>
 </head>
 
@@ -372,6 +739,24 @@ button.stop{
 
 <main>
 
+
+
+<section class="card">
+    <h2>👤 ข้อมูลผู้ทำการทดสอบ</h2>
+    <div class="user-section">
+        <div class="field">
+            <label for="userName">ชื่อผู้ทำการทดสอบ</label>
+            <input id="userName" type="text" maxlength="80"
+                   placeholder="กรอกชื่อ เช่น สมชาย ใจดี">
+        </div>
+        <div>
+            <button id="saveNameButton" type="button">💾 บันทึกชื่อ</button>
+        </div>
+    </div>
+    <div class="info">
+        📌 ชื่อจะถูกใช้เป็นข้อมูลประกอบผลการทดสอบย้อนหลัง
+    </div>
+</section>
 
 <!-- ========================= -->
 <!-- SELECT EXERCISE -->
@@ -503,6 +888,22 @@ class="stop">
 
 </button>
 
+<div class="recording-bar">
+    <div class="recording-status">
+        <span id="recordingDot" class="recording-dot"></span>
+        <span id="recordingStatus">ยังไม่ได้เริ่มบันทึกข้อมูล</span>
+    </div>
+    <div class="record-buttons">
+        <button id="startRecordingButton" class="record" type="button" disabled>
+            ⏺️ เริ่มบันทึกข้อมูล
+        </button>
+        <button id="stopRecordingButton" class="record stop-record" type="button" disabled>
+            ⏹️ หยุดและบันทึกผล
+        </button>
+    </div>
+</div>
+
+
 
 </div>
 
@@ -599,6 +1000,21 @@ id="tip">
 
 </section>
 
+
+
+<section class="card">
+    <div class="history-header">
+        <h2>🗂️ ประวัติการทดสอบ</h2>
+        <div class="history-actions">
+            <button id="clearHistoryButton" class="small-button" type="button">🗑️ ล้างประวัติ</button>
+        </div>
+    </div>
+    <div id="historyList" class="history-list"></div>
+    <div class="info">
+        📌 ข้อมูลย้อนหลังจัดเก็บไว้ในเครื่องนี้ด้วย LocalStorage
+        หากล้างข้อมูลเว็บไซต์หรือเปลี่ยนเบราว์เซอร์ ประวัติอาจหายได้
+    </div>
+</section>
 
 </main>
 
@@ -717,6 +1133,11 @@ document
         "click",
         () => {
 
+            if(isRecording){
+                alert("กรุณาหยุดและบันทึกผลก่อนเปลี่ยนท่าออกกำลังกาย");
+                return;
+            }
+
             document
             .querySelectorAll(".exercise")
             .forEach(item => {
@@ -742,6 +1163,9 @@ document
                 button.textContent.trim();
 
 
+            if(isRecording){
+                stopRecording();
+            }
             resetExercise();
 
         }
@@ -1088,6 +1512,10 @@ async function startCamera(){
         cameraStatus.textContent =
             "🟢 กำลังตรวจจับ";
 
+        startRecordingButton.disabled = false;
+        stopRecordingButton.disabled = true;
+        recordingStatus.textContent = "พร้อมบันทึกข้อมูล";
+
 
         tip.textContent =
             "💡 ระบบกำลังค้นหาตำแหน่งร่างกาย";
@@ -1125,6 +1553,15 @@ async function startCamera(){
 ========================================================= */
 
 function stopCamera(){
+
+    if(isRecording){
+        stopRecording();
+    }
+
+    startRecordingButton.disabled = true;
+    stopRecordingButton.disabled = true;
+    recordingStatus.textContent = "กล้องปิดแล้ว";
+    recordingDot.classList.remove("on");
 
     if(camera){
 
@@ -2069,4 +2506,3 @@ window.addEventListener(
 
 </body>
 </html>
-```
