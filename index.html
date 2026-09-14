@@ -1,40 +1,664 @@
-name: Build Android APK for Body Point
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-on:
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+<title>FitCheck AI</title>
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,"Noto Sans Thai",sans-serif;
+}
 
-      - name: Set up Java Development Kit (JDK 17)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+body{
+    background:#f5f7fb;
+    color:#222;
+}
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.19.x'
-          channel: 'stable'
-          cache: true
+header{
+    background:linear-gradient(135deg,#111827,#374151);
+    color:white;
+    padding:22px;
+    text-align:center;
+}
 
-      - name: Install Dependencies
-        run: flutter pub get
+header h1{
+    font-size:28px;
+}
 
-      - name: Build APK (Release)
-        run: flutter build apk --release --no-tree-shake-icons
+header p{
+    margin-top:6px;
+    opacity:.8;
+}
 
-      - name: Upload Build Artifact (APK)
-        uses: actions/upload-artifact@v4
-        with:
-          name: BodyPoint-Release-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+h2{
+    margin-bottom:15px;
+}
+
+.exercise-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+
+.exercise{
+    border:2px solid #e5e7eb;
+    border-radius:15px;
+    padding:18px 10px;
+    text-align:center;
+    cursor:pointer;
+    transition:.2s;
+    background:white;
+}
+
+.exercise:hover{
+    transform:translateY(-3px);
+    border-color:#111827;
+}
+
+.exercise.active{
+    background:#111827;
+    color:white;
+}
+
+.exercise .icon{
+    font-size:35px;
+    display:block;
+    margin-bottom:8px;
+}
+
+.camera-box{
+    position:relative;
+    width:100%;
+    max-width:700px;
+    margin:auto;
+    background:#000;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+video{
+    width:100%;
+    display:block;
+    transform:scaleX(-1);
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    transform:scaleX(-1);
+}
+
+.status{
+    position:absolute;
+    top:15px;
+    left:15px;
+    background:rgba(0,0,0,.7);
+    color:white;
+    padding:8px 14px;
+    border-radius:20px;
+}
+
+.results{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.result{
+    background:#f3f4f6;
+    padding:18px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.result strong{
+    display:block;
+    font-size:30px;
+    margin-top:5px;
+}
+
+.good{
+    color:#16a34a;
+}
+
+.warning{
+    color:#d97706;
+}
+
+.bad{
+    color:#dc2626;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:15px;
+    border:0;
+    border-radius:14px;
+    background:#111827;
+    color:white;
+    font-size:17px;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.tip{
+    margin-top:15px;
+    padding:15px;
+    border-radius:14px;
+    background:#eef2ff;
+    line-height:1.6;
+}
+
+.hidden{
+    display:none;
+}
+
+@media(max-width:700px){
+    .exercise-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .results{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏋️ FitCheck AI</h1>
+    <p>ผู้ช่วยตรวจสอบท่าออกกำลังกายด้วย AI</p>
+</header>
+
+<div class="container">
+
+    <!-- เลือกท่า -->
+    <div class="card">
+        <h2>เลือกท่าออกกำลังกาย</h2>
+
+        <div class="exercise-grid">
+
+            <div class="exercise active" onclick="selectExercise('squat',this)">
+                <span class="icon">🏋️</span>
+                Squat
+            </div>
+
+            <div class="exercise" onclick="selectExercise('lunge',this)">
+                <span class="icon">🦵</span>
+                Lunge
+            </div>
+
+            <div class="exercise" onclick="selectExercise('pushup',this)">
+                <span class="icon">💪</span>
+                Push-up
+            </div>
+
+            <div class="exercise" onclick="selectExercise('plank',this)">
+                <span class="icon">🧘</span>
+                Plank
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- กล้อง -->
+    <div class="card">
+
+        <h2 id="exerciseTitle">ตรวจท่า Squat</h2>
+
+        <div class="camera-box">
+
+            <video id="video" autoplay playsinline></video>
+
+            <canvas id="canvas"></canvas>
+
+            <div class="status" id="status">
+                กำลังเตรียมกล้อง...
+            </div>
+
+        </div>
+
+        <button onclick="startCamera()">
+            📷 เปิดกล้อง
+        </button>
+
+        <button onclick="stopCamera()">
+            ⛔ ปิดกล้อง
+        </button>
+
+    </div>
+
+
+    <!-- ผลวิเคราะห์ -->
+    <div class="card">
+
+        <h2>📊 ผลการวิเคราะห์</h2>
+
+        <div class="results">
+
+            <div class="result">
+                จำนวนครั้ง
+                <strong id="count">0</strong>
+            </div>
+
+            <div class="result">
+                คะแนน
+                <strong id="score">--%</strong>
+            </div>
+
+            <div class="result">
+                สถานะท่า
+                <strong id="poseStatus">รอการตรวจ</strong>
+            </div>
+
+        </div>
+
+        <div class="tip" id="tip">
+            💡 กรุณายืนให้เห็นร่างกายตั้งแต่ศีรษะถึงเท้า
+            แล้วเริ่มทำท่าออกกำลังกาย
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let camera = null;
+let pose = null;
+
+let selectedExercise = "squat";
+
+let squatCount = 0;
+let squatState = "up";
+
+
+// --------------------------------
+// เลือกท่า
+// --------------------------------
+
+function selectExercise(type,element){
+
+    selectedExercise = type;
+
+    document.querySelectorAll(".exercise")
+        .forEach(el => el.classList.remove("active"));
+
+    element.classList.add("active");
+
+    document.getElementById("exerciseTitle").innerText =
+        "ตรวจท่า " + type.toUpperCase();
+
+    squatCount = 0;
+
+    document.getElementById("count").innerText = "0";
+
+    document.getElementById("score").innerText = "--%";
+
+    document.getElementById("poseStatus").innerText =
+        "รอการตรวจ";
+
+}
+
+
+// --------------------------------
+// เริ่มกล้อง
+// --------------------------------
+
+async function startCamera(){
+
+    try{
+
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                video:{
+                    facingMode:"user",
+                    width:{ideal:1280},
+                    height:{ideal:720}
+                },
+                audio:false
+            });
+
+        video.srcObject = stream;
+
+        pose = new Pose({
+            locateFile:(file)=>{
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+            }
+        });
+
+        pose.setOptions({
+            modelComplexity:1,
+            smoothLandmarks:true,
+            enableSegmentation:false,
+            smoothSegmentation:true,
+            minDetectionConfidence:.5,
+            minTrackingConfidence:.5
+        });
+
+        pose.onResults(onResults);
+
+        camera = new Camera(video,{
+            onFrame:async()=>{
+                await pose.send({
+                    image:video
+                });
+            },
+            width:1280,
+            height:720
+        });
+
+        camera.start();
+
+        document.getElementById("status").innerText =
+            "🟢 กำลังตรวจจับ";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert(
+            "ไม่สามารถเปิดกล้องได้\n\n" +
+            "กรุณาอนุญาตให้เว็บไซต์เข้าถึงกล้อง"
+        );
+
+    }
+
+}
+
+
+// --------------------------------
+// ปิดกล้อง
+// --------------------------------
+
+function stopCamera(){
+
+    if(video.srcObject){
+
+        video.srcObject
+            .getTracks()
+            .forEach(track => track.stop());
+
+        video.srcObject = null;
+    }
+
+    if(camera){
+        camera.stop();
+        camera = null;
+    }
+
+    document.getElementById("status").innerText =
+        "กล้องปิดแล้ว";
+
+}
+
+
+// --------------------------------
+// รับผลจาก AI
+// --------------------------------
+
+function onResults(results){
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    if(!results.poseLandmarks){
+
+        document.getElementById("status").innerText =
+            "⚠️ ไม่พบร่างกาย";
+
+        return;
+    }
+
+    drawConnectors(
+        ctx,
+        results.poseLandmarks,
+        POSE_CONNECTIONS,
+        {
+            color:"#00ff88",
+            lineWidth:4
+        }
+    );
+
+    drawLandmarks(
+        ctx,
+        results.poseLandmarks,
+        {
+            color:"#ffffff",
+            lineWidth:2,
+            radius:5
+        }
+    );
+
+
+    if(selectedExercise === "squat"){
+
+        analyzeSquat(results.poseLandmarks);
+
+    }else{
+
+        document.getElementById("poseStatus").innerText =
+            "พร้อมตรวจ";
+
+        document.getElementById("tip").innerText =
+            "💡 ท่านี้เป็นฟังก์ชันสำหรับเวอร์ชันถัดไป";
+    }
+
+}
+
+
+// --------------------------------
+// วิเคราะห์ Squat
+// --------------------------------
+
+function analyzeSquat(lm){
+
+    const leftHip = lm[23];
+    const leftKnee = lm[25];
+    const leftAnkle = lm[27];
+
+    const rightHip = lm[24];
+    const rightKnee = lm[26];
+    const rightAnkle = lm[28];
+
+
+    if(
+        !leftHip ||
+        !leftKnee ||
+        !leftAnkle
+    ) return;
+
+
+    const leftAngle =
+        calculateAngle(
+            leftHip,
+            leftKnee,
+            leftAnkle
+        );
+
+    const rightAngle =
+        calculateAngle(
+            rightHip,
+            rightKnee,
+            rightAnkle
+        );
+
+
+    const kneeAngle =
+        (leftAngle + rightAngle) / 2;
+
+
+    let score = 0;
+
+
+    // -------------------------------
+    // ท่า Squat ลง
+    // -------------------------------
+
+    if(kneeAngle < 110){
+
+        if(squatState === "up"){
+
+            squatState = "down";
+
+            document.getElementById("poseStatus")
+                .innerText = "⬇️ ลง";
+
+            document.getElementById("poseStatus")
+                .className = "warning";
+
+        }
+
+    }
+
+
+    // -------------------------------
+    // กลับขึ้น
+    // -------------------------------
+
+    if(kneeAngle > 160){
+
+        if(squatState === "down"){
+
+            squatCount++;
+
+            document.getElementById("count")
+                .innerText = squatCount;
+
+            squatState = "up";
+
+        }
+
+        document.getElementById("poseStatus")
+            .innerText = "🟢 ถูกต้อง";
+
+        document.getElementById("poseStatus")
+            .className = "good";
+
+        score = 95;
+
+        document.getElementById("tip")
+            .innerText =
+            "💡 ท่าดีมาก รักษาหลังให้ตรงและควบคุมจังหวะขึ้น-ลง";
+
+    }
+
+
+    // -------------------------------
+    // อยู่ตรงกลาง
+    // -------------------------------
+
+    else if(
+        kneeAngle >= 110 &&
+        kneeAngle <= 160
+    ){
+
+        score = 80;
+
+        document.getElementById("poseStatus")
+            .innerText = "กำลังเคลื่อนไหว";
+
+        document.getElementById("poseStatus")
+            .className = "warning";
+
+        document.getElementById("tip")
+            .innerText =
+            "💡 ควบคุมการเคลื่อนไหวให้ช้าและรักษาแนวเข่าให้ตรง";
+    }
+
+
+    document.getElementById("score")
+        .innerText = score + "%";
+
+}
+
+
+// --------------------------------
+// คำนวณมุม 3 จุด
+// --------------------------------
+
+function calculateAngle(a,b,c){
+
+    const radians =
+        Math.atan2(
+            c.y-b.y,
+            c.x-b.x
+        )
+        -
+        Math.atan2(
+            a.y-b.y,
+            a.x-b.x
+        );
+
+    let angle =
+        Math.abs(
+            radians * 180 / Math.PI
+        );
+
+    if(angle > 180)
+        angle = 360-angle;
+
+    return angle;
+
+}
+
+</script>
+
+</body>
+</html>
+```
