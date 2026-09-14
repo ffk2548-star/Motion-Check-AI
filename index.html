@@ -58,7 +58,6 @@ function formatDate(dateValue){
 function exerciseLabel(){
     const map = {
         squat:"Squat",
-        lunge:"Lunge",
         pushup:"Push-up",
         plank:"Plank"
     };
@@ -319,7 +318,7 @@ main{
 .exercise-grid{
     display:grid;
     grid-template-columns:
-        repeat(4,1fr);
+        repeat(3,1fr);
 
     gap:12px;
 }
@@ -783,21 +782,6 @@ data-exercise="squat">
 Squat
 
 </div>
-
-
-<div
-class="exercise"
-data-exercise="lunge">
-
-<span class="exercise-icon">
-🦵
-</span>
-
-Lunge
-
-</div>
-
-
 <div
 class="exercise"
 data-exercise="pushup">
@@ -1075,7 +1059,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const exerciseNames = {
         squat: "Squat",
-        lunge: "Lunge",
         pushup: "Push-up",
         plank: "Plank"
     };
@@ -1350,7 +1333,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cameraStatus.textContent = "🟢 ตรวจพบร่างกาย";
 
         if (selectedExercise === "squat") analyzeSquat(landmarks);
-        else if (selectedExercise === "lunge") analyzeLunge(landmarks);
         else if (selectedExercise === "pushup") analyzePushup(landmarks);
         else if (selectedExercise === "plank") analyzePlank(landmarks);
     }
@@ -1393,78 +1375,6 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             setResult(Math.max(0, quality - 5), "กำลังเคลื่อนไหว", "warning",
                 "💡 เคลื่อนไหวอย่างช้าและควบคุม");
-        }
-    }
-
-    /* ---------- Leg Lunge ---------- */
-    function analyzeLunge(lm) {
-        const required = [lm[23], lm[25], lm[27], lm[24], lm[26], lm[28]];
-
-        if (!enough(required)) {
-            setResult(null, "จัดตำแหน่ง", "warning",
-                "💡 ให้เห็นสะโพก เข่า และข้อเท้าทั้งสองข้างเต็มเฟรม");
-            return;
-        }
-
-        const leftKnee = calculateAngle(lm[23], lm[25], lm[27]);
-        const rightKnee = calculateAngle(lm[24], lm[26], lm[28]);
-
-        // ประเมิน Neutral Pelvis จากระดับความสูงของสะโพกซ้าย/ขวา
-        // ใช้ระยะระหว่างไหล่เป็นสเกล เพื่อให้ค่าทนต่อระยะห่างจากกล้องมากขึ้น
-        const shoulderWidth = Math.max(
-            Math.hypot(lm[11].x - lm[12].x, lm[11].y - lm[12].y),
-            0.001
-        );
-        const pelvisTilt = Math.abs(lm[23].y - lm[24].y) / shoulderWidth;
-        const pelvisNeutral = pelvisTilt <= 0.18;
-
-        // 90/90 Kinematics: ขาหน้าและขาหลังควรอยู่ใกล้ 90°
-        const frontError = Math.abs(Math.min(leftKnee, rightKnee) - 90);
-        const backError = Math.abs(Math.max(leftKnee, rightKnee) - 90);
-        const ninety90 = frontError <= 15 && backError <= 20;
-
-        // ท่าเริ่มต้น: ยืนตรงทั้งสองขา
-        const startPosition = leftKnee > 160 && rightKnee > 160;
-        const downPosition = ninety90 && pelvisNeutral;
-
-        const kneeScore = 100 - Math.min(60, (frontError + backError) * 1.5);
-        const pelvisScore = pelvisNeutral ? 100 : Math.max(0, 100 - pelvisTilt * 250);
-        const quality = Math.round((kneeScore * 0.75) + (pelvisScore * 0.25));
-
-        if (downPosition) {
-            // จำว่าผู้ทดสอบลงถึงตำแหน่งที่ถูกต้องแล้ว
-            movementState = "down";
-            setResult(quality, "🟢 90/90 ถูกต้อง", "good",
-                "💡 เข่าหน้าและขาหลังใกล้ 90° และรักษาอุ้งเชิงกรานให้อยู่ในแนวระนาบ");
-            return;
-        }
-
-        if (ninety90 && !pelvisNeutral) {
-            setResult(Math.min(quality, 70), "⚠️ ปรับอุ้งเชิงกราน", "bad",
-                "💡 รักษาอุ้งเชิงกรานให้อยู่ในแนวระนาบ ไม่เอียงซ้ายหรือขวา");
-            return;
-        }
-
-        // นับ 1 ครั้งเมื่อกลับสู่ท่าเริ่มต้น หลังจากลงถึงตำแหน่ง 90/90 ที่ถูกต้อง
-        if (startPosition && movementState === "down") {
-            if (Date.now() - lastRepTime > 500) {
-                repetitions++;
-                lastRepTime = Date.now();
-                movementState = "up";
-                repCount.textContent = repetitions;
-            }
-
-            setResult(quality, "🟢 กลับท่าเริ่มต้น", "good",
-                "💡 นับ 1 ครั้งแล้ว ค่อย ๆ ลงครั้งถัดไป");
-            return;
-        }
-
-        if (!ninety90) {
-            setResult(Math.max(0, quality - 10), "กำลังเคลื่อนไหว", "warning",
-                "💡 ลงให้เข่าหน้าและขาหลังเข้าใกล้ 90° โดยควบคุมการเคลื่อนไหว");
-        } else {
-            setResult(quality, "กำลังเคลื่อนไหว", "warning",
-                "💡 รักษาอุ้งเชิงกรานให้นิ่งและกลับสู่ท่าเริ่มต้น");
         }
     }
 
